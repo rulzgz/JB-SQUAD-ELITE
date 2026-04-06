@@ -182,21 +182,19 @@ document.addEventListener('DOMContentLoaded', () => {
         setupAuthHandlers();
     }
 
+    let isHandlingSession = false; // Guard para evitar múltiples llamadas simultáneas
     async function handleUserSession(authUser) {
+        if (isHandlingSession) return;
+        isHandlingSession = true;
+
         try {
             console.log(">>> INICIO handleUserSession para:", authUser.email);
             
             // 1. Cargar Perfil
             console.log(">>> Intentando cargar perfil...");
             let { data: profile, error: pErr } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
-            console.log(">>> Resultado perfil:", profile, "Error:", pErr);
             
-            if (pErr) {
-                console.error(">>> ERROR en perfil:", pErr.message);
-                if (pErr.message.includes("relation") && pErr.message.includes("does not exist")) {
-                    alert("¡ATENCIÓN! La tabla 'profiles' no existe en tu Supabase. ¿Has ejecutado el script SQL que te pasé?");
-                }
-            }
+            if (pErr) console.error(">>> ERROR en perfil:", pErr.message);
 
             if (!profile) {
                 console.log(">>> Perfil no encontrado, creando uno nuevo...");
@@ -204,26 +202,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { data: newProfile, error: insErr } = await supabase.from('profiles').insert({ 
                     id: authUser.id, 
                     full_name: username 
-                }).select().single();
+                }).select().maybeSingle();
                 
-                if (insErr) console.error(">>> ERROR creando perfil:", insErr);
-                profile = newProfile;
-                console.log(">>> Perfil creado con éxito:", profile);
+                if (insErr) {
+                    console.error(">>> ERROR creando perfil:", insErr);
+                    // Si el error es 409 (ya existe), re-intentamos cargar
+                    if (insErr.code === '23505') {
+                        let { data: retryProfile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+                        profile = retryProfile;
+                    }
+                } else {
+                    profile = newProfile;
+                }
             }
             
             // 2. Cargar Membresía
             console.log(">>> Intentando cargar membresía...");
             let { data: membership, error: mErr } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
-            console.log(">>> Resultado membresía:", membership, "Error:", mErr);
-
+            
             state.user = { 
                 auth: authUser,
                 profile: profile,
                 membership: membership,
                 role: membership ? membership.role : null 
             };
-
-            console.log(">>> Estado de membresía final:", membership ? "Miembro de " + membership.teams.name : "Sin club");
 
             if (!membership) {
                 switchAuthView('team-select');
@@ -235,7 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error(">>> FALLO CATASTRÓFICO:", err);
-            alert("Error crítico de conexión. Revisa la consola (F12).");
+        } finally {
+            isHandlingSession = false;
         }
     }
 
