@@ -181,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.log(">>> [BOOT v3.0] Sin sesión. Mostrando login.");
             switchAuthView('auth');
+            hideAppLoader();
         }
 
         // 2. Configurar escuchador solo para CAMBIOS futuros (LOGIN manual / LOGOUT / EXPIRACIÓN)
@@ -241,6 +242,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.team = membership.teams;
                 state.user.role = membership.role;
                 await loadTeamData();
+            } else {
+                console.log(">>> [BOOT] Usuario sin club. Redirigiendo a Selección de Equipo...");
+                switchAuthView('team-select');
+                await fetchAvailableClubs(); 
+                hideAppLoader();
             }
         } catch (err) {
             console.error(">>> Error de sesión:", err);
