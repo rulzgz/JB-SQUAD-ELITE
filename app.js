@@ -236,13 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 role: membership ? membership.role : null 
             };
 
-            if (!membership) {
-                switchAuthView('team-select');
-                await fetchAvailableClubs(); 
-            } else {
+            if (membership) {
+                console.log(">>> [BOOT] Equipo detectado. Sincronizando datos del club...");
                 state.team = membership.teams;
-                switchAuthView('main');
-                applyRolePermissions();
+                state.user.role = membership.role;
                 await loadTeamData();
             }
         } catch (err) {
@@ -780,7 +777,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchView(viewId) {
         views.forEach(v => v.classList.remove('active-view'));
         const targetView = document.getElementById(`view-${viewId}`);
-        if (targetView) targetView.classList.add('active-view');
+        if (targetView) {
+            targetView.classList.add('active-view');
+            // Asegurar que si es el contenedor principal, se muestre sobre el !important del CSS inicial
+            const mainApp = document.getElementById('main-app');
+            if (mainApp) mainApp.style.setProperty('display', 'flex', 'important');
+        }
 
         if (viewId === 'tacticas') {
             handleTacticViewDisplay();

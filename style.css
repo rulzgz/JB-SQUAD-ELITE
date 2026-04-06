@@ -1040,6 +1040,18 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     box-shadow: 0 0 20px rgba(240, 165, 0, 0.1);
 }
 
+/* --- SISTEMA DE VISTAS (v4.3.1) --- */
+#main-app, 
+.auth-container, 
+.team-select-container {
+    display: none !important;
+}
+
+/* El loader debe ser lo único visible al inicio */
+#app-loader {
+    display: flex !important;
+}
+
 /* --- SISTEMA DE AUTENTICACIÓN Y SELECCIÓN DE EQUIPO --- */
 .auth-container {
     background: rgba(15, 15, 15, 0.8) !important;
