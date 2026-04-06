@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Configuración de Supabase
+    // Configuración de Supabase (Fuera para evitar re-inicializaciones)
     const SUPABASE_URL = 'https://drzwawwlpsunprtfbytu.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_dJK1GrVDtroLy4zqHUwdfQ_QRIVCmi3';
     const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -165,21 +165,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Inicialización
     init();
 
-    // ESCUDO GLOBAL DE SESIÓN (Fuera de funciones para máxima seguridad)
     let isHandlingSession = false; 
 
     async function init() {
         if (!supabase) return;
 
-        let lastEventTime = 0;
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            const now = Date.now();
-            if (now - lastEventTime < 800) return; // Filtro estricto de 800ms
-            lastEventTime = now;
+        console.log(">>> [BOOT v3.0] Iniciando arranque limpio...");
+        
+        // 1. Obtener sesión actual síncronamente nada más cargar
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+            console.log(">>> [BOOT v3.0] Sesión detectada en arranque.");
+            await handleUserSession(session.user);
+        } else {
+            console.log(">>> [BOOT v3.0] Sin sesión. Mostrando login.");
+            switchAuthView('auth');
+        }
 
-            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-                await new Promise(r => setTimeout(r, 100)); // Estabilización
-                await handleUserSession(session.user);
+        // 2. Configurar escuchador solo para CAMBIOS futuros (LOGIN manual / LOGOUT / EXPIRACIÓN)
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(">>> [EVENTO AUTH]:", event);
+            
+            if (event === 'SIGNED_IN' && !state.user) {
+                // Solo si no estamos ya procesándolo
+                if (session) await handleUserSession(session.user);
             } else if (event === 'SIGNED_OUT') {
                 state.user = null;
                 state.team = null;
