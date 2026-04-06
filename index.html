@@ -296,6 +296,17 @@
                             <input type="range" id="photoScale" min="0.5" max="2.5" step="0.05" value="1.0" class="premium-range">
                         </div>
 
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0.5rem;">
+                            <div class="form-group">
+                                <label for="photoX">Eje X (<span id="photo-x-value">0</span>px)</label>
+                                <input type="range" id="photoX" min="-100" max="100" step="1" value="0" class="premium-range">
+                            </div>
+                            <div class="form-group">
+                                <label for="photoY">Eje Y (<span id="photo-y-value">0</span>px)</label>
+                                <input type="range" id="photoY" min="-100" max="100" step="1" value="0" class="premium-range">
+                            </div>
+                        </div>
+
                         <input type="hidden" id="selected-avatar-id" value="1">
                         <button type="submit" class="btn-gold" style="margin-top: 1.5rem;">CONFIRMAR FICHA</button>
                     </form>

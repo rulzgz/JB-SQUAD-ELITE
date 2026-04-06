@@ -362,9 +362,25 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('playerName').value = state.userPlayer.name || '';
             document.getElementById('consoleID').value = state.userPlayer.consoleID || '';
             document.getElementById('dorsal').value = state.userPlayer.dorsal || '';
+            
+            // Cargar preferencias de diseño si existen
             if (state.userPlayer.photo_scale) {
-                document.getElementById('photoScale').value = state.userPlayer.photo_scale;
-                document.getElementById('photo-scale-value').textContent = state.userPlayer.photo_scale.toFixed(2);
+                const scaleEl = document.getElementById('photoScale');
+                const xEl = document.getElementById('photoX');
+                const yEl = document.getElementById('photoY');
+                
+                if (scaleEl) {
+                    scaleEl.value = state.userPlayer.photo_scale;
+                    document.getElementById('photo-scale-value').textContent = state.userPlayer.photo_scale.toFixed(2);
+                }
+                if (xEl) {
+                    xEl.value = state.userPlayer.photo_x || 0;
+                    document.getElementById('photo-x-value').textContent = state.userPlayer.photo_x || 0;
+                }
+                if (yEl) {
+                    yEl.value = state.userPlayer.photo_y || 0;
+                    document.getElementById('photo-y-value').textContent = state.userPlayer.photo_y || 0;
+                }
             }
         }
         
@@ -682,6 +698,10 @@ document.addEventListener('DOMContentLoaded', () => {
             primary_pos: player.primaryPos,
             secondary_pos: player.secondaryPos,
             dorsal: player.dorsal,
+            photo_url: player.photo_url,
+            photo_scale: player.photo_scale,
+            photo_x: player.photo_x,
+            photo_y: player.photo_y,
             stats: player.stats || { official: player.official, friendly: player.friendly }
         });
     }
@@ -938,6 +958,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 secondary_pos: [...new Set(secondaryPositions)].slice(0, 3),
                 photo_url: currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null),
                 photo_scale: parseFloat(document.getElementById('photoScale')?.value || 1.0),
+                photo_x: parseInt(document.getElementById('photoX')?.value || 0),
+                photo_y: parseInt(document.getElementById('photoY')?.value || 0),
                 avatar_id: parseInt(document.getElementById('selected-avatar-id').value) || 1,
                 stats: state.userPlayer ? state.userPlayer.stats : { 
                     official: { matches: 0, goals: 0, assists: 0, mvps: 0 },
@@ -963,9 +985,11 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload(); // Recargamos para actualizar cache global
         });
 
-        // Listeners para Foto y Escalado
+        // Listeners para Foto y Escalado/Posición
         const photoInput = document.getElementById('playerPhoto');
         const scaleInput = document.getElementById('photoScale');
+        const xInput = document.getElementById('photoX');
+        const yInput = document.getElementById('photoY');
 
         if (photoInput) {
             photoInput.addEventListener('change', (e) => {
@@ -981,13 +1005,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        if (scaleInput) {
-            scaleInput.addEventListener('input', (e) => {
-                const val = parseFloat(e.target.value).toFixed(2);
-                document.getElementById('photo-scale-value').textContent = val;
-                updatePlayerPreview();
-            });
-        }
+        [scaleInput, xInput, yInput].forEach(input => {
+            if (input) {
+                input.addEventListener('input', (e) => {
+                    const id = e.target.id;
+                    const val = e.target.value;
+                    if (id === 'photoScale') document.getElementById('photo-scale-value').textContent = parseFloat(val).toFixed(2);
+                    else if (id === 'photoX') document.getElementById('photo-x-value').textContent = val;
+                    else if (id === 'photoY') document.getElementById('photo-y-value').textContent = val;
+                    updatePlayerPreview();
+                });
+            }
+        });
 
         // Listeners para Previsualización en Vivo
         ['playerName', 'dorsal', 'primaryPos'].forEach(id => {
@@ -1104,14 +1133,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const ast = player.stats?.official?.assists || 0;
             const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
             const photo = player.photo_url;
-            const pScale = player.photo_scale || 1.0;
+            const transform = getPlayerTransform(player);
 
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
             const isSelf = player.user_id === state.user.auth.id;
 
             playerRow.innerHTML = `
                 <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px; overflow: hidden;">
-                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${transform}">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
                     <div style="display: flex; align-items: center; gap: 6px; overflow:hidden;">
@@ -1338,12 +1367,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const photo = player.photo_url;
-                const pScale = player.photo_scale || 1.0;
+                const transform = getPlayerTransform(player);
 
                 slotEl.innerHTML = `
                     <div class="dorsal-small">${player.dorsal}</div>
                     <div class="player-card-img" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                        ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: ${transform}">` : (avatar ? avatar.svg : '')}
                     </div>
                     <h4 title="${player.name}" style="
                         width: 100%;
@@ -1432,11 +1461,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
             const photo = player.photo_url;
-            const pScale = player.photo_scale || 1.0;
+            const transform = getPlayerTransform(player);
 
             card.innerHTML = `
                 <div class="roster-card-avatar" style="width: 40px; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);">
-                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: ${transform}">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos-badge ${groupInfo.class}">${player.primaryPos}</div>
                 <div style="display: flex; flex-direction: column; overflow: hidden;">
@@ -1509,11 +1538,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
             const photo = player.photo_url;
-            const pScale = player.photo_scale || 1.0;
+            const transform = getPlayerTransform(player);
 
             card.innerHTML = `
                 <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
-                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: ${transform}">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos">${player.primaryPos}</div>
                 <div class="roster-card-name">${player.name}</div>
@@ -1848,8 +1877,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // pero como los PJ se sumaron en finalizeMatch usando state.savedTactics[0], 
             // asumimos que el usuario sabe que si borra una jornada muy antigua con tácticas cambiadas, el PJ podría variar ligeramente.
             // MEJORA: El match ahora guarda implicitamente los que sumaron PJ si quisiéramos ser perfectos, 
-            // pero por ahora revertimos PJ a los que sumaron stats en ese partido o simplemente no sumamos PJ negativo si hay duda.
-            // En este sistema, restaremos PJ a TODOS los que tengan stats en ese partido por ahora, 
+            // pero por ahora revertimos PJ a los que sumaron stats en ese partido por ahora, 
             // o mejor, dejamos los PJ si hay duda? No, el usuario pidió "deshacer estadísticas".
             
             // Revertir MVP de partido
@@ -2160,6 +2188,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCIONES DE PERFIL ELITE ---
 
+    function getPlayerTransform(player) {
+        if (!player) return 'scale(1)';
+        const s = player.photo_scale || 1.0;
+        const x = player.photo_x || 0;
+        const y = player.photo_y || 0;
+        return `translate(${x}px, ${y}px) scale(${s})`;
+    }
+
     function updatePlayerPreview() {
         const previewContainer = document.getElementById('live-player-preview');
         if (!previewContainer) return;
@@ -2168,7 +2204,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('playerName').value || 'TU NOMBRE';
         const dorsal = document.getElementById('dorsal').value || '00';
         const pos = document.getElementById('primaryPos').value || '??';
-        const scale = document.getElementById('photoScale')?.value || 1.0;
+        
+        const transform = getPlayerTransform({
+            photo_scale: parseFloat(document.getElementById('photoScale')?.value || 1.0),
+            photo_x: parseInt(document.getElementById('photoX')?.value || 0),
+            photo_y: parseInt(document.getElementById('photoY')?.value || 0)
+        });
         
         // Prioridad: Foto recién subida > Foto guardada > Avatar
         const photo = currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null);
@@ -2180,7 +2221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="dorsal-large">${dorsal}</div>
             <div class="pos-large">${pos}</div>
             <div class="player-img-large">
-                ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
+                ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
             </div>
             <div class="name-banner-large">
                 <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
@@ -2200,14 +2241,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (profileCard) {
             const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
             const photo = player.photo_url;
-            const scale = player.photo_scale || 1.0;
+            const transform = getPlayerTransform(player);
             const name = player.name || 'SIN NOMBRE';
 
             profileCard.innerHTML = `
                 <div class="dorsal-large">${player.dorsal || '00'}</div>
                 <div class="pos-large">${player.primaryPos || '??'}</div>
                 <div class="player-img-large">
-                    ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="name-banner-large">
                     <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
@@ -2243,6 +2284,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('selected-avatar-id').value = player.avatarID || player.avatar_id || 1;
         document.getElementById('photoScale').value = player.photo_scale || 1.0;
         document.getElementById('photo-scale-value').textContent = (player.photo_scale || 1.0).toFixed(2);
+        
+        const photoX = document.getElementById('photoX');
+        const photoY = document.getElementById('photoY');
+        if (photoX) {
+            photoX.value = player.photo_x || 0;
+            document.getElementById('photo-x-value').textContent = player.photo_x || 0;
+        }
+        if (photoY) {
+            photoY.value = player.photo_y || 0;
+            document.getElementById('photo-y-value').textContent = player.photo_y || 0;
+        }
         
         // Posiciones secundarias
         const secondaries = player.secondaryPos || player.secondary_pos || [];
@@ -2308,14 +2360,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const statsBox = document.getElementById('profile-modal-stats');
 
         const photo = player.photo_url;
-        const scale = player.photo_scale || 1.0;
+        const transform = getPlayerTransform(player);
 
         content.innerHTML = `
             <div class="player-card-fut large" style="margin: 0 auto; box-shadow: 0 0 40px var(--primary-glow);">
                 <div class="dorsal-large">${player.dorsal || '00'}</div>
                 <div class="pos-large">${player.primaryPos || '??'}</div>
                 <div class="player-img-large">
-                    ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="name-banner-large">
                     <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${(player.name || 'SIN NOMBRE').toUpperCase()}</h2>
@@ -2357,7 +2409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .map(p => ({
                     name: p.name,
                     photo: p.photo_url,
-                    scale: p.photo_scale || 1.0,
+                    transform: getPlayerTransform(p),
                     avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
                     totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0)
                 }))
@@ -2375,7 +2427,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     row.innerHTML = `
                         <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
                         <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:scale(${s.scale})">` : (s.avatar ? s.avatar.svg : '')}
+                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                         </div>
                         <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${s.name.toUpperCase()}</span>
                         <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
