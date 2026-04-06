@@ -1,4 +1,12 @@
 # Changelog - JB-SQUAD
+<br>
+
+## [v4.3.0] - 2026-04-06
+### Añadido
+- **Evolución del Manual del Agente (`agents.md`)**:
+    - **Mobile-First Elite**: Expandida la regla con requisitos técnicos de usabilidad táctil (44px min), jerarquía inteligente y validación estricta de viewport.
+    - **Arquitectura de Diseño Divergente**: Nueva directiva para crear layouts independientes en Escritorio/Móvil mediante Media Queries avanzadas, evitando el diseño "estirado".
+    - **Despliegue Continuo (Git Push)**: Implementada la obligatoriedad de realizar un push al repositorio tras cada cambio para garantizar sincronización en tiempo real.
 
 ## [v4.0.0] - 2026-04-06 (ERA DE AUTOGESTIÓN)
 ### Añadido
