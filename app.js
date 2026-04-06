@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyRolePermissions() {
-        const role = state.user.role;
+        const role = state.user.role || 'jugador';
         const isAdmin = role === 'manager' || role === 'capitan';
         
         // Elementos que solo ven Admins
@@ -428,10 +428,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Modificar botones específicos
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
         if (btnAddPlayer) {
-            // El Manager NO puede añadir jugadores manualmente, solo el propietario de su ficha
-            btnAddPlayer.style.display = (isAdmin && role !== 'jugador') ? 'none' : 'flex';
-            if (role === 'jugador') {
-                btnAddPlayer.querySelector('span').textContent = 'MI FICHA';
+            if (isAdmin) {
+                // Manager no crea jugadores manualmente
+                btnAddPlayer.style.display = 'none';
+            } else {
+                // Jugador: mostrar botón "Mi Ficha"
+                btnAddPlayer.style.display = 'flex';
+                const spanEl = btnAddPlayer.querySelector('span');
+                if (spanEl) spanEl.textContent = 'MI FICHA';
             }
         }
 
@@ -439,12 +443,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
 
         // Rol Badge en Header
-        const header = document.getElementById('global-header');
+        const displayUserName = document.getElementById('display-user-name');
+        if (!displayUserName) return;
+        
         let badge = document.querySelector('.role-badge');
         if (!badge) {
             badge = document.createElement('span');
             badge.className = `role-badge role-${role}`;
-            document.getElementById('display-user-name').insertAdjacentElement('afterend', badge);
+            displayUserName.insertAdjacentElement('afterend', badge);
         }
         badge.textContent = role.toUpperCase();
     }
@@ -628,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 primary_pos: p.primaryPos,
                 secondary_pos: p.secondaryPos,
                 dorsal: p.dorsal,
-                stats: { official: p.official, friendly: p.friendly }
+                stats: { official: p.stats?.official || p.official, friendly: p.stats?.friendly || p.friendly }
             });
         }
         
@@ -668,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
             primary_pos: player.primaryPos,
             secondary_pos: player.secondaryPos,
             dorsal: player.dorsal,
-            stats: { official: player.official, friendly: player.friendly }
+            stats: player.stats || { official: player.official, friendly: player.friendly }
         });
     }
 
@@ -946,8 +952,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Mapear claves de stats a la nueva estructura oficial
             if (['matches', 'goals', 'assists', 'mvps'].includes(sortConfig.key)) {
-                valA = a.official[sortConfig.key] || 0;
-                valB = b.official[sortConfig.key] || 0;
+                valA = a.stats.official[sortConfig.key] || 0;
+                valB = b.stats.official[sortConfig.key] || 0;
             }
 
             if (['matches', 'goals', 'assists', 'dorsal', 'mvps'].includes(sortConfig.key)) {
@@ -1011,9 +1017,9 @@ document.addEventListener('DOMContentLoaded', () => {
             playerRow.className = 'player-table-row fade-in';
             const badgeColor = getPositionColorClass(player.primaryPos);
             
-            const pj = player.official.matches || 0;
-            const gl = player.official.goals || 0;
-            const ast = player.official.assists || 0;
+            const pj = player.stats?.official?.matches || 0;
+            const gl = player.stats?.official?.goals || 0;
+            const ast = player.stats?.official?.assists || 0;
             const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
 
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
@@ -1029,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span style="font-weight: 800; font-size: 0.85rem; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${player.name ? player.name.toUpperCase() : 'DESCONOCIDO'}</span>
                     </div>
                     <span style="font-size: 0.6rem; color: var(--text-muted); margin-top:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${player.consoleID || ''} | <span title="Goles Amistosos">${player.friendly.goals} G(A)</span>
+                        ${player.consoleID || ''} | <span title="Goles Amistosos">${player.stats?.friendly?.goals || 0} G(A)</span>
                     </span>
                 </div>
                 <div class="stat-cell cell-center" style="font-size: 0.8rem;">${pj}</div>
@@ -1711,10 +1717,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const assistant = state.players.find(p => p.id == ev.assistantId);
                 
                 if (scorer) {
-                    scorer[match.type].goals = Math.max(0, scorer[match.type].goals - 1);
+                    scorer.stats[match.type].goals = Math.max(0, scorer.stats[match.type].goals - 1);
                 }
                 if (assistant) {
-                    assistant[match.type].assists = Math.max(0, assistant[match.type].assists - 1);
+                    assistant.stats[match.type].assists = Math.max(0, assistant.stats[match.type].assists - 1);
                 }
             });
 
@@ -1733,7 +1739,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (match.mvpId) {
                 const mvpPlayer = state.players.find(p => p.id == match.mvpId);
                 if (mvpPlayer) {
-                    mvpPlayer[match.type].mvps = Math.max(0, mvpPlayer[match.type].mvps - 1);
+                    mvpPlayer.stats[match.type].mvps = Math.max(0, mvpPlayer.stats[match.type].mvps - 1);
                 }
             }
         });
@@ -1745,7 +1751,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Determinar si fue oficial o friendly (lógica original de finalizeSession)
                 const hasOfficial = session.matches.some(m => m.type === 'official');
                 const type = hasOfficial ? 'official' : 'friendly';
-                mvpPlayer[type].mvps = Math.max(0, mvpPlayer[type].mvps - 1);
+                mvpPlayer.stats[type].mvps = Math.max(0, mvpPlayer.stats[type].mvps - 1);
             }
         }
     }
@@ -1932,11 +1938,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const assistant = state.players.find(p => p.id == ev.assistantId);
             
             if (scorer) {
-                scorer[currentMatch.type].goals++;
+                scorer.stats[currentMatch.type].goals++;
                 await savePlayerCloud(scorer);
             }
             if (assistant) {
-                assistant[currentMatch.type].assists++;
+                assistant.stats[currentMatch.type].assists++;
                 await savePlayerCloud(assistant);
             }
         }
@@ -1947,7 +1953,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const assignedIds = Object.values(lastTactic.assignments);
             for (let p of state.players) {
                 if (assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id)) {
-                    p[currentMatch.type].matches++;
+                    p.stats[currentMatch.type].matches++;
                     await savePlayerCloud(p);
                 }
             }
@@ -1998,8 +2004,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (player) {
                 // ...
                 const hasOfficial = state.activeSession.matches.some(m => m.type === 'official');
-                if (hasOfficial) player.official.mvps++;
-                else player.friendly.mvps++;
+                if (hasOfficial) player.stats.official.mvps++;
+                else player.stats.friendly.mvps++;
                 
                 state.activeSession.mvpId = mvpId;
                 await savePlayerCloud(player);
