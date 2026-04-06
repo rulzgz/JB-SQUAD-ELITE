@@ -165,20 +165,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Inicialización
     init();
 
-    let lastUpdate = 0;
+    // ESCUDO GLOBAL DE SESIÓN (Fuera de funciones para máxima seguridad)
+    let isHandlingSession = false; 
+
     async function init() {
         if (!supabase) return;
 
+        let lastEventTime = 0;
         supabase.auth.onAuthStateChange(async (event, session) => {
             const now = Date.now();
-            if (now - lastUpdate < 500) return; // Filtro de 500ms
-            
+            if (now - lastEventTime < 800) return; // Filtro estricto de 800ms
+            lastEventTime = now;
+
             if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-                lastUpdate = now;
-                await new Promise(r => setTimeout(r, 100)); // Delay para estabilizar
+                await new Promise(r => setTimeout(r, 100)); // Estabilización
                 await handleUserSession(session.user);
             } else if (event === 'SIGNED_OUT') {
-                lastUpdate = now;
                 state.user = null;
                 state.team = null;
                 switchAuthView('auth');
@@ -188,20 +190,19 @@ document.addEventListener('DOMContentLoaded', () => {
         setupAuthHandlers();
     }
 
-    let isHandlingSession = false; 
     async function handleUserSession(authUser) {
-        // ESCUDO INSTANTÁNEO: Bloqueamos antes de cualquier proceso asíncrono
         if (isHandlingSession) return;
         isHandlingSession = true;
 
         try {
-            console.log(">>> Procesando sesión única para:", authUser.email);
+            // Limpiamos logs para no mostrar emails internos
+            const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
+            console.log(">>> Entrando como:", username.toUpperCase());
             
             // 1. Perfil
             let { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
             
             if (!profile) {
-                const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
                 const { data: newProfile, error: insErr } = await supabase.from('profiles').insert({ 
                     id: authUser.id, 
                     full_name: username 
@@ -235,10 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 await loadTeamData();
             }
         } catch (err) {
-            console.error(">>> Error en flujo de sesión:", err);
+            console.error(">>> Error de sesión:", err);
         } finally {
-            // Liberamos el escudo solo después de terminar todo el proceso
-            // isHandlingSession = false; // Mantenemos el bloqueo durante la vida de la carga inicial
+            // No resetear inmediatamente para evitar bucles de carga
+            setTimeout(() => { isHandlingSession = false; }, 2000);
         }
     }
 
