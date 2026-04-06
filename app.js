@@ -2235,14 +2235,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populatePlayerForm(player) {
+        if (!player) return;
         document.getElementById('playerName').value = player.name || '';
         document.getElementById('consoleID').value = player.consoleID || player.console_id || '';
         document.getElementById('dorsal').value = player.dorsal || '';
-        document.getElementById('primaryPos').value = player.primaryPos || '';
+        document.getElementById('primaryPos').value = (player.primaryPos || player.primary_pos || '');
         document.getElementById('selected-avatar-id').value = player.avatarID || player.avatar_id || 1;
         document.getElementById('photoScale').value = player.photo_scale || 1.0;
         document.getElementById('photo-scale-value').textContent = (player.photo_scale || 1.0).toFixed(2);
         
+        // Posiciones secundarias
+        const secondaries = player.secondaryPos || player.secondary_pos || [];
+        secondaryPosSelects.forEach((select, i) => {
+            select.value = secondaries[i] || '';
+        });
+
         // Disparar preview
         updatePlayerPreview();
     }
