@@ -241,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(">>> [BOOT] Equipo detectado. Sincronizando datos del club...");
                 state.team = membership.teams;
                 state.user.role = membership.role;
+                switchAuthView('main'); // <--- CRÍTICO: Oculta el login y muestra la app
                 await loadTeamData();
             } else {
                 console.log(">>> [BOOT] Usuario sin club. Redirigiendo a Selección de Equipo...");
