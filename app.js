@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             playerRow.innerHTML = `
                 <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px; overflow: hidden;">
-                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; transform:scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
                     <div style="display: flex; align-items: center; gap: 6px; overflow:hidden;">
@@ -1313,7 +1313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 slotEl.innerHTML = `
                     <div class="dorsal-small">${player.dorsal}</div>
                     <div class="player-card-img" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                        ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                     </div>
                     <h4 title="${player.name}" style="
                         font-size: ${fontSize} !important; 
@@ -1389,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.innerHTML = `
                 <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; opacity: 0.8; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
-                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos">${player.primaryPos}</div>
                 <div class="roster-card-name">${player.name}</div>
@@ -1464,7 +1464,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.innerHTML = `
                 <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
-                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos">${player.primaryPos}</div>
                 <div class="roster-card-name">${player.name}</div>
@@ -2114,7 +2114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="dorsal-large">${dorsal}</div>
             <div class="pos-large">${pos}</div>
             <div class="player-img-large">
-                ${photo ? `<img src="${photo}" style="transform: scale(${scale})">` : (avatar ? avatar.svg : '')}
+                ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
             </div>
             <div class="name-banner-large">
                 <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
@@ -2139,7 +2139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dorsal-large">${player.dorsal || '00'}</div>
                 <div class="pos-large">${player.primaryPos || '??'}</div>
                 <div class="player-img-large">
-                    ${photo ? `<img src="${photo}" style="transform: scale(${scale})">` : (avatar ? avatar.svg : '')}
+                    ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="name-banner-large">
                     <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${(player.name || 'SIN NOMBRE').toUpperCase()}</h2>
@@ -2199,7 +2199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     row.innerHTML = `
                         <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
                         <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; transform:scale(${s.scale})">` : (s.avatar ? s.avatar.svg : '')}
+                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:scale(${s.scale})">` : (s.avatar ? s.avatar.svg : '')}
                         </div>
                         <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${s.name.toUpperCase()}</span>
                         <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
