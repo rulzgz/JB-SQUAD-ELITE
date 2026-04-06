@@ -1629,3 +1629,77 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     color: var(--primary) !important;
     background: rgba(240, 165, 0, 0.05) !important;
 }
+/* --- Perfil Vista v4.2.3 --- */
+.profile-view-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 2rem;
+}
+
+.profile-card-column {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-info-column {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info-block label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.info-block h2 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+}
+
+.pos-badge-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.secondary-pos-badge {
+    padding: 6px 15px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+}
+
+.secondary-pos-badge.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(240, 165, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .profile-view-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .profile-card-column {
+        order: -1;
+    }
+    .info-block h2 {
+        font-size: 1.4rem;
+    }
+}

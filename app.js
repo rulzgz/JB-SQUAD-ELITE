@@ -387,23 +387,22 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
 
         // Redirección forzada a 'Mi Perfil' (v4.2.3)
-        // Usamos un pequeño delay para asegurar que todos los componentes UI se han renderizado
         setTimeout(() => {
-            switchView('add-player');
-            if (state.userPlayer) renderPlayerStats(state.userPlayer);
-            console.log(">>> [BOOT v4.2.3] Aterrizaje final en Mi Perfil ejecutado.");
+            if (state.userPlayer) {
+                switchView('my-profile');
+                renderMyProfile(state.userPlayer);
+            } else {
+                switchView('add-player');
+                console.log(">>> Usuario sin ficha. Mostrando editor...");
+                const alertMsg = document.createElement('div');
+                alertMsg.className = 'card-elite fade-in shadow-premium';
+                alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
+                alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
+                document.body.appendChild(alertMsg);
+                setTimeout(() => alertMsg.remove(), 5000);
+            }
+            console.log(">>> [BOOT v4.2.3] Aterrizaje final ejecutado.");
         }, 100);
-
-        // Onboarding si no tiene ficha
-        if (!state.userPlayer) {
-            console.log(">>> Usuario sin ficha. Mostrando editor...");
-            const alertMsg = document.createElement('div');
-            alertMsg.className = 'card-elite fade-in shadow-premium';
-            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
-            alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
-            document.body.appendChild(alertMsg);
-            setTimeout(() => alertMsg.remove(), 5000);
-        }
     }
 
     function switchAuthView(viewName) {
@@ -860,7 +859,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Botones especiales de transición
-        btnGoToAddPlayer.addEventListener('click', () => switchView('add-player'));
+        const btnEditMyFicha = document.getElementById('btn-edit-my-ficha');
+        if (btnEditMyFicha) {
+            btnEditMyFicha.addEventListener('click', () => {
+                if (state.userPlayer) {
+                    populatePlayerForm(state.userPlayer);
+                    switchView('add-player');
+                }
+            });
+        }
+
+        const btnBackToProfile = document.getElementById('btn-back-to-profile');
+        if (btnBackToProfile) {
+            btnBackToProfile.addEventListener('click', () => switchView('my-profile'));
+        }
+
+        btnGoToAddPlayer.addEventListener('click', () => {
+            if (state.userPlayer) {
+                switchView('my-profile');
+                renderMyProfile(state.userPlayer);
+            } else {
+                switchView('add-player');
+            }
+        });
         btnBackToPlantilla.addEventListener('click', () => switchView('plantilla'));
 
         // Lógica de colapso para la barra de navegación
@@ -2160,6 +2181,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
             </div>
         `;
+    }
+
+    function renderMyProfile(player) {
+        if (!player) return;
+        const profileCard = document.getElementById('my-profile-card');
+        const profileConsoleId = document.getElementById('profile-console-id');
+        const secondaryPosContainer = document.getElementById('profile-secondary-pos');
+
+        if (profileConsoleId) profileConsoleId.textContent = (player.consoleID || player.console_id || '-').toUpperCase();
+        
+        // Renderizar Tarjeta
+        if (profileCard) {
+            const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
+            const photo = player.photo_url;
+            const scale = player.photo_scale || 1.0;
+            const name = player.name || 'SIN NOMBRE';
+
+            profileCard.innerHTML = `
+                <div class="dorsal-large">${player.dorsal || '00'}</div>
+                <div class="pos-large">${player.primaryPos || '??'}</div>
+                <div class="player-img-large">
+                    ${photo ? `<img src="${photo}" style="transform: scale(${scale}); object-position: top;">` : (avatar ? avatar.svg : '')}
+                </div>
+                <div class="name-banner-large">
+                    <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
+                </div>
+            `;
+        }
+
+        // Renderizar Posiciones Secundarias
+        if (secondaryPosContainer) {
+            secondaryPosContainer.innerHTML = '';
+            const secondaries = player.secondaryPos || player.secondary_pos || [];
+            if (secondaries.length === 0) {
+                secondaryPosContainer.innerHTML = '<p style="font-size:0.7rem; opacity:0.5;">SIN POSICIONES ADICIONALES</p>';
+            } else {
+                secondaries.forEach(pos => {
+                    const badge = document.createElement('span');
+                    badge.className = 'secondary-pos-badge active';
+                    badge.textContent = pos;
+                    secondaryPosContainer.appendChild(badge);
+                });
+            }
+        }
+
+        renderPlayerStats(player);
+    }
+
+    function populatePlayerForm(player) {
+        document.getElementById('playerName').value = player.name || '';
+        document.getElementById('consoleID').value = player.consoleID || player.console_id || '';
+        document.getElementById('dorsal').value = player.dorsal || '';
+        document.getElementById('primaryPos').value = player.primaryPos || '';
+        document.getElementById('selected-avatar-id').value = player.avatarID || player.avatar_id || 1;
+        document.getElementById('photoScale').value = player.photo_scale || 1.0;
+        document.getElementById('photo-scale-value').textContent = (player.photo_scale || 1.0).toFixed(2);
+        
+        // Disparar preview
+        updatePlayerPreview();
     }
 
     function renderPlayerStats(player) {

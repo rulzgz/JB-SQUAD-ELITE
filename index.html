@@ -185,11 +185,68 @@
                 </div>
             </section>
 
-            <!-- VIEW: Add Player / Mi Ficha (CON PREVIEW) -->
+            <!-- VIEW: Mi Perfil (ESTADÍSTICAS Y CARTA) -->
+            <section id="view-my-profile" class="view">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1>Mi <span class="gradient-text">Perfil Elite</span></h1>
+                    <button id="btn-edit-my-ficha" class="btn-gold" style="width: auto; padding: 10px 20px;">✍️ EDITAR FICHA</button>
+                </div>
+
+                <div class="profile-view-layout">
+                    <!-- Tarjeta FUT (Izquierda/Arriba) -->
+                    <div class="profile-card-column">
+                        <div id="my-profile-card" class="player-card-fut large shadow-premium">
+                            <!-- Inyectado por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Datos y Posiciones (Derecha) -->
+                    <div class="profile-info-column card-elite">
+                        <div class="info-block">
+                            <label>GAMER ID</label>
+                            <h2 id="profile-console-id">-</h2>
+                        </div>
+                        <div class="info-block" style="margin-top: 20px;">
+                            <label>POSICIONES SECUNDARIAS</label>
+                            <div id="profile-secondary-pos" class="pos-badge-grid">
+                                <!-- Badges inyectados -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE ESTADÍSTICAS ELITE -->
+                <div id="profile-stats-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
+                    <h2 style="font-size: 1.1rem; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 15px;">RENDIMIENTO <span class="gradient-text">TEMPORADA</span></h2>
+                    <div class="stats-table-wrapper">
+                        <table class="stats-elite-table">
+                            <thead>
+                                <tr>
+                                    <th>CATEGORÍA</th>
+                                    <th>PJ</th>
+                                    <th>GOLES</th>
+                                    <th>ASIST.</th>
+                                    <th>MVP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-stats-body">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                            <tfoot>
+                                <tr id="profile-stats-footer">
+                                    <!-- Totales -->
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Add Player / Mi Ficha (ESTRICTAMENTE EDITOR) -->
             <section id="view-add-player" class="view">
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 2rem;">
-                    <button id="btn-back-to-plantilla" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer;">←</button>
-                    <h1>Mi <span class="gradient-text">Ficha</span></h1>
+                    <button id="btn-back-to-profile" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer;">←</button>
+                    <h1>Mi <span class="gradient-text">Ficha (Editor)</span></h1>
                 </div>
 
                 <div class="profile-editor-layout">
@@ -244,30 +301,6 @@
                     </div>
                 </div>
 
-                <!-- TABLA DE ESTADÍSTICAS ELITE (Debajo de la ficha) -->
-                <div id="profile-stats-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
-                    <h2 style="font-size: 1.1rem; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 15px;">RENDIMIENTO <span class="gradient-text">TEMPORADA</span></h2>
-                    <div class="stats-table-wrapper">
-                        <table class="stats-elite-table">
-                            <thead>
-                                <tr>
-                                    <th>CATEGORÍA</th>
-                                    <th>PJ</th>
-                                    <th>GOLES</th>
-                                    <th>ASIST.</th>
-                                    <th>MVP</th>
-                                </tr>
-                            </thead>
-                            <tbody id="profile-stats-body">
-                                <!-- Inyectado dinámicamente -->
-                            </tbody>
-                            <tfoot>
-                                <tr id="profile-stats-footer">
-                                    <!-- Totales -->
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
                 </div>
             </section>
 
@@ -471,9 +504,9 @@
                     <span class="icon">🏠</span>
                     INICIO
                 </button>
-                <button class="nav-btn" data-view="add-player">
+                <button class="nav-btn" data-view="my-profile">
                     <span class="icon">👤</span>
-                    MI FICHA
+                    MI PERFIL
                 </button>
                 <button class="nav-btn" data-view="plantilla">
                     <span class="icon">👥</span>
