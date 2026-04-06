@@ -184,27 +184,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleUserSession(authUser) {
         try {
-            console.log("Manejando sesión para:", authUser.email);
+            console.log(">>> INICIO handleUserSession para:", authUser.email);
             
-            // 1. Cargar Perfil (con manejo de error si no existe)
+            // 1. Cargar Perfil
+            console.log(">>> Intentando cargar perfil...");
             let { data: profile, error: pErr } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+            console.log(">>> Resultado perfil:", profile, "Error:", pErr);
             
-            if (pErr) console.error("Error cargando perfil:", pErr);
+            if (pErr) {
+                console.error(">>> ERROR en perfil:", pErr.message);
+                if (pErr.message.includes("relation") && pErr.message.includes("does not exist")) {
+                    alert("¡ATENCIÓN! La tabla 'profiles' no existe en tu Supabase. ¿Has ejecutado el script SQL que te pasé?");
+                }
+            }
 
-            // Si por alguna razón no hay perfil, lo creamos ahora (seguridad extra)
             if (!profile) {
+                console.log(">>> Perfil no encontrado, creando uno nuevo...");
                 const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
-                const { data: newProfile } = await supabase.from('profiles').insert({ 
+                const { data: newProfile, error: insErr } = await supabase.from('profiles').insert({ 
                     id: authUser.id, 
                     full_name: username 
                 }).select().single();
+                
+                if (insErr) console.error(">>> ERROR creando perfil:", insErr);
                 profile = newProfile;
+                console.log(">>> Perfil creado con éxito:", profile);
             }
             
             // 2. Cargar Membresía
+            console.log(">>> Intentando cargar membresía...");
             let { data: membership, error: mErr } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
-            
-            if (mErr) console.error("Error cargando membresía:", mErr);
+            console.log(">>> Resultado membresía:", membership, "Error:", mErr);
 
             state.user = { 
                 auth: authUser,
@@ -213,22 +223,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 role: membership ? membership.role : null 
             };
 
+            console.log(">>> Estado de membresía final:", membership ? "Miembro de " + membership.teams.name : "Sin club");
+
             if (!membership) {
-                console.log("Usuario sin club, enviando a selector.");
                 switchAuthView('team-select');
             } else {
-                console.log("Usuario con club:", membership.teams.name);
                 state.team = membership.teams;
-                
-                // CAMBIO CRÍTICO: Primero mostramos la app, luego cargamos datos
                 switchAuthView('main');
                 applyRolePermissions();
-                
                 await loadTeamData();
             }
         } catch (err) {
-            console.error("Fallo crítico en handleUserSession:", err);
-            alert("Error al cargar la sesión. Intenta recargar la página.");
+            console.error(">>> FALLO CATASTRÓFICO:", err);
+            alert("Error crítico de conexión. Revisa la consola (F12).");
         }
     }
 
