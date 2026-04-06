@@ -874,15 +874,20 @@ document.addEventListener('DOMContentLoaded', () => {
             btnBackToProfile.addEventListener('click', () => switchView('my-profile'));
         }
 
-        btnGoToAddPlayer.addEventListener('click', () => {
-            if (state.userPlayer) {
-                switchView('my-profile');
-                renderMyProfile(state.userPlayer);
-            } else {
-                switchView('add-player');
-            }
-        });
-        btnBackToPlantilla.addEventListener('click', () => switchView('plantilla'));
+        if (btnGoToAddPlayer) {
+            btnGoToAddPlayer.addEventListener('click', () => {
+                if (state.userPlayer) {
+                    switchView('my-profile');
+                    renderMyProfile(state.userPlayer);
+                } else {
+                    switchView('add-player');
+                }
+            });
+        }
+
+        if (btnBackToPlantilla) {
+            btnBackToPlantilla.addEventListener('click', () => switchView('plantilla'));
+        }
 
         // Lógica de colapso para la barra de navegación
         const mainNav = document.getElementById('main-nav');
