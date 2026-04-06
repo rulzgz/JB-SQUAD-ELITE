@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTeamHeader();
         renderPlayers();
         renderSessions();
-        renderTactics();
+        renderTacticsList();
 
         // Inicializar componentes UI
         populatePositionSelects();
@@ -871,9 +871,9 @@ document.addEventListener('DOMContentLoaded', () => {
             savePlayerCloud(newPlayer);
             
             playerForm.reset();
-            updateTeamUI();
+            updateTeamHeader();
             renderPlayers();
-            switchView('plantilla'); // Volver a la lista
+            switchView('plantilla'); 
         });
     }
 
@@ -1453,8 +1453,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.players.splice(playerIndex, 1);
                 await savePlayerCloud(null);
                 renderPlayers();
-                updateTeamUI();
-                renderPitch(); // Actualizar también el campo
+                updateTeamHeader();
+                renderPitch(); 
             }
         }
     };
