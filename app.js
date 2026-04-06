@@ -1368,26 +1368,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         const assignedPlayerIds = Object.values(activeTactic?.assignments || {});
 
-        state.players.forEach(player => {
-            const isAssigned = assignedPlayerIds.includes(player.id.toString()) || assignedPlayerIds.includes(player.id);
-            if (isAssigned) return; // Filtrar por completo si está en el campo
+        const getPosGroupInfo = (pos) => {
+            const p = (pos || '').toUpperCase();
+            if (p === 'POR') return { score: 1, label: 'PORTEROS', class: 'pos-gk' };
+            if (['DFC', 'LD', 'LI', 'CAD', 'CAI'].includes(p)) return { score: 2, label: 'DEFENSAS', class: 'pos-df' };
+            if (['MCD', 'MC', 'MI', 'MD', 'MCO'].includes(p)) return { score: 3, label: 'MEDIOS', class: 'pos-mf' };
+            if (['ED', 'EI', 'SD', 'DC'].includes(p)) return { score: 4, label: 'DELANTEROS', class: 'pos-fw' };
+            return { score: 5, label: 'OTROS', class: 'pos-mf' };
+        };
+
+        // Filtrar y ordenar
+        const playersToShow = state.players
+            .filter(p => !assignedPlayerIds.includes(p.id.toString()) && !assignedPlayerIds.includes(p.id))
+            .sort((a, b) => getPosGroupInfo(a.primaryPos).score - getPosGroupInfo(b.primaryPos).score);
+
+        let currentGroup = '';
+
+        playersToShow.forEach(player => {
+            const groupInfo = getPosGroupInfo(player.primaryPos);
+            
+            // Añadir cabecera de grupo
+            if (groupInfo.label !== currentGroup) {
+                const header = document.createElement('div');
+                header.className = 'roster-group-header';
+                header.innerHTML = `<span>${groupInfo.label}</span> <span>${playersToShow.filter(p => getPosGroupInfo(p.primaryPos).label === groupInfo.label).length}</span>`;
+                rosterGrid.appendChild(header);
+                currentGroup = groupInfo.label;
+            }
 
             const card = document.createElement('div');
             card.className = 'player-roster-card fade-in';
             card.draggable = true;
 
-            const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
-
+            const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
             const photo = player.photo_url;
             const pScale = player.photo_scale || 1.0;
 
             card.innerHTML = `
-                <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; opacity: 0.8; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
+                <div class="roster-card-avatar" style="width: 40px; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);">
                     ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
-                <div class="roster-card-pos">${player.primaryPos}</div>
-                <div class="roster-card-name">${player.name}</div>
-                <div class="roster-card-stats">${player.secondaryPos && player.secondaryPos.length ? player.secondaryPos.join(', ') : '-'}</div>
+                <div class="roster-card-pos-badge ${groupInfo.class}">${player.primaryPos}</div>
+                <div style="display: flex; flex-direction: column; overflow: hidden;">
+                    <div class="roster-card-name">${player.name.toUpperCase()}</div>
+                    <div class="roster-card-substats">${player.secondaryPos && player.secondaryPos.length ? player.secondaryPos.join(' • ') : 'SIN SECUNDARIA'}</div>
+                </div>
                 <div class="roster-card-rating">${player.dorsal}</div>
             `;
 
