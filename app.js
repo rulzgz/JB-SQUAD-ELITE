@@ -219,9 +219,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log("Usuario con club:", membership.teams.name);
                 state.team = membership.teams;
-                await loadTeamData();
+                
+                // CAMBIO CRÍTICO: Primero mostramos la app, luego cargamos datos
                 switchAuthView('main');
                 applyRolePermissions();
+                
+                await loadTeamData();
             }
         } catch (err) {
             console.error("Fallo crítico en handleUserSession:", err);
@@ -306,10 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show the target view
         if (viewName === 'auth' && authView) {
+            console.log("Mostrando Auth View");
             authView.style.setProperty('display', 'flex', 'important');
         } else if (viewName === 'team-select' && teamSelect) {
+            console.log("Mostrando Team Select View");
             teamSelect.style.setProperty('display', 'flex', 'important');
         } else if (viewName === 'main' && mainApp) {
+            console.log("Mostrando Main App View");
             mainApp.style.setProperty('display', 'block', 'important');
         }
     }
