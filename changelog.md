@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v6.1.0] - 2026-04-07
+### Añadido (Broadcast Pre-Match Evolution)
+- **Suelo Unificado (Cinema Turf)**: El campo táctico se integra directamente en el estadio; las líneas flotan sobre el césped sin recuadros sólidos, creando un acabado de realidad aumentada.
+- **Cartas Glassmorphism v3**: Rediseño total de los slots con un tamaño imponente (210x340px) y un acabado de cristal translúcido con desenfoque de fondo.
+- **Dorsales y Etiquetas integradas**: Eliminación definitiva de las cajas blancas y amarillas. Los números son ahora tipografía dorada integrada y los nombres aparecen sobre un degradado orgánico.
+- **TV Scorebug Banner**: Implementación de un marcador de estilo televisión en la parte inferior para agrupar la información del club y el partido con un look broadcast profesional.
+- **Consistencia de Escala**: Se ha forzado el tamaño absoluto en la exportación para que todas las cartas midan exactamente lo mismo independientemente del nombre.
+
 ## [v5.0.0] - 2026-04-07
 ### Añadido (Reverse Elite Overhaul)
 - **Layout Invertido**: Cambio estructural masivo en la exportación: el campo táctico ahora encabeza la imagen (parte superior) y la información del club se traslada a la base.

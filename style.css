@@ -2048,8 +2048,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     left: -5000px;
     width: 1080px;
     height: 1350px;
-    background: #020202;
-    background-image: radial-gradient(circle at 100% 100%, rgba(240, 165, 0, 0.05) 0%, transparent 60%);
+    background: #000;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(240, 165, 0, 0.08) 0%, transparent 70%),
+        linear-gradient(135deg, #050505 0%, #0a0a0a 100%);
     display: flex;
     flex-direction: column;
     color: #fff;
@@ -2058,57 +2060,74 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     overflow: hidden;
 }
 
-.export-pitch-area {
+.export-broadcast-container {
     width: 100%;
-    height: 980px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.export-pitch-area {
+    flex: 1;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 40px;
+    padding-bottom: 200px; /* Espacio para el scorebug */
 }
 
-.export-footer-info {
-    flex: 1;
-    background: #000;
-    border-top: 3px solid var(--primary);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 60px;
-    position: relative;
-    box-shadow: 0 -30px 60px rgba(0,0,0,0.5);
-}
-
-.export-footer-info::before {
-    content: '';
+.export-scorebug-banner {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(45deg, rgba(240, 165, 0, 0.05) 0%, transparent 100%);
-}
-
-.export-main-banner {
+    bottom: 60px;
+    left: 60px;
+    right: 60px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(240, 165, 0, 0.3);
+    border-left: 10px solid var(--primary);
+    padding: 30px 45px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
+    align-items: center;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    border-radius: 4px;
 }
 
-.export-team-name {
-    font-size: 5rem;
-    font-weight: 900;
-    letter-spacing: -3px;
+.scorebug-team-name {
+    font-size: 4rem;
+    font-weight: 950;
+    letter-spacing: -2px;
     margin: 0;
     text-transform: uppercase;
     color: #fff;
-    text-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
-.export-match-info {
-    font-size: 2rem;
+.scorebug-subline {
+    font-size: 1.2rem;
     font-weight: 800;
+    letter-spacing: 5px;
+    opacity: 0.7;
+    margin-top: 5px;
+}
+
+.scorebug-right {
+    text-align: right;
+}
+
+.scorebug-matchday {
+    font-size: 1.8rem;
+    font-weight: 900;
     color: var(--primary);
-    letter-spacing: 4px;
-    margin: 0;
+    letter-spacing: 3px;
+}
+
+.scorebug-formation {
+    font-size: 1.1rem;
+    font-weight: 700;
+    opacity: 0.5;
+    letter-spacing: 6px;
+    margin-top: 5px;
 }
 
 .export-branding-bar {
@@ -2129,21 +2148,25 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     margin-top: 10px;
 }
 
-.export-pitch-area .pitch-container {
-    width: 960px !important;
-    height: 900px !important;
+.export-matchday-wrapper .pitch-container {
+    width: 1000px !important;
+    height: 1200px !important;
     transform: none !important;
-    background: #14331e !important;
-    background-image: linear-gradient(135deg, #1a472a 0%, #0d2415 100%) !important;
-    border: 3px solid rgba(240, 165, 0, 0.3) !important;
-    box-shadow: 0 50px 100px rgba(0,0,0,0.8) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .export-matchday-wrapper .pitch-lines,
 .export-matchday-wrapper .pitch-midline,
 .export-matchday-wrapper .pitch-circle,
 .export-matchday-wrapper .pitch-penalty {
-    border-color: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    border-width: 2px !important;
+}
+
+.export-matchday-wrapper .pitch-midline {
+    background: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Ocultar slots vacíos en la exportación */
@@ -2151,15 +2174,15 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     display: none !important;
 }
 
-/* Cartas Rectangulares Pro Ratio (FUT style) */
+/* Cartas Broadcast Glass v6.1 */
 .export-matchday-wrapper .tactical-slot.filled {
-    width: 185px !important;
-    height: 265px !important;
-    background: #000 !important;
-    border: 3px solid var(--primary) !important;
+    width: 210px !important;
+    height: 340px !important;
+    background: rgba(10, 10, 10, 0.6) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(240, 165, 0, 0.3) !important;
     border-radius: 4px !important;
-    /* BACK GLOW EFFECT */
-    box-shadow: 0 0 70px rgba(240, 165, 0, 0.45), inset 0 0 20px rgba(255,255,255,0.05) !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6) !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 0 !important;
@@ -2168,64 +2191,57 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .export-matchday-wrapper .player-card-img {
     width: 100% !important;
-    height: 210px !important; /* Gran tamaño para la foto */
-    border-radius: 2px 2px 0 0 !important;
+    height: 270px !important; 
+    border-radius: 0 !important;
     position: relative !important;
     top: 5px !important;
     overflow: hidden !important;
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
-/* Posicionar nombre en la base de la carta */
 .export-matchday-wrapper h4 {
     display: block !important;
     position: absolute !important;
-    bottom: 0px !important;
+    bottom: 15px !important;
     left: 0 !important;
     width: 100% !important;
-    height: 45px !important;
-    line-height: 45px !important;
-    background: var(--primary) !important;
-    color: #000 !important;
-    font-size: 1.2rem !important;
-    font-weight: 950 !important;
+    background: transparent !important;
+    color: #fff !important;
+    font-size: 1.3rem !important;
+    font-weight: 900 !important;
     text-align: center !important;
     margin: 0 !important;
-    border-radius: 0 !important;
     transform: none !important;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.5) !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8) !important;
+    letter-spacing: 1px !important;
 }
 
-/* Dorsal en la esquina superior izquierda */
 .export-matchday-wrapper .dorsal-small {
     display: block !important;
     position: absolute !important;
-    top: -18px !important;
-    left: -18px !important;
-    background: #fff !important;
-    color: #000 !important;
-    border: 3px solid #000 !important;
-    width: 50px !important;
-    height: 50px !important;
-    line-height: 46px !important;
-    font-size: 1.2rem !important;
+    top: 15px !important;
+    left: 15px !important;
+    background: transparent !important;
+    color: var(--primary) !important;
+    border: none !important;
+    width: auto !important;
+    height: auto !important;
+    font-size: 2.2rem !important;
     font-weight: 950 !important;
     z-index: 50 !important;
-    border-radius: 4px !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.6) !important;
+    text-shadow: 0 0 15px rgba(240, 165, 0, 0.6) !important;
 }
 
 .export-matchday-wrapper .slot-pos {
     display: block !important;
     position: absolute !important;
-    bottom: 45px !important;
-    right: 0 !important;
-    background: rgba(0,0,0,0.9) !important;
-    color: var(--primary) !important;
-    border-left: 2px solid var(--primary) !important;
-    border-top: 2px solid var(--primary) !important;
-    padding: 3px 12px !important;
-    font-size: 0.85rem !important;
+    top: 15px !important;
+    right: 15px !important;
+    background: var(--primary) !important;
+    color: #000 !important;
+    padding: 4px 10px !important;
+    font-size: 1rem !important;
     font-weight: 950 !important;
-    z-index: 20 !important;
-    border-radius: 6px 0 0 0 !important;
+    z-index: 50 !important;
+    border-radius: 2px !important;
 }
