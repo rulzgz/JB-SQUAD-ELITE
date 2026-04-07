@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v17.0.0] - 2026-04-07
+### Añadido (Broadcast Top Horizon)
+- **Marcador al Top (Scorebug Top)**: Reubicación del banner informativo (nombre, hora y formación) a la zona superior de la imagen, aprovechando el espacio de las gradas y liberando el césped inferior.
+- **Expansión Horizontal Maestro**: Ampliación del área táctica a `1020px` y ajuste de margen `left: 30px`. Esto clava el eje central del equipo (POR, DFC, MCD) con las líneas de cal del estadio.
+- **Jerarquía Visual Mejorada**: Las cartas defensivas ahora son totalmente visibles sin la interferencia del marcador inferior previo.
+
 ## [v16.0.0] - 2026-04-07
 ### Corregido (Pitch Alignment Calibration)
 - **Sincronización con el Terreno Real**: Re-calculo de las dimensiones del contenedor táctico (`960px x 920px`) y aplicación de un offset vertical (`top: 260px`) para saltar las gradas de la imagen de fondo.

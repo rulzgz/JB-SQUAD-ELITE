@@ -2541,9 +2541,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         wrapper.innerHTML = `
             <div class="export-broadcast-container">
-                <div class="export-pitch-area">
-                    <!-- El campo se clonará aquí -->
-                </div>
                 <div class="export-scorebug-banner">
                     <div class="scorebug-left">
                         <h1 class="scorebug-team-name">${teamNameText}</h1>
@@ -2553,6 +2550,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="scorebug-matchday">MATCHDAY • ${matchTimeText}</div>
                         <div class="scorebug-formation">LINEUP: ${activeTactic.formation}</div>
                     </div>
+                </div>
+                <div class="export-pitch-area">
+                    <!-- El campo se clonará aquí -->
                 </div>
             </div>
         `;
