@@ -2542,13 +2542,14 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.innerHTML = `
             <div class="export-header">
                 <p class="export-match-info">MATCHDAY • ${matchTimeText}</p>
-                <h1 class="export-team-name gradient-text">${teamNameText}</h1>
+                <h1 class="export-team-name">${teamNameText}</h1>
             </div>
             <div class="export-pitch-area">
                 <!-- El campo se clonará aquí -->
             </div>
             <div class="export-footer">
-                <p>LINEUP: ${activeTactic.formation}</p>
+                <div style="font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 2px; margin-bottom: 5px;">JB-SQUAD <span style="color: var(--primary);">ELITE UNIT</span></div>
+                <p style="font-size: 1.1rem; opacity: 0.6; letter-spacing: 6px;">FORMACIÓN: ${activeTactic.formation}</p>
             </div>
         `;
         

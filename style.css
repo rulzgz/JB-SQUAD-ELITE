@@ -2041,38 +2041,43 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     50% { transform: translateX(100%); }
     100% { transform: translateX(-100%); }
 }
-/* --- EXPORT MATCHDAY STYLES v4.8.0 --- */
+/* --- EXPORT MATCHDAY STYLES v4.8.1 (Elite Dark Aesthetic) --- */
 .export-matchday-wrapper {
     position: fixed;
-    top: -5000px; /* Off-screen */
+    top: -5000px;
     left: -5000px;
-    width: 1080px; /* Resolución Instagram/Social Media */
+    width: 1080px;
     height: 1350px;
     background: #050505;
     background-image: 
-        radial-gradient(circle at 50% 0%, rgba(240, 165, 0, 0.15) 0%, transparent 70%),
-        url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1080&auto=format&fit=crop'); /* Fondo de estadio sutil */
-    background-size: cover;
-    background-position: center;
+        radial-gradient(circle at 50% 0%, rgba(240, 165, 0, 0.1) 0%, transparent 80%),
+        linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
     display: flex;
     flex-direction: column;
-    padding: 60px;
+    padding: 80px 60px;
     color: #fff;
     font-family: 'Outfit', sans-serif;
     z-index: -1000;
+    overflow: hidden;
 }
 
 .export-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
+    position: relative;
 }
 
 .export-team-name {
-    font-size: 4rem;
+    font-size: 5rem;
     font-weight: 900;
-    letter-spacing: -2px;
+    letter-spacing: -3px;
     margin: 0;
     text-transform: uppercase;
+    background: linear-gradient(to bottom, #fff 40%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(240, 165, 0, 0.3));
 }
 
 .export-match-info {
@@ -2113,7 +2118,32 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     width: 900px !important;
     height: 1100px !important;
     transform: none !important;
-    border: 3px solid rgba(255,255,255,0.1);
+    background: #0a0a0a !important; /* Terreno oscuro profesional */
+    background-image: none !important;
+    border: 2px solid rgba(240, 165, 0, 0.2) !important;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8) !important;
+}
+
+.export-matchday-wrapper .pitch-lines,
+.export-matchday-wrapper .pitch-midline,
+.export-matchday-wrapper .pitch-circle,
+.export-matchday-wrapper .pitch-penalty {
+    border-color: rgba(240, 165, 0, 0.3) !important;
+}
+
+.export-matchday-wrapper .pitch-midline {
+    background: rgba(240, 165, 0, 0.3) !important;
+}
+
+/* Ocultar slots vacíos en la exportación */
+.export-matchday-wrapper .tactical-slot:not(.filled) {
+    display: none !important;
+}
+
+.export-matchday-wrapper .tactical-slot.filled {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
 }
 
 .export-matchday-wrapper .tactical-slot {

@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v4.8.1] - 2026-04-07
+### Mejorado (Aesthetic Elite Redesign)
+- **Visual Matchday v2**: Rediseño total de la exportación de tácticas.
+    - **Fondo Obsidian**: Eliminada la imagen de hierba genérica; sustituida por un degradado negro profundo con resplandor amber.
+    - **Pitch Dark Gold**: En la imagen, el campo es ahora carbón oscuro con líneas doradas, resaltando las cartas de los jugadores.
+    - **Limpieza de Roster**: Los slots vacíos (iconos "+") se ocultan automáticamente en la exportación para un acabado profesional tipo TV.
+    - **Nueva Marca 'Elite Unit'**: Añadida una firma visual en el pie de la imagen para reforzar la identidad del club.
+
 ## [v4.8.0] - 2026-04-07
 ### Añadido
 - **Exportación de Tácticas (Matchday Image)**: Nueva funcionalidad para generar y descargar imágenes profesionales de la alineación.
