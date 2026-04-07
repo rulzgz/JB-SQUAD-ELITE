@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v10.0.0] - 2026-04-07
+### Añadido (Broadcast Giant Elite Overhaul)
+- **Escalado Masivo de Cartas**: Aumento del tamaño de las cartas a 200px x 280px para una presencia dominante y profesional en la exportación final.
+- **Centrado de Imágenes 'Perfect Crop'**: Ajuste de las propiedades de alineación para asegurar que las fotos de los jugadores estén perfectamente centradas en sus slots.
+- **Tipografía Escalada**: Incremento proporcional del tamaño de fuente en dorsales (1.8rem), nombres (1.35rem) y etiquetas de posición para mantener la legibilidad a gran escala.
+- **Sombras de Profundidad**: Refinamiento de las sombras paralelas para dar un aspecto tridimensional sobre el césped fotográfico.
+
 ## [v9.0.0] - 2026-04-07
 ### Añadido (Tactical Mirror Sincronización)
 - **Sincronización Visual Absoluta**: Las cartas de la exportación ahora son un espejo idéntico de las del dashboard (Dorsal arriba-izq, Nombre abajo, Posición Badge debajo).
