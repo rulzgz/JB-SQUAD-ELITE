@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v12.0.0] - 2026-04-07
+### Corregido (Broadcast Balanced Elite)
+- **Punto de Equilibrio de Escala**: Re-ajuste del tamaño de las cartas a 150px x 210px. Este tamaño es el "sweet spot" que mantiene un gran impacto visual sin provocar solapamientos en formaciones cerradas (como la 3-1-4-2).
+- **Recalibración Tipográfica**: Ajuste proporcional de las fuentes y espaciados para el nuevo ancho de 150px, asegurando legibilidad pro sin saturar la carta.
+
 ## [v11.0.0] - 2026-04-07
 ### Corregido (Broadcast Giant Calibration)
 - **Eliminación de Restricciones de Tamaño**: Se han desactivado las propiedades `max-width` y `max-height` heredadas que impedían que las cartas de la exportación alcanzaran su tamaño gigante (200x280px).
