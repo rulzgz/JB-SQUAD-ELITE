@@ -2152,15 +2152,15 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .export-matchday-wrapper .pitch-container {
-    width: 1020px !important; /* Expansión horizontal para centrado maestro */
+    width: 1180px !important; /* Calibración Ultra-Wide para espaciado total */
     height: 920px !important;
     transform: none !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     position: absolute !important;
-    top: 260px !important; /* Alineado tras gradas y marcador */
-    left: 30px !important; /* Centrado compensado */
+    top: 260px !important; /* Salto de gradas y marcador */
+    left: 15px !important; /* Anclaje izquierdo compensado */
     overflow: visible !important;
 }
 

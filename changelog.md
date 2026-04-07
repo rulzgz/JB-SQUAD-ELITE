@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v18.0.0] - 2026-04-07
+### Corregido (Broadcast Wide Horizon)
+- **Espaciado Táctico Maestro**: Ampliación del ancho del contenedor a `1180px` para "estirar" las posiciones horizontalmente. Esto replica el espaciado del dashboard, eliminando el amontonamiento en el centro.
+- **Calibración de Eje Real**: Ajuste fino del margen `left: 15px`, lo que desplaza el centro táctico hacia la derecha para coincidir con el círculo central real del estadio.
+- **Apertura de Bandas**: Re-calibración de las coordenadas de la 3-1-4-2 para que los extremos y los MC aprovechen todo el nuevo ancho del campo, ocupando la imagen de borde a borde.
+
 ## [v17.0.0] - 2026-04-07
 ### Añadido (Broadcast Top Horizon)
 - **Marcador al Top (Scorebug Top)**: Reubicación del banner informativo (nombre, hora y formación) a la zona superior de la imagen, aprovechando el espacio de las gradas y liberando el césped inferior.
