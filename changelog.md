@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v14.0.0] - 2026-04-07
+### Corregido (Formation Precision Elite)
+- **Calibración Táctica (3-1-4-2)**: Reubicación de coordenadas para maximizar el espacio entre cartas. Se han ensanchado las bandas (MI/MD) y se ha desplazado verticalmente el bloque defensivo hacia la base para evitar solapamientos.
+- **Etiquetas de Posición 'Below-Card'**: Reubicación de la etiqueta de posición a una zona claramente inferior fuera de la carta (`bottom: -32px`), eliminando el ruido visual sobre el nombre del jugador.
+
 ## [v13.0.0] - 2026-04-07
 ### Añadido (Full Formation Export)
 - **Visibilidad de Formación Completa**: Se ha eliminado la restricción que ocultaba los slots vacíos. Ahora, la exportación muestra todas las posiciones tácticas de la formación elegida, incluso si no tienen jugadores asignados.
