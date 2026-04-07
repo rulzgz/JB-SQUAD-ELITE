@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v16.0.0] - 2026-04-07
+### Corregido (Pitch Alignment Calibration)
+- **Sincronización con el Terreno Real**: Re-calculo de las dimensiones del contenedor táctico (`960px x 920px`) y aplicación de un offset vertical (`top: 260px`) para saltar las gradas de la imagen de fondo.
+- **Alineación de Cal**: Los jugadores ahora se sitúan exactamente sobre las líneas de cal fotográficas (áreas, círculo central y bandas) del estadio real.
+- **Mantenimiento de 'Infinite Pitch'**: Se conserva el `overflow: visible` para garantizar que ninguna carta se corte, independientemente de su posición extrema.
+
 ## [v15.0.0] - 2026-04-07
 ### Corregido (Infinite Pitch Elite)
 - **Eliminación de Recortes de Borde**: Desactivación del `overflow: hidden` y expansión del área táctica al 100% del canvas de exportación. Ahora el Portero y los extremos pueden ocupar los bordes sin cortarse.
