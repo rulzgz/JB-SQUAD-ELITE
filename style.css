@@ -2068,16 +2068,14 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .export-team-name {
-    font-size: 5rem;
+    font-size: 5.5rem;
     font-weight: 900;
-    letter-spacing: -3px;
+    letter-spacing: -4px;
     margin: 0;
     text-transform: uppercase;
-    background: linear-gradient(to bottom, #fff 40%, var(--primary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 20px rgba(240, 165, 0, 0.3));
+    color: #fff;
+    text-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 100px rgba(240, 165, 0, 0.4);
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
 }
 
 .export-match-info {
@@ -2111,28 +2109,24 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     color: #fff;
 }
 
-/* Modificaciones específicas para la captura */
+/* Modificaciones específicas para la captura v3 (Emerald & Gold) */
 .export-matchday-wrapper .pitch-container {
     max-width: none !important;
     max-height: none !important;
     width: 900px !important;
     height: 1100px !important;
     transform: none !important;
-    background: #0a0a0a !important; /* Terreno oscuro profesional */
-    background-image: none !important;
-    border: 2px solid rgba(240, 165, 0, 0.2) !important;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8) !important;
+    background: #0d2415 !important; /* Esmeralda oscuro profundo */
+    background-image: radial-gradient(circle at 50% 50%, #1a472a 0%, #0d2415 100%) !important;
+    border: 3px solid rgba(255,255,255,0.1) !important;
+    box-shadow: 0 50px 150px rgba(0,0,0,0.9) !important;
 }
 
 .export-matchday-wrapper .pitch-lines,
 .export-matchday-wrapper .pitch-midline,
 .export-matchday-wrapper .pitch-circle,
 .export-matchday-wrapper .pitch-penalty {
-    border-color: rgba(240, 165, 0, 0.3) !important;
-}
-
-.export-matchday-wrapper .pitch-midline {
-    background: rgba(240, 165, 0, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 /* Ocultar slots vacíos en la exportación */
@@ -2140,28 +2134,80 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     display: none !important;
 }
 
+/* Cartas Rectangulares Pro Ratio (FUT style) */
 .export-matchday-wrapper .tactical-slot.filled {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(240, 165, 0, 0.4) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-}
-
-.export-matchday-wrapper .tactical-slot {
-    width: 140px !important;
-    height: 180px !important;
+    width: 155px !important;
+    height: 220px !important;
+    background: rgba(0, 0, 0, 0.6) !important; /* Oscuro translúcido */
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%) !important;
+    border: 2px solid var(--primary) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(240,165,0,0.2) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    overflow: visible !important;
 }
 
 .export-matchday-wrapper .player-card-img {
-    width: 120px !important;
-    height: 120px !important;
+    width: 100% !important;
+    height: 160px !important; /* Más espacio para la foto */
+    border-radius: 6px 6px 0 0 !important;
+    position: relative !important;
+    top: 5px !important;
 }
 
+/* Posicionar nombre en la base de la carta */
 .export-matchday-wrapper h4 {
-    font-size: 1.2rem !important;
-    margin-top: 10px !important;
+    display: block !important;
+    position: absolute !important;
+    bottom: 0px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 35px !important;
+    line-height: 35px !important;
+    background: var(--primary) !important;
+    color: #000 !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    margin: 0 !important;
+    border-radius: 0 0 6px 6px !important;
+    transform: none !important;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.3) !important;
 }
 
+/* Dorsal en la esquina superior izquierda */
+.export-matchday-wrapper .dorsal-small {
+    display: block !important;
+    position: absolute !important;
+    top: -12px !important;
+    left: -12px !important;
+    background: #000 !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--primary) !important;
+    width: 38px !important;
+    height: 38px !important;
+    line-height: 36px !important;
+    font-size: 0.95rem !important;
+    z-index: 20 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6) !important;
+}
+
+/* Posición en la base (sobre el nombre) */
 .export-matchday-wrapper .slot-pos {
-    font-size: 1rem !important;
-    padding: 4px 12px !important;
+    display: block !important;
+    position: absolute !important;
+    bottom: 35px !important;
+    right: 0 !important;
+    background: rgba(0,0,0,0.8) !important;
+    color: var(--primary) !important;
+    border-left: 1px solid var(--primary) !important;
+    border-top: 1px solid var(--primary) !important;
+    padding: 2px 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 900 !important;
+    z-index: 20 !important;
+    border-radius: 4px 0 0 0 !important;
 }

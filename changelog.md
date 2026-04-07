@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v4.9.0] - 2026-04-07
+### Añadido (Pro Matchday Redesign v3)
+- **Cartas Rectangulares (FUT Style)**: Rediseño total de los slots en la exportación, pasando de formas cuadradas a rectángulos verticales profesionales (155x220px).
+- **Layout de Nombre Inferior**: El nombre del jugador ahora aparece en la base de la carta, integrado en una franja de color sólido para máxima visibilidad.
+- **Retorno al Grass Elite**: El campo vuelve a ser verde, utilizando un degradado **Emerald Elite** con líneas blancas nítidas, combinando realismo y elegancia.
+- **Cabecera "High-Contrast"**: El nombre del club ahora es blanco puro con sombras profundas y resplandor amber, garantizando legibilidad total sobre cualquier fondo.
+- **Elementos Flotantes**: Dorsales y posiciones reposicionados artísticamente en las esquinas de las nuevas cartas rectangulares.
+
 ## [v4.8.1] - 2026-04-07
 ### Mejorado (Aesthetic Elite Redesign)
 - **Visual Matchday v2**: Rediseño total de la exportación de tácticas.
