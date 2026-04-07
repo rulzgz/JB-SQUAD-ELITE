@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v9.0.0] - 2026-04-07
+### Añadido (Tactical Mirror Sincronización)
+- **Sincronización Visual Absoluta**: Las cartas de la exportación ahora son un espejo idéntico de las del dashboard (Dorsal arriba-izq, Nombre abajo, Posición Badge debajo).
+- **Eliminación de Líneas Redundantes**: Se han ocultado las líneas tácticas generadas por código para delegar la visualización del campo exclusivamente a la textura del fondo.
+- **Nuevo Fondo 'Emerald Pitch'**: Integración de `emerald_pitch.png`, que incluye un césped profesional con líneas de cal reales integradas fotográficamente.
+- **Refinamiento de Proporciones**: Ajuste de las dimensiones de las cartas (160x220px) para una mayor elegancia y fidelidad al diseño original de la aplicación.
+
 ## [v8.0.0] - 2026-04-07
 ### Añadido (Emerald Pure Elite Overhaul)
 - **Fondo de Césped Profesional Puro**: Sustitución total de la imagen de fondo por una textura de césped de estadio HD (`emerald_grass.png`), eliminando elementos humanos o distracciones para un acabado minimalista y pro.
