@@ -105,6 +105,32 @@ body {
     overflow: hidden;
 }
 
+@media (max-width: 1023px) {
+    .bottom-nav {
+        bottom: 0;
+        width: 100%;
+        max-width: none;
+        height: 65px;
+        border-radius: 0;
+        border-top: 1px solid var(--glass-border);
+        left: 0;
+        transform: none;
+    }
+
+    .nav-btn {
+        gap: 2px;
+        font-size: 0.65rem;
+    }
+
+    .nav-btn span.icon {
+        font-size: 1.1rem;
+    }
+
+    .app-wrapper {
+        padding-bottom: 75px; /* Espacio para el nav */
+    }
+}
+
 .bottom-nav.collapsed {
     height: 18px; /* Pastilla pequeña */
     width: 60px;
@@ -585,6 +611,16 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     font-size: 3cqw;
     color: var(--primary);
     opacity: 0.4;
+}
+
+@media (max-width: 1023px) {
+    .tactical-slot {
+        width: 16cqw;
+        height: 22cqw;
+    }
+    .dorsal-small, .dorsal {
+        display: none !important;
+    }
 }
 
 .tactical-slot.filled {
@@ -1560,6 +1596,31 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         transform: scale(0.9);
         margin-top: -20px;
         margin-bottom: -20px;
+    }
+
+    #global-header {
+        margin-bottom: 10px !important;
+        padding: 5px 0 !important;
+    }
+    #display-team-name {
+        font-size: 1.1rem !important;
+    }
+    #display-user-name {
+        font-size: 0.6rem !important;
+    }
+    #header-tactic-info {
+        padding-left: 8px !important;
+        margin-left: 5px !important;
+    }
+    #current-formation-label {
+        font-size: 1.1rem !important;
+    }
+    #current-formation-sub {
+        font-size: 0.7rem !important;
+    }
+    #btn-save-tactic {
+        padding: 8px 12px !important;
+        font-size: 0.7rem !important;
     }
 }
 

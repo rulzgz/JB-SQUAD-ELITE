@@ -736,16 +736,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function saveTacticsCloud() {
         if (!supabase || !state.team) return;
-        // Upsert masivo de tácticas (o individualmente si se prefiere)
+        
         for (let t of state.savedTactics) {
-            await supabase.from('tactics').upsert({
-                id: t.id,
-                team_id: state.team.id, // FIX: Vincular al equipo actual
+            // Asegurar que el ID sea un string (UUID) para evitar el error 400
+            const payload = {
+                team_id: state.team.id,
                 name: t.name,
                 formation: t.formation,
-                assignments: t.assignments,
-                is_active: t.isActive
-            });
+                assignments: t.assignments || {},
+                is_active: t.isActive || false
+            };
+
+            // Solo incluimos el ID si es un UUID válido (no un timestamp de Date.now())
+            if (typeof t.id === 'string' && t.id.length > 15) {
+                payload.id = t.id;
+            }
+
+            const { data, error } = await supabase.from('tactics').upsert(payload).select();
+            
+            if (error) {
+                console.error("Error al guardar táctica:", error);
+            } else if (data && data.length > 0 && typeof t.id !== 'string') {
+                // Si era una táctica nueva, actualizamos el ID local con el generado por el servidor
+                t.id = data[0].id;
+            }
         }
     }
 
@@ -1254,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!tName) tName = `Táctica ${formation}`;
                 
                 const newTactic = {
-                    id: Date.now(),
+                    id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `temp-${Date.now()}`,
                     name: tName,
                     formation: formation,
                     assignments: {}
@@ -1381,33 +1395,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const nameLength = displayName.length;
 
-                // Lógica de escalado inteligente ELITE v4.6.0
+                // Lógica de escalado inteligente ELITE v4.7.0
                 if (isMobile) {
                     if (nameLength >= 15) {
-                        fontSize = '0.38rem';
-                        letterSpacing = '-0.8px';
-                        scaleX = 0.7;
+                        fontSize = '0.35rem';
+                        letterSpacing = '-1px';
+                        scaleX = 0.65;
                     } else if (nameLength >= 12) {
-                        fontSize = '0.45rem';
-                        letterSpacing = '-0.5px';
-                        scaleX = 0.75;
+                        fontSize = '0.42rem';
+                        letterSpacing = '-0.7px';
+                        scaleX = 0.7;
                     } else if (nameLength >= 10) {
-                        fontSize = '0.52rem';
-                        letterSpacing = '-0.3px';
-                        scaleX = 0.8;
+                        fontSize = '0.5rem';
+                        letterSpacing = '-0.4px';
+                        scaleX = 0.75;
                     } else if (nameLength >= 8) {
-                        fontSize = '0.58rem';
-                        letterSpacing = '-0.1px';
-                        scaleX = 0.9;
+                        fontSize = '0.55rem';
+                        letterSpacing = '-0.2px';
+                        scaleX = 0.85;
                     }
                 } else {
                     // Escalado para PC (más conservador)
                     if (nameLength >= 15) {
-                        fontSize = '0.6rem';
-                        scaleX = 0.8;
+                        fontSize = '0.55rem';
+                        scaleX = 0.75;
                     } else if (nameLength >= 12) {
-                        fontSize = '0.7rem';
-                        scaleX = 0.9;
+                        fontSize = '0.65rem';
+                        scaleX = 0.85;
                     }
                 }
 
