@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v7.0.0] - 2026-04-07
+### Añadido (Social Elite Ultra-Pro Overhaul)
+- **Fondo Fotográfico Real**: Integración de la imagen `stadium_bg.png` como telón de fondo para una estética de broadcast auténtica.
+- **Corrección de Deformación Visual**: Solucionado el bug que estiraba las etiquetas (barras amarillas) verticalmente; ahora tienen el tamaño exacto del contenido.
+- **Dorsales No Intrusivos**: Reducción del tamaño de los números (1.1rem) y reubicación estratégica para evitar tapar los rostros de los jugadores.
+- **Campo de Máxima Escala**: El trazado del campo táctico se ha ampliado a 1040px de ancho para un impacto visual dominante sobre el fondo del estadio.
+- **Optimización de Contraste**: Mejora en los degradados de las cartas (Glassmorphism v3.1) para asegurar legibilidad sobre texturas de césped real.
+
 ## [v6.1.0] - 2026-04-07
 ### Añadido (Broadcast Pre-Match Evolution)
 - **Suelo Unificado (Cinema Turf)**: El campo táctico se integra directamente en el estadio; las líneas flotan sobre el césped sin recuadros sólidos, creando un acabado de realidad aumentada.
