@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v19.0.1] - 2026-04-07
+### Corregido (Hotfix)
+- **Error Crítico de Arranque**: Corregida la llamada `setupNav()` por `setupNavigation()` en el bloque de inicialización de `app.js`. Este error impedía que la aplicación superara la pantalla de carga (Splash Screen).
+
 ## [v19.0.0] - 2026-04-07
 ### Corregido (Broadcast Cinematic Wide)
 - **Escalado Radical a 1600px**: Cambio estructural del contenedor táctico para forzar un espaciado horizontal idéntico al del dashboard. Esto permite que las cartas tengan "aire" y no se toquen entre sí.

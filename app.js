@@ -2596,7 +2596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Inicialización final
-    setupNav();
+    setupNavigation();
     setupAuth();
     setupTeamSelectors();
     setupPlantillaHandlers();
