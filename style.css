@@ -2048,34 +2048,76 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     left: -5000px;
     width: 1080px;
     height: 1350px;
-    background: #050505;
-    background-image: 
-        radial-gradient(circle at 50% 0%, rgba(240, 165, 0, 0.1) 0%, transparent 80%),
-        linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    background: #020202;
+    background-image: radial-gradient(circle at 100% 100%, rgba(240, 165, 0, 0.05) 0%, transparent 60%);
     display: flex;
     flex-direction: column;
-    padding: 80px 60px;
     color: #fff;
     font-family: 'Outfit', sans-serif;
     z-index: -1000;
     overflow: hidden;
 }
 
-.export-header {
-    text-align: center;
-    margin-bottom: 60px;
+.export-pitch-area {
+    width: 100%;
+    height: 980px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 40px;
+}
+
+.export-footer-info {
+    flex: 1;
+    background: #000;
+    border-top: 3px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 60px;
     position: relative;
+    box-shadow: 0 -30px 60px rgba(0,0,0,0.5);
+}
+
+.export-footer-info::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(45deg, rgba(240, 165, 0, 0.05) 0%, transparent 100%);
+}
+
+.export-main-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
 }
 
 .export-team-name {
-    font-size: 5.5rem;
+    font-size: 5rem;
     font-weight: 900;
-    letter-spacing: -4px;
+    letter-spacing: -3px;
     margin: 0;
     text-transform: uppercase;
     color: #fff;
-    text-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 100px rgba(240, 165, 0, 0.4);
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+    text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.export-match-info {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.export-branding-bar {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    font-size: 1.1rem;
+    color: #888;
 }
 
 .export-match-info {
@@ -2087,39 +2129,14 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     margin-top: 10px;
 }
 
-.export-pitch-area {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 20px;
-}
-
-.export-footer {
-    text-align: center;
-    margin-top: 40px;
-    opacity: 0.8;
-}
-
-.export-footer p {
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: 4px;
-    color: #fff;
-}
-
-/* Modificaciones específicas para la captura v3 (Emerald & Gold) */
-.export-matchday-wrapper .pitch-container {
-    max-width: none !important;
-    max-height: none !important;
-    width: 900px !important;
-    height: 1100px !important;
+.export-pitch-area .pitch-container {
+    width: 960px !important;
+    height: 900px !important;
     transform: none !important;
-    background: #0d2415 !important; /* Esmeralda oscuro profundo */
-    background-image: radial-gradient(circle at 50% 50%, #1a472a 0%, #0d2415 100%) !important;
-    border: 3px solid rgba(255,255,255,0.1) !important;
-    box-shadow: 0 50px 150px rgba(0,0,0,0.9) !important;
+    background: #14331e !important;
+    background-image: linear-gradient(135deg, #1a472a 0%, #0d2415 100%) !important;
+    border: 3px solid rgba(240, 165, 0, 0.3) !important;
+    box-shadow: 0 50px 100px rgba(0,0,0,0.8) !important;
 }
 
 .export-matchday-wrapper .pitch-lines,
@@ -2136,13 +2153,13 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 /* Cartas Rectangulares Pro Ratio (FUT style) */
 .export-matchday-wrapper .tactical-slot.filled {
-    width: 155px !important;
-    height: 220px !important;
-    background: rgba(0, 0, 0, 0.6) !important; /* Oscuro translúcido */
-    background-image: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%) !important;
-    border: 2px solid var(--primary) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(240,165,0,0.2) !important;
+    width: 185px !important;
+    height: 265px !important;
+    background: #000 !important;
+    border: 3px solid var(--primary) !important;
+    border-radius: 4px !important;
+    /* BACK GLOW EFFECT */
+    box-shadow: 0 0 70px rgba(240, 165, 0, 0.45), inset 0 0 20px rgba(255,255,255,0.05) !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 0 !important;
@@ -2151,10 +2168,11 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .export-matchday-wrapper .player-card-img {
     width: 100% !important;
-    height: 160px !important; /* Más espacio para la foto */
-    border-radius: 6px 6px 0 0 !important;
+    height: 210px !important; /* Gran tamaño para la foto */
+    border-radius: 2px 2px 0 0 !important;
     position: relative !important;
     top: 5px !important;
+    overflow: hidden !important;
 }
 
 /* Posicionar nombre en la base de la carta */
@@ -2164,50 +2182,50 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     bottom: 0px !important;
     left: 0 !important;
     width: 100% !important;
-    height: 35px !important;
-    line-height: 35px !important;
+    height: 45px !important;
+    line-height: 45px !important;
     background: var(--primary) !important;
     color: #000 !important;
-    font-size: 1rem !important;
-    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    font-weight: 950 !important;
     text-align: center !important;
     margin: 0 !important;
-    border-radius: 0 0 6px 6px !important;
+    border-radius: 0 !important;
     transform: none !important;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.5) !important;
 }
 
 /* Dorsal en la esquina superior izquierda */
 .export-matchday-wrapper .dorsal-small {
     display: block !important;
     position: absolute !important;
-    top: -12px !important;
-    left: -12px !important;
-    background: #000 !important;
-    color: var(--primary) !important;
-    border: 1px solid var(--primary) !important;
-    width: 38px !important;
-    height: 38px !important;
-    line-height: 36px !important;
-    font-size: 0.95rem !important;
-    z-index: 20 !important;
-    border-radius: 50% !important;
+    top: -18px !important;
+    left: -18px !important;
+    background: #fff !important;
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    width: 50px !important;
+    height: 50px !important;
+    line-height: 46px !important;
+    font-size: 1.2rem !important;
+    font-weight: 950 !important;
+    z-index: 50 !important;
+    border-radius: 4px !important;
     box-shadow: 0 5px 15px rgba(0,0,0,0.6) !important;
 }
 
-/* Posición en la base (sobre el nombre) */
 .export-matchday-wrapper .slot-pos {
     display: block !important;
     position: absolute !important;
-    bottom: 35px !important;
+    bottom: 45px !important;
     right: 0 !important;
-    background: rgba(0,0,0,0.8) !important;
+    background: rgba(0,0,0,0.9) !important;
     color: var(--primary) !important;
-    border-left: 1px solid var(--primary) !important;
-    border-top: 1px solid var(--primary) !important;
-    padding: 2px 8px !important;
-    font-size: 0.75rem !important;
-    font-weight: 900 !important;
+    border-left: 2px solid var(--primary) !important;
+    border-top: 2px solid var(--primary) !important;
+    padding: 3px 12px !important;
+    font-size: 0.85rem !important;
+    font-weight: 950 !important;
     z-index: 20 !important;
-    border-radius: 4px 0 0 0 !important;
+    border-radius: 6px 0 0 0 !important;
 }

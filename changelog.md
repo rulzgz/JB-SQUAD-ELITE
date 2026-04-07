@@ -1,6 +1,15 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v5.0.0] - 2026-04-07
+### Añadido (Reverse Elite Overhaul)
+- **Layout Invertido**: Cambio estructural masivo en la exportación: el campo táctico ahora encabeza la imagen (parte superior) y la información del club se traslada a la base.
+- **Cartas Pro Impact (v4)**: Las cartas de jugadores han aumentado significativamente de escala (185x265px) para un impacto visual dominante.
+- **Resplandor Anterior (Back-Glow)**: Implementación de una luz ámbar difusa que emana tras cada carta, separándola del césped y aportando profundidad 3D.
+- **Bordes Definidos**: Aplicación de marcos dorados de 3px con alta nitidez para estructurar las cartas tipo FUT.
+- **Dorsales y Etiquetas de Gala**: Rediseño de los números dorsales (ahora en fondo blanco sólido) y las posiciones para mejor legibilidad a gran escala.
+- **Banner de Información Premium**: Nueva sección inferior con tipografía de alta gama sobre un fondo negro sólido con sutiles degradados dorados.
+
 ## [v4.9.0] - 2026-04-07
 ### Añadido (Pro Matchday Redesign v3)
 - **Cartas Rectangulares (FUT Style)**: Rediseño total de los slots en la exportación, pasando de formas cuadradas a rectángulos verticales profesionales (155x220px).

@@ -2540,16 +2540,18 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.className = 'export-matchday-wrapper';
         
         wrapper.innerHTML = `
-            <div class="export-header">
-                <p class="export-match-info">MATCHDAY • ${matchTimeText}</p>
-                <h1 class="export-team-name">${teamNameText}</h1>
-            </div>
             <div class="export-pitch-area">
                 <!-- El campo se clonará aquí -->
             </div>
-            <div class="export-footer">
-                <div style="font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 2px; margin-bottom: 5px;">JB-SQUAD <span style="color: var(--primary);">ELITE UNIT</span></div>
-                <p style="font-size: 1.1rem; opacity: 0.6; letter-spacing: 6px;">FORMACIÓN: ${activeTactic.formation}</p>
+            <div class="export-footer-info">
+                <div class="export-main-banner">
+                    <h1 class="export-team-name">${teamNameText}</h1>
+                    <p class="export-match-info">MATCHDAY • ${matchTimeText}</p>
+                </div>
+                <div class="export-branding-bar">
+                    <div style="font-weight: 900; letter-spacing: 2px;">JB-SQUAD <span style="color: var(--primary);">ELITE UNIT</span></div>
+                    <div style="opacity: 0.6; letter-spacing: 4px;">LINEUP: ${activeTactic.formation}</div>
+                </div>
             </div>
         `;
         
