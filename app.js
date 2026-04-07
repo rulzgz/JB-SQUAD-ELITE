@@ -1369,30 +1369,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                const displayName = (player.name || '').toUpperCase(); // Usamos el nombre completo pero con recortes si es necesario
-                let fontSize = '0.85rem';
-                let letterSpacing = '0.5px';
+                const displayName = (player.name || '').toUpperCase();
+                let fontSize = '0.75rem'; // Bajado de 0.85rem para asegurar que quepa por defecto
+                let letterSpacing = '0px';
                 let scaleX = 1;
 
                 const nameLength = displayName.length;
 
                 if (nameLength >= 15) {
-                    fontSize = '0.45rem';
+                    fontSize = '0.4rem';
                     letterSpacing = '-1px';
-                    scaleX = 0.75;
+                    scaleX = 0.7;
                 } else if (nameLength >= 12) {
-                    fontSize = '0.55rem';
+                    fontSize = '0.5rem';
                     letterSpacing = '-0.7px';
-                    scaleX = 0.8;
+                    scaleX = 0.75;
                 } else if (nameLength >= 10) {
-                    fontSize = '0.65rem';
+                    fontSize = '0.6rem';
                     letterSpacing = '-0.4px';
                     scaleX = 0.85;
-                } else if (nameLength >= 8) {
-                    fontSize = '0.75rem';
+                } else if (nameLength >= 7) {
+                    fontSize = '0.7rem';
                     letterSpacing = '-0.2px';
-                    scaleX = 0.95;
+                    scaleX = 0.9;
+                } else if (nameLength >= 5) {
+                    fontSize = '0.75rem';
+                    letterSpacing = '0px';
                 }
+
 
 
                 const photo = player.photo_url;

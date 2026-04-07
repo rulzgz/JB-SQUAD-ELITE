@@ -1,16 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v4.4.0] - 2026-04-07
-### Añadido
-- **Optimización Táctica Mobile-First Elite**:
-    - **Ocultación de Dorsales**: Implementada la eliminación visual del número del jugador en el campo para dispositivos móviles mediante Media Queries avanzadas, priorizando la claridad del avatar y el nombre por encima de datos secundarios.
-    - **Refinamiento de Tipografía Táctica**: Ajuste del tamaño de fuente (`0.65rem`) y banners de nombres en móvil para garantizar cero solapamientos entre slots adyacentes, siguiendo el estilo visual de FC Mobile.
-    - **Jerarquía de Posiciones**: Reducción de escala y reposicionamiento de las etiquetas de posición (`.slot-pos`) en móviles para una composición más equilibrada.
-
+## [v4.4.1] - 2026-04-07
 ### Corregido
-- **Error de Renderizado de Nombres**: Se ha activado la lógica de escalado inteligente de nombres en `app.js` que estaba calculada pero no aplicada al DOM. Ahora los nombres largos se escalan y ajustan su `letter-spacing` automáticamente para mantenerse dentro de los límites de la carta.
-- **Inconsistencia de Bordes**: Suavizado del grosor de borde en slots tácticos para móviles para evitar un aspecto "tosco" en pantallas pequeñas.
+- **Blindaje contra Desbordamiento de Nombres**:
+    - Implementado un sistema de "salvaguarda" en CSS con `text-overflow: ellipsis` y `overflow: hidden` para asegurar que ningún nombre, por largo que sea, rompa el layout de la carta.
+    - Se ha eliminado la restricción `!important` que impedía al motor de JS aplicar escalas de fuente ultra-finas en móviles.
+    - Refinamiento de los umbrales de escalado: ahora los nombres de más de 12 caracteres bajan hasta `0.45rem` con un factor de escala horizontal de `0.75x`, permitiendo nombres compuestos como "HIJO DEL METAL" con total legibilidad.
+
+## [v4.4.0] - 2026-04-07
 
 
 ## [v4.3.0] - 2026-04-06
