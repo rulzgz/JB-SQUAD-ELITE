@@ -1413,6 +1413,20 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     cursor: grabbing !important;
 }
 
+/* Indicador visual de que los slots son movibles */
+body.editing-tactic .tactical-slot {
+    outline: 2px dashed var(--primary);
+    outline-offset: 5px;
+    cursor: move !important;
+    animation: pulse-edit 1.5s infinite;
+}
+
+@keyframes pulse-edit {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
 .tactical-slot:hover {
     scale: 1.05;
     z-index: 10;

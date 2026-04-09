@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v19.2.0-ELITE] - 2026-04-09
+### Añadido (Seguridad de Diseño)
+- **Separación de Modos**: Implementado un sistema de bloqueo que separa la asignación de jugadores (Modo Gestión) de la edición de posiciones (Modo Diseño).
+- **Botón "Modificar Dibujo"**: Nuevo control en cabecera para habilitar la edición manual de la formación.
+- **Feedback Visual de Edición**: Al activar el modo diseño, los slots muestran un borde punteado animado para indicar que son movibles.
+- **Prevención de Errores**: Se bloquea el arrastre accidental de jugadores cuando se está moviendo la estructura de la formación.
+
 ## [v19.0.0-DRAG] - 2026-04-09
 ### Añadido (Pizarra Táctica Dinámica)
 - **Posiciones Personalizadas**: Ahora puedes arrastrar a los jugadores libremente por el campo en la sección de Tácticas para crear dibujos tácticos a medida.

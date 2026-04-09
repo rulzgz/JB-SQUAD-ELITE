@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessions: [],
         activeSession: null,
         activeTacticId: null,
-        currentView: 'auth'
+        currentView: 'auth',
+        isEditingPositions: false // Nuevo: Estado para bloquear/desbloquear diseño dinámico
     };
 
     const FORMATIONS = {
@@ -1343,22 +1344,41 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Handlers para diseño personalizado (v19.1.0)
-        document.getElementById('btn-save-custom-positions')?.addEventListener('click', async () => {
-            await saveTacticsCloud();
-            alert('DISEÑO GUARDADO CORRECTAMENTE');
-            document.getElementById('btn-save-custom-positions').style.display = 'none';
-            document.getElementById('btn-reset-positions').style.display = 'none';
+        // Handlers para diseño personalizado (v19.2.0 - Con modo edición)
+        const btnEditBoard = document.getElementById('btn-edit-board');
+        const btnSaveDesign = document.getElementById('btn-save-custom-positions');
+        const btnResetDesign = document.getElementById('btn-reset-positions');
+
+        btnEditBoard?.addEventListener('click', () => {
+            state.isEditingPositions = true;
+            btnEditBoard.style.display = 'none';
+            btnSaveDesign.style.display = 'block';
+            btnResetDesign.style.display = 'block';
+            // Opcional: Feedback visual de que estamos editando
+            document.body.classList.add('editing-tactic');
         });
 
-        document.getElementById('btn-reset-positions')?.addEventListener('click', async () => {
+        btnSaveDesign?.addEventListener('click', async () => {
+            state.isEditingPositions = false;
+            await saveTacticsCloud();
+            alert('DISEÑO GUARDADO CORRECTAMENTE');
+            btnEditBoard.style.display = 'block';
+            btnSaveDesign.style.display = 'none';
+            btnResetDesign.style.display = 'none';
+            document.body.classList.remove('editing-tactic');
+        });
+
+        btnResetDesign?.addEventListener('click', async () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             if (activeTactic && await window.jbConfirm('¿Restablecer el diseño original de la formación?')) {
+                state.isEditingPositions = false;
                 activeTactic.customPositions = {};
                 await saveTacticsCloud();
                 renderPitch();
-                document.getElementById('btn-save-custom-positions').style.display = 'none';
-                document.getElementById('btn-reset-positions').style.display = 'none';
+                btnEditBoard.style.display = 'block';
+                btnSaveDesign.style.display = 'none';
+                btnResetDesign.style.display = 'none';
+                document.body.classList.remove('editing-tactic');
             }
         });
     }
@@ -1422,6 +1442,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (headerTacticInfo) headerTacticInfo.style.display = 'flex';
         if (btnSaveTactic) btnSaveTactic.style.display = 'block';
         if (btnExportTactic) btnExportTactic.style.display = 'block';
+
+        // Mostrar botón de editar pizarra (solo para managers/capitanes)
+        const btnEditBoard = document.getElementById('btn-edit-board');
+        const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
+        if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'block' : 'none';
+        state.isEditingPositions = false; // Resetear modo al entrar
         
         renderPitch();
     }
@@ -1456,24 +1482,19 @@ document.addEventListener('DOMContentLoaded', () => {
             slotEl.style.top = `${customPos.y}%`;
             slotEl.dataset.slotId = slot.id;
 
-            // --- Lógica de Arrastre de Posiciones (v19.0.0) ---
+            // --- Lógica de Arrastre de Posiciones (v19.2.0 - Separada por Modos) ---
             if (targetPitch === pitch) {
                 let isDragging = false;
                 let pitchRect = null;
 
                 slotEl.onpointerdown = (e) => {
-                    // Solo permitir arrastrar si no estamos en un flujo de drag-and-drop de archivos/jugadores
-                    // O si se pulsa prolongadamente/con intención de mover el slot
+                    // BLOQUEO: Solo permitir si el modo edición está activo
+                    if (!state.isEditingPositions) return;
+
                     isDragging = true;
                     slotEl.setPointerCapture(e.pointerId);
                     slotEl.classList.add('dragging');
                     pitchRect = targetPitch.getBoundingClientRect();
-                    
-                    // Mostrar controles en la cabecera si estaban ocultos
-                    const btnSave = document.getElementById('btn-save-custom-positions');
-                    const btnReset = document.getElementById('btn-reset-positions');
-                    if (btnSave) btnSave.style.display = 'block';
-                    if (btnReset) btnReset.style.display = 'block';
                 };
 
                 slotEl.onpointermove = (e) => {
