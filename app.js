@@ -1343,11 +1343,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Handlers para diseño personalizado (v19.0.0)
+        // Handlers para diseño personalizado (v19.1.0)
         document.getElementById('btn-save-custom-positions')?.addEventListener('click', async () => {
             await saveTacticsCloud();
             alert('DISEÑO GUARDADO CORRECTAMENTE');
-            document.getElementById('custom-tactic-controls').style.display = 'none';
+            document.getElementById('btn-save-custom-positions').style.display = 'none';
+            document.getElementById('btn-reset-positions').style.display = 'none';
         });
 
         document.getElementById('btn-reset-positions')?.addEventListener('click', async () => {
@@ -1356,7 +1357,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeTactic.customPositions = {};
                 await saveTacticsCloud();
                 renderPitch();
-                document.getElementById('custom-tactic-controls').style.display = 'none';
+                document.getElementById('btn-save-custom-positions').style.display = 'none';
+                document.getElementById('btn-reset-positions').style.display = 'none';
             }
         });
     }
@@ -1467,9 +1469,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     slotEl.classList.add('dragging');
                     pitchRect = targetPitch.getBoundingClientRect();
                     
-                    // Mostrar controles si estaban ocultos
-                    const controls = document.getElementById('custom-tactic-controls');
-                    if (controls) controls.style.display = 'flex';
+                    // Mostrar controles en la cabecera si estaban ocultos
+                    const btnSave = document.getElementById('btn-save-custom-positions');
+                    const btnReset = document.getElementById('btn-reset-positions');
+                    if (btnSave) btnSave.style.display = 'block';
+                    if (btnReset) btnReset.style.display = 'block';
                 };
 
                 slotEl.onpointermove = (e) => {

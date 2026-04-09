@@ -139,9 +139,13 @@
                 </div>
             </div>
             
-            <div style="display: flex; gap: 10px;">
-                <button id="btn-export-tactic" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">📥 EXPORTAR</button>
-                <button id="btn-save-tactic" style="display: none; background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Guardar</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Botones de Edición Dinámica (Cero Espacio en campo) -->
+                <button id="btn-reset-positions" title="Restablecer Formación" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 6px; cursor: pointer;">🔄</button>
+                <button id="btn-save-custom-positions" style="display: none; background: linear-gradient(135deg, var(--primary) 0%, #d48a00 100%); border: none; color: #000; padding: 10px 15px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px var(--primary-glow);">GUARDAR DISEÑO</button>
+
+                <button id="btn-export-tactic" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">📸 EXPORTAR</button>
+                <button id="btn-save-tactic" style="display: none; background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Guardar Equipo</button>
                 <button id="btn-global-logout" title="Cerrar Sesión" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #F44336; padding: 10px; border-radius: 6px; cursor: pointer;">🚪</button>
             </div>
         </header>
@@ -392,21 +396,8 @@
                 </div><!-- /tacticas-initial-selection -->
 
                 <!-- Sub-vista: Campo Táctico (Visualización/Edición) -->
-                <div id="tacticas-field-view">
-                    <!-- Barra de Controles de Diseño Personalizado -->
-                    <div id="custom-tactic-controls" style="display: none; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--primary); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 100;">
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-size: 0.65rem; color: var(--primary); font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Modo Diseño Libre</span>
-                            <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 500;">ARRASTRA LOS JUGADORES PARA PERSONALIZAR TU ESTRATEGIA</span>
-                        </div>
-                        <div style="display: flex; gap: 12px;">
-                             <button id="btn-reset-positions" class="btn-cancel" style="padding: 6px 15px; font-size: 0.7rem; color: #fff; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);">RESET</button>
-                             <button id="btn-save-custom-positions" class="btn-gold" style="padding: 8px 25px; font-size: 0.75rem; width: auto; font-weight: 900; letter-spacing: 1px;">GUARDAR DISEÑO</button>
-                        </div>
-                    </div>
-
-                    <div class="tacticas-split-layout">
-                        <div class="pitch-container" id="football-pitch">
+                <div id="tacticas-field-view" class="tacticas-split-layout">
+                    <div class="pitch-container" id="football-pitch">
                         <div class="pitch-lines">
                             <div class="pitch-midline"></div>
                             <div class="pitch-circle"></div>
