@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.1.0-ELITE] - 2026-04-09
+### Ajustado (Refinamiento Estético Desktop)
+- **Sidebar Glassmorphism**: Rediseño de la barra lateral con fondo translúcido (25px blur) e indicador de sección integrado.
+- **Campo Táctico XL**: Aumento de la longitud vertical del campo (aspect-ratio 1:1.55) para una visualización más profesional en pantallas grandes.
+- **UX Premium**: Mejora en la alineación de iconos y tipografía del menú lateral para un aspecto más cohesivo.
+- **Layout Adaptativo**: Ajuste de paddings globales para acomodar el nuevo ancho del sidebar.
+
 ## [v20.0.0-PRO] - 2026-04-09
 ### Añadido (Interfaz Élite Desktop)
 - **Navegación Híbrida Inteligente**: Nueva arquitectura de navegación que detecta el dispositivo automáticamente.
