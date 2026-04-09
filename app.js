@@ -1633,6 +1633,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (targetPitch === pitch) {
                 slotEl.addEventListener('click', () => {
+                    if (state.isEditingPositions) return; // BLOQUEO: No abrir modal en edición de dibujo
                     activeSlotId = slot.id;
                     renderPlayerModal(slot.pos);
                 });

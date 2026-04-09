@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.2.1-FIX] - 2026-04-09
+### Ajustado (Blindaje Total)
+- **Cierre de Brecha en Slots**: Corregido el error que permitía abrir el modal de gestión en slots ocupados mientras se editaba el dibujo táctico.
+- **Bloqueo de Un Solo Clic**: Deshabilitada la función de mandar al banquillo o cambiar jugador mediante clic directo durante la fase de diseño.
+
 ## [v20.2.0-PURE] - 2026-04-09
 ### Añadido (Blindaje de Modos)
 - **Bloqueo de Gestión en Edición**: Mientras el modo "Modificar Dibujo" está activo, se deshabilitan todas las funciones de gestión de plantilla (arrastre del banquillo y clics en slots).
