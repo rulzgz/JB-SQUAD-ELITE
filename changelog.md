@@ -1,6 +1,18 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v18.1.0-SECURITY] - 2026-04-09
+### Añadido (Capa de Seguridad Blindada)
+- **Implementación de CSP (Content Security Policy)**: Nueva política de seguridad que indica al navegador qué fuentes de datos y scripts son de confianza, bloqueando preventivamente cualquier conexión a dominios externos no autorizados (exfiltración).
+- **Validación Proactiva de Entrada**: Añadida una capa de detección de caracteres maliciosos en los formularios (`playerName`, `consoleID`) para rechazar inyecciones antes de que se procesen.
+
+## [v18.0.0-SECURITY] - 2026-04-09
+### Añadido (Blindaje Élite & Optimización)
+- **Seguridad: Protección Anti-XSS**: Implementación de un motor de higienización (`escapeHTML`) que neutraliza cualquier intento de inyección de código (HTML/JS) en nombres de jugadores, IDs de consola y nombres de clubes.
+- **Seguridad: Prevención de Mass Assignment**: Restricción de campos en las peticiones a Supabase y diseño de políticas **Row Level Security (RLS)** para impedir la manipulación no autorizada de roles o estadísticas desde la consola del navegador.
+- **Rendimiento: Optimización de Base de Datos**: Creación de índices en `team_id`, `user_id` y `status` para reducir drásticamente la latencia en las consultas, mitigando los retardos del plan gratuito de Supabase.
+- **Supabase Hardening**: Generación de un script SQL maestro (`supabase_security.sql`) para el refuerzo total del backend.
+
 ## [v17.0.0-FIXED] - 2026-04-07
 ### Reversión Total (Hotfix)
 - **Restauración de Sistema**: Los archivos `app.js`, `style.css` y `changelog.md` han sido revertidos íntegramente al commit de la **v17.0.0** (`48e66ca`) para recuperar la estabilidad visual y funcional.

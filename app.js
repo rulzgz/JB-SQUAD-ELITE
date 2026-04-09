@@ -5,7 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Configuración de Datos y Estado
     const POSITIONS = ['POR', 'DFC', 'CAD', 'CAI', 'LI', 'LD', 'MCD', 'MC', 'MVI', 'MVD', 'MD', 'MI', 'MCO', 'ED', 'EI', 'DC'];
     
-    // 1. Funciones de Persistencia Segura
+    // 1. Funciones de Persistencia Segura e Higienización
+    function escapeHTML(str) {
+        if (!str) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return str.toString().replace(/[&<>"']/g, m => map[m]);
+    }
+
     function getSafeStorage(key, defaultValue) {
         const item = localStorage.getItem(key);
         if (!item) return defaultValue;
@@ -293,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'card-elite';
             card.style.cssText = `padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 8px;`;
-            card.innerHTML = `<div><h4 style="margin-bottom: 4px; font-size: 0.95rem; color: #fff;">${team.name}</h4><p style="font-size: 0.7rem; color: var(--text-muted);">Fundado el ${new Date(team.created_at).toLocaleDateString()}</p></div><button class="join-btn btn-gold" style="padding: 8px 16px; font-size: 0.75rem; min-width: 80px;">UNIRSE</button>`;
+            card.innerHTML = `<div><h4 style="margin-bottom: 4px; font-size: 0.95rem; color: #fff;">${escapeHTML(team.name)}</h4><p style="font-size: 0.7rem; color: var(--text-muted);">Fundado el ${new Date(team.created_at).toLocaleDateString()}</p></div><button class="join-btn btn-gold" style="padding: 8px 16px; font-size: 0.75rem; min-width: 80px;">UNIRSE</button>`;
 
             const joinBtn = card.querySelector('.join-btn');
             joinBtn.onclick = async () => {
@@ -986,6 +998,15 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             
             const submitBtn = e.target.querySelector('button');
+            const playerName = document.getElementById('playerName').value.trim();
+            const consoleID = document.getElementById('consoleID').value.trim();
+
+            // Validación Proactiva Anti-XSS (v18.1.0)
+            const xssPattern = /<[^>]*>?/gm;
+            if (xssPattern.test(playerName) || xssPattern.test(consoleID)) {
+                return alert('ERROR DE SEGURIDAD: Se han detectado caracteres no permitidos. Limpia los campos e inténtalo de nuevo.');
+            }
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando Ficha...';
 
@@ -1190,10 +1211,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
                     <div style="display: flex; align-items: center; gap: 6px; overflow:hidden;">
                         <span class="player-pos-badge ${badgeColor}" style="font-size: 0.55rem; padding: 1px 4px; border-radius: 3px; min-width: 25px;">${player.primaryPos || 'NA'}</span>
-                        <span style="font-weight: 800; font-size: 0.85rem; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${player.name ? player.name.toUpperCase() : 'DESCONOCIDO'}</span>
+                        <span style="font-weight: 800; font-size: 0.85rem; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${player.name ? escapeHTML(player.name.toUpperCase()) : 'DESCONOCIDO'}</span>
                     </div>
                     <span style="font-size: 0.6rem; color: var(--text-muted); margin-top:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${player.consoleID || ''} | <span title="Goles Amistosos">${player.stats?.friendly?.goals || 0} G(A)</span>
+                        ${escapeHTML(player.consoleID || '')} | <span title="Goles Amistosos">${player.stats?.friendly?.goals || 0} G(A)</span>
                     </span>
                 </div>
                 <div class="stat-cell cell-center" style="font-size: 0.8rem;">${pj}</div>
@@ -1459,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="player-card-img" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
                         ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: ${transform}">` : (avatar ? avatar.svg : '')}
                     </div>
-                    <h4 title="${player.name}" style="
+                    <h4 title="${escapeHTML(player.name)}" style="
                         width: 100%;
                         text-align: center;
                         font-size: ${fontSize};
@@ -1467,7 +1488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         transform: scaleX(${scaleX});
                         transform-origin: center center;
                         z-index: 10;
-                    ">${displayName}</h4>
+                    ">${escapeHTML(displayName)}</h4>
                     <div class="slot-pos">${slot.pos}</div>
                 `;
 
@@ -1558,8 +1579,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="roster-card-pos-badge ${groupInfo.class}">${player.primaryPos}</div>
                 <div style="display: flex; flex-direction: column; overflow: hidden;">
-                    <div class="roster-card-name">${player.name.toUpperCase()}</div>
-                    <div class="roster-card-substats">${player.secondaryPos && player.secondaryPos.length ? player.secondaryPos.join(' • ') : 'SIN SECUNDARIA'}</div>
+                    <div class="roster-card-name">${escapeHTML(player.name.toUpperCase())}</div>
+                    <div class="roster-card-substats">${player.secondaryPos && player.secondaryPos.length ? escapeHTML(player.secondaryPos.join(' • ')) : 'SIN SECUNDARIA'}</div>
                 </div>
                 <div class="roster-card-rating">${player.dorsal}</div>
             `;
@@ -2340,7 +2361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="name-banner-large">
-                    <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
+                    <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${escapeHTML((player.name || 'JUGADOR').toUpperCase())}</h2>
                 </div>
             `;
         }
@@ -2459,7 +2480,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="name-banner-large">
-                    <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${(player.name || 'SIN NOMBRE').toUpperCase()}</h2>
+                    <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${escapeHTML((player.name || 'SIN NOMBRE').toUpperCase())}</h2>
                 </div>
             </div>
         `;
@@ -2518,7 +2539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                             ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                         </div>
-                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${s.name.toUpperCase()}</span>
+                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${escapeHTML(s.name.toUpperCase())}</span>
                         <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
                     `;
                     scorersListEl.appendChild(row);
@@ -2543,12 +2564,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="export-broadcast-container">
                 <div class="export-scorebug-banner">
                     <div class="scorebug-left">
-                        <h1 class="scorebug-team-name">${teamNameText}</h1>
+                        <h1 class="scorebug-team-name">${escapeHTML(teamNameText)}</h1>
                         <div class="scorebug-subline">JB-SQUAD <span style="color: var(--primary);">ELITE UNIT</span></div>
                     </div>
                     <div class="scorebug-right">
-                        <div class="scorebug-matchday">MATCHDAY • ${matchTimeText}</div>
-                        <div class="scorebug-formation">LINEUP: ${activeTactic.formation}</div>
+                        <div class="scorebug-matchday">MATCHDAY • ${escapeHTML(matchTimeText)}</div>
+                        <div class="scorebug-formation">LINEUP: ${escapeHTML(activeTactic.formation)}</div>
                     </div>
                 </div>
                 <div class="export-pitch-area">
