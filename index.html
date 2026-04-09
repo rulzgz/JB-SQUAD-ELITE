@@ -393,6 +393,18 @@
 
                 <!-- Sub-vista: Campo Táctico (Visualización/Edición) -->
                 <div id="tacticas-field-view" class="tacticas-split-layout">
+                    <!-- Barra de Controles de Diseño Personalizado -->
+                    <div id="custom-tactic-controls" style="display: none; justify-content: space-between; align-items: center; width: 100%; grid-column: 1 / -1; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 0.6rem; color: var(--primary); font-weight: 800; letter-spacing: 1px;">MODO EDICIÓN</span>
+                            <span style="font-size: 0.5rem; color: var(--text-muted);">ARRASTRA LOS JUGADORES PARA PERSONALIZAR SU POSICIÓN</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                             <button id="btn-reset-positions" class="btn-action" style="padding: 5px 15px; font-size: 0.7rem; color: #fff; border-color: rgba(255,255,255,0.1);">RESET</button>
+                             <button id="btn-save-custom-positions" class="btn-gold" style="padding: 5px 20px; font-size: 0.7rem; width: auto; font-weight: 800;">GUARDAR DISEÑO</button>
+                        </div>
+                    </div>
+                    
                     <div class="pitch-container" id="football-pitch">
                         <div class="pitch-lines">
                             <div class="pitch-midline"></div>

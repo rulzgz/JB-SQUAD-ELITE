@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v19.0.0-DRAG] - 2026-04-09
+### Añadido (Pizarra Táctica Dinámica)
+- **Posiciones Personalizadas**: Ahora puedes arrastrar a los jugadores libremente por el campo en la sección de Tácticas para crear dibujos tácticos a medida.
+- **Botón "Guardar Diseño"**: Permite persistir las coordenadas (X/Y) personalizadas de una formación en Supabase.
+- **Botón "Reset"**: Permite volver instantáneamente a la formación estándar del sistema (4-4-2, 3-5-2, etc.).
+- **Soporte Táctil**: Implementación con Pointer Events para una experiencia fluida tanto en móviles como en PC.
+- **Base de Datos**: Nueva columna `custom_positions` en la tabla `tactics`.
+
 ## [v18.1.0-SECURITY] - 2026-04-09
 ### Añadido (Capa de Seguridad Blindada)
 - **Implementación de CSP (Content Security Policy)**: Nueva política de seguridad que indica al navegador qué fuentes de datos y scripts son de confianza, bloqueando preventivamente cualquier conexión a dominios externos no autorizados (exfiltración).

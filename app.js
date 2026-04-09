@@ -386,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: t.name,
             formation: t.formation,
             assignments: t.assignments,
+            customPositions: t.custom_positions || {},
             isActive: t.is_active
         }));
 
@@ -713,6 +714,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         alert('Migración Completada con Éxito. Recargando...');
         location.reload();
+    }
+
+    async function saveTacticsCloud() {
+        if (!supabase) return;
+        
+        // Preparar datos para upsert (v19.0.0 incluye custom_positions)
+        const tacticsToSave = state.savedTactics.map(t => ({
+            id: t.id,
+            name: t.name,
+            formation: t.formation,
+            assignments: t.assignments,
+            custom_positions: t.customPositions || {},
+            team_id: state.team.id,
+            is_active: t.id === state.activeTacticId
+        }));
+
+        const { error } = await supabase.from('tactics').upsert(tacticsToSave);
+        if (error) console.error('Error guardando tácticas:', error.message);
     }
 
     async function saveTeamCloud() {
@@ -1313,7 +1332,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `temp-${Date.now()}`,
                     name: tName,
                     formation: formation,
-                    assignments: {}
+                    assignments: {},
+                    customPositions: {}
                 };
 
                 state.savedTactics.push(newTactic);
@@ -1321,6 +1341,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 openPitchView(newTactic.id);
             });
+        });
+
+        // Handlers para diseño personalizado (v19.0.0)
+        document.getElementById('btn-save-custom-positions')?.addEventListener('click', async () => {
+            await saveTacticsCloud();
+            alert('DISEÑO GUARDADO CORRECTAMENTE');
+            document.getElementById('custom-tactic-controls').style.display = 'none';
+        });
+
+        document.getElementById('btn-reset-positions')?.addEventListener('click', async () => {
+            const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+            if (activeTactic && await window.jbConfirm('¿Restablecer el diseño original de la formación?')) {
+                activeTactic.customPositions = {};
+                await saveTacticsCloud();
+                renderPitch();
+                document.getElementById('custom-tactic-controls').style.display = 'none';
+            }
         });
     }
 
@@ -1407,8 +1444,58 @@ document.addEventListener('DOMContentLoaded', () => {
         formation.forEach(slot => {
             const slotEl = document.createElement('div');
             slotEl.className = 'tactical-slot';
-            slotEl.style.left = `${slot.x}%`;
-            slotEl.style.top = `${slot.y}%`;
+            
+            // Usar coordenadas personalizadas si existen
+            const customPos = (activeTactic.customPositions && activeTactic.customPositions[slot.id]) 
+                ? activeTactic.customPositions[slot.id] 
+                : { x: slot.x, y: slot.y };
+
+            slotEl.style.left = `${customPos.x}%`;
+            slotEl.style.top = `${customPos.y}%`;
+            slotEl.dataset.slotId = slot.id;
+
+            // --- Lógica de Arrastre de Posiciones (v19.0.0) ---
+            if (targetPitch === pitch) {
+                let isDragging = false;
+                let pitchRect = null;
+
+                slotEl.onpointerdown = (e) => {
+                    // Solo permitir arrastrar si no estamos en un flujo de drag-and-drop de archivos/jugadores
+                    // O si se pulsa prolongadamente/con intención de mover el slot
+                    isDragging = true;
+                    slotEl.setPointerCapture(e.pointerId);
+                    slotEl.classList.add('dragging');
+                    pitchRect = targetPitch.getBoundingClientRect();
+                    
+                    // Mostrar controles si estaban ocultos
+                    const controls = document.getElementById('custom-tactic-controls');
+                    if (controls) controls.style.display = 'flex';
+                };
+
+                slotEl.onpointermove = (e) => {
+                    if (!isDragging || !pitchRect) return;
+                    
+                    let newX = ((e.clientX - pitchRect.left) / pitchRect.width) * 100;
+                    let newY = ((e.clientY - pitchRect.top) / pitchRect.height) * 100;
+
+                    // Restricciones de campo (límites ELITE)
+                    newX = Math.max(5, Math.min(95, newX));
+                    newY = Math.max(5, Math.min(95, newY));
+
+                    slotEl.style.left = `${newX}%`;
+                    slotEl.style.top = `${newY}%`;
+                    
+                    // Guardar temporalmente en el objeto de la táctica (sin persistir aún)
+                    if (!activeTactic.customPositions) activeTactic.customPositions = {};
+                    activeTactic.customPositions[slot.id] = { x: newX, y: newY };
+                };
+
+                slotEl.onpointerup = (e) => {
+                    isDragging = false;
+                    slotEl.releasePointerCapture(e.pointerId);
+                    slotEl.classList.remove('dragging');
+                };
+            }
             
             const assignedPlayerId = activeTactic.assignments[slot.id];
             const player = state.players.find(p => p.id == assignedPlayerId);

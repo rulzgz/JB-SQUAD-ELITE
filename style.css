@@ -1405,6 +1405,25 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     text-transform: uppercase;
 }
 
+.tactical-slot.dragging {
+    opacity: 0.8;
+    scale: 0.9;
+    z-index: 1000;
+    box-shadow: 0 0 30px var(--primary);
+    cursor: grabbing !important;
+}
+
+.tactical-slot:hover {
+    scale: 1.05;
+    z-index: 10;
+}
+
+/* Transición suave para cuando se posicionan */
+.tactical-slot {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    touch-action: none; /* Importante para que funcione el arrastre en móvil */
+}
+
 .goal-btn {
     background: linear-gradient(135deg, rgba(240, 165, 0, 0.2) 0%, rgba(0,0,0,0.5) 100%);
     border-color: var(--primary);
