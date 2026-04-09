@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.0.0-PRO] - 2026-04-09
+### Añadido (Interfaz Élite Desktop)
+- **Navegación Híbrida Inteligente**: Nueva arquitectura de navegación que detecta el dispositivo automáticamente.
+- **Sidebar de Escritorio**: Implementación de una barra lateral fija a la izquierda (90px) con estética premium, iconos con glow y bordes luminosos.
+- **Layout Adaptativo**: Todo el contenido principal se desplaza automáticamente para dejar espacio al sidebar en pantallas de PC.
+- **Feedback Activo Pro**: Indicador lateral luminoso y efectos de escalado en los iconos del sidebar para una navegación más fluida.
+
 ## [v19.2.0-ELITE] - 2026-04-09
 ### Añadido (Seguridad de Diseño)
 - **Separación de Modos**: Implementado un sistema de bloqueo que separa la asignación de jugadores (Modo Gestión) de la edición de posiciones (Modo Diseño).

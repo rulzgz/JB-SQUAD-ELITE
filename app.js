@@ -859,8 +859,10 @@ document.addEventListener('DOMContentLoaded', () => {
         navButtons.forEach(btn => {
             if (btn.getAttribute('data-view') === viewId) {
                 btn.classList.add('active');
+                btn.classList.add('active-nav'); // Nuevo: Para el sidebar de escritorio
             } else {
                 btn.classList.remove('active');
+                btn.classList.remove('active-nav');
             }
         });
         

@@ -78,7 +78,11 @@ body {
 
 @media (min-width: 1024px) {
     .app-wrapper {
-        max-width: 1460px; /* Ancho exacto: Roster(600) + Campo(800) + Gap(20) + Paddings(40) */
+        max-width: none; /* Dejar que crezca con el sidebar */
+        margin: 0;
+        padding-left: 110px; /* Espacio para el sidebar fijo */
+        padding-right: 40px;
+        width: 100%;
     }
 }
 
@@ -2324,4 +2328,76 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important;
     white-space: nowrap !important;
     text-transform: uppercase !important;
+}
+/* --- ESCRITORIO ÉLITE: SIDEBAR LAYOUT (v5.0.0) --- */
+@media (min-width: 1024px) {
+    .bottom-nav {
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        transform: none !important;
+        width: 90px !important;
+        height: 100vh !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+        flex-direction: column !important;
+        background: linear-gradient(180deg, #0a0a0a 0%, #000 100%) !important;
+        border: none !important;
+        border-right: 2px solid var(--primary) !important;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5) !important;
+        padding: 40px 0 !important;
+    }
+
+    .bottom-nav .nav-content {
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        gap: 30px !important;
+    }
+
+    .nav-btn {
+        width: 100% !important;
+        height: auto !important;
+        padding: 15px 0 !important;
+        flex: none !important;
+        position: relative !important;
+    }
+
+    .nav-btn span.icon {
+        font-size: 1.8rem !important;
+        margin-bottom: 8px !important;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nav-btn:hover span.icon,
+    .nav-btn.active-nav span.icon {
+        transform: scale(1.2);
+        color: var(--primary);
+        filter: drop-shadow(0 0 8px var(--primary-glow));
+    }
+
+    .nav-btn.active-nav::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        height: 60%;
+        width: 4px;
+        background: var(--primary);
+        box-shadow: 0 0 15px var(--primary-glow);
+        border-radius: 0 4px 4px 0;
+    }
+
+    #nav-toggle-handle {
+        display: none !important;
+    }
+
+    /* Ajuste de scroll para contenido con sidebar */
+    body {
+        overflow: auto; /* Permitir scroll si el contenido es largo en escritorio */
+    }
+    
+    .app-wrapper {
+        height: auto; /* Dejar que el contenido defina la altura */
+        min-height: 100vh;
+    }
 }
