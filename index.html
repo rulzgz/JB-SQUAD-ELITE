@@ -140,8 +140,7 @@
         <!-- Header Principal ELITE -->
         <header id="global-header" style="margin-bottom: 20px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
-                <h2 id="display-team-name" class="gradient-text" style="font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 0; font-weight: 800;">CLUB NAME</h2>
-                <span id="display-user-name" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">ELITE MANAGER</span>
+                <h2 id="display-team-name" class="gradient-text" style="font-size: 1.8rem; letter-spacing: 1.2px; margin-bottom: 0; font-weight: 900; text-transform: uppercase;">CLUB NAME</h2>
                 
                 <!-- Info extra para Tácticas -->
                 <div id="header-tactic-info" style="display: none; align-items: baseline; gap: 12px; border-left: 2px solid var(--glass-border); padding-left: 12px; margin-left: 8px;">
@@ -160,7 +159,6 @@
 
                 <button id="btn-export-tactic" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">📸 EXPORTAR</button>
                 <button id="btn-save-tactic" style="display: none; background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Guardar Equipo</button>
-                <button id="btn-global-logout" title="Cerrar Sesión" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #F44336; padding: 10px; border-radius: 6px; cursor: pointer;">🚪</button>
             </div>
         </header>
 
@@ -178,7 +176,6 @@
                                 <span id="display-user-welcome" class="gradient-text">JUGADOR</span> 
                                 <span id="display-user-role" style="font-size: 0.8rem; background: rgba(240, 165, 0, 0.15); color: var(--primary); padding: 5px 10px; border-radius: 6px; letter-spacing: 1px; font-weight: 900; text-transform: uppercase;">RANGO</span>
                             </h1>
-                            <p style="font-size: 1.1rem; opacity: 0.9; margin-top: 5px;">Gestiona tu plantilla y tácticas de <span id="display-team-welcome" style="font-weight:bold; color:white;">tu club</span> desde la palma de tu mano.</p>
                         </div>
                         
                         <div class="card-elite" style="padding: 25px;">
@@ -622,6 +619,10 @@
                 <button class="nav-btn" data-view="tacticas">
                     <span class="icon">🛡️</span>
                     TÁCTICAS
+                </button>
+                <button class="nav-btn" id="btn-global-logout" style="color: #F44336;">
+                    <span class="icon">🚪</span>
+                    SALIR
                 </button>
             </div>
         </nav>

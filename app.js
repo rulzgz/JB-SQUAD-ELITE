@@ -504,17 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnNewSession = document.getElementById('btn-new-session');
         if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
 
-        // Rol Badge en Header
-        const displayUserName = document.getElementById('display-user-name');
-        if (!displayUserName) return;
-        
-        let badge = document.querySelector('.role-badge');
-        if (!badge) {
-            badge = document.createElement('span');
-            badge.className = `role-badge role-${role}`;
-            displayUserName.insertAdjacentElement('afterend', badge);
-        }
-        badge.textContent = role.toUpperCase();
+        // Rol Badge removido del top header. Sekarang se maneja en el Dashboard de forma limpia.
     }
 
     function setupAuthHandlers() {
@@ -936,19 +926,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateTeamHeader() {
         const teamNameLabel = document.getElementById('display-team-name');
-        const userNameLabel = document.getElementById('display-user-name');
         const userWelcome = document.getElementById('display-user-welcome');
-        const teamWelcome = document.getElementById('display-team-welcome');
         
         const fullName = state.user.profile ? state.user.profile.full_name : 'Usuario Elite';
         const teamName = state.team ? state.team.name : 'Mi Club';
 
         if (teamNameLabel) teamNameLabel.textContent = teamName.toUpperCase();
-        if (userNameLabel) userNameLabel.textContent = fullName.toUpperCase();
         if (userWelcome) userWelcome.textContent = fullName.split(' ')[0] || 'Capitán';
-        if (teamWelcome) teamWelcome.textContent = teamName || 'tu club';
         
         const statsPlayers = document.getElementById('stats-total-players');
         if (statsPlayers) statsPlayers.textContent = state.players.length;
@@ -2756,18 +2741,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const scorersListEl = document.getElementById('home-top-scorers-list');
         const displayUser = document.getElementById('display-user-welcome');
         const displayRole = document.getElementById('display-user-role');
-        const displayTeam = document.getElementById('display-team-welcome');
 
         if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
         if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
         
-        const username = state.user?.profile?.username || 'JUGADOR';
+        const username = state.user?.profile?.full_name || state.user?.profile?.username || 'JUGADOR';
         const role = state.user?.role || 'JUGADOR';
-        const teamName = state.team?.name || 'MI EQUIPO';
 
         if (displayUser) displayUser.textContent = username.toUpperCase();
         if (displayRole) displayRole.textContent = role.toUpperCase();
-        if (displayTeam) displayTeam.textContent = teamName.toUpperCase();
 
         // --- 1. TOP GOLEADORES ---
         if (scorersListEl) {
