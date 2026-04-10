@@ -316,11 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     joinBtn.textContent = '...';
                     const { error: mErr } = await supabase.from('memberships').insert({ user_id: state.user.auth.id, team_id: team.id, role: 'jugador' });
                     if (mErr) {
-                        alert('Error al unirse: ' + mErr.message);
+                        window.jbToast('Error al unirse: ' + mErr.message, 'error');
                         joinBtn.disabled = false;
                         joinBtn.textContent = 'UNIRSE';
                     } else {
-                        alert(`¡Bienvenido a ${team.name}!`);
+                        window.jbToast(`¡Bienvenido a ${team.name}!`, 'success');
                         location.reload();
                     }
                 }
@@ -553,9 +553,9 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
             if (error.message.includes('Email not confirmed')) {
-                alert('ERROR CRÍTICO: Debes desactivar "Confirmación de Email" en tu Panel de Supabase (Authentication -> Providers -> Email).');
+                window.jbToast('Debes desactivar "Confirmación de Email" en tu Panel de Supabase (Authentication -> Providers -> Email).', 'error', 6000);
             } else {
-                alert('Error al entrar: ' + error.message);
+                window.jbToast('Error al entrar: ' + error.message, 'error');
             }
         }
     };
@@ -566,7 +566,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = usernameInput.value.trim();
         
         if (username.includes('@')) {
-            return alert('ERROR: El nombre de usuario no puede contener el símbolo "@". Usa solo texto o números.');
+            window.jbToast('El nombre de usuario no puede contener el símbolo "@". Usa solo texto o números.', 'error');
+            return;
         }
 
         const submitBtn = regForm.querySelector('button[type="submit"]');
@@ -586,12 +587,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
-            return alert('Error en el registro: ' + error.message);
+            window.jbToast('Error en el registro: ' + error.message, 'error');
+            return;
         }
         
         if (data.user) {
             await supabase.from('profiles').insert({ id: data.user.id, full_name: username });
-            alert('¡Cuenta creada con éxito! Iniciando sesión...');
+            window.jbToast('¡Cuenta creada con éxito! Iniciando sesión...', 'success');
             // Tras registrarse, el login es automático por Supabase, 
             // así que onAuthStateChange se encargará del resto.
         }
@@ -604,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Fundando Club...';
 
         const teamName = document.getElementById('new-team-name').value.trim();
-        if (!state.user?.auth) return alert('Sesión no encontrada.');
+        if (!state.user?.auth) { window.jbToast('Sesión no encontrada.', 'error'); return; }
 
         const { data: team, error: tErr } = await supabase.from('teams').insert({ 
             name: teamName, 
@@ -614,7 +616,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tErr) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Fundar Ahora';
-            return alert('Error al crear equipo: ' + tErr.message);
+            window.jbToast('Error al crear equipo: ' + tErr.message, 'error');
+            return;
         }
 
         console.log(">>> Equipo creado, insertando membresía MANAGER...");
@@ -627,10 +630,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mErr) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Fundar Ahora';
-            return alert('Error al asignar rol de Manager: ' + mErr.message);
+            window.jbToast('Error al asignar rol de Manager: ' + mErr.message, 'error');
+            return;
         }
 
-        alert(`¡Club ${teamName} fundado con éxito! Bienvenido, Manager.`);
+        window.jbToast(`¡Club ${teamName} fundado con éxito! Bienvenido, Manager.`, 'success');
         location.reload();
     };
 
@@ -650,7 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error || !teams.length) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Buscar y Solicitar';
-            return alert('No se ha encontrado ningún club con ese nombre.');
+            window.jbToast('No se ha encontrado ningún club con ese nombre.', 'error');
+            return;
         }
 
         const targetTeam = teams[0];
@@ -664,9 +669,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (mErr) {
-                alert('Error al unirte: ' + mErr.message);
+                window.jbToast('Error al unirte: ' + mErr.message, 'error');
             } else {
-                alert(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`);
+                window.jbToast(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`, 'success');
                 location.reload();
             }
         }
@@ -713,7 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        alert('Migración Completada con Éxito. Recargando...');
+        window.jbToast('Migración Completada con Éxito. Recargando...', 'success');
         location.reload();
     }
 
@@ -1027,11 +1032,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Validación Proactiva Anti-XSS (v18.1.0)
             const xssPattern = /<[^>]*>?/gm;
             if (xssPattern.test(playerName) || xssPattern.test(consoleID)) {
-                return alert('ERROR DE SEGURIDAD: Se han detectado caracteres no permitidos. Limpia los campos e inténtalo de nuevo.');
+                window.jbToast('Se han detectado caracteres no permitidos. Limpia los campos e inténtalo de nuevo.', 'error');
+                return;
             }
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando Ficha...';
+            window.jbLoading.show('Guardando ficha...');
 
             const secondaryPositions = Array.from(secondaryPosSelects)
                 .map(s => s.value)
@@ -1064,13 +1071,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const { error: insErr } = await supabase.from('players').upsert(newPlayer);
             
             if (insErr) {
-                alert('Error al guardar ficha: ' + insErr.message);
+                window.jbToast('Error al guardar ficha: ' + insErr.message, 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Confirmar Ficha';
+                window.jbLoading.hide();
                 return;
             }
 
-            alert('¡Ficha actualizada con éxito!');
+            window.jbLoading.hide();
+            window.jbToast('¡Ficha actualizada con éxito!', 'success');
             location.reload(); // Recargamos para actualizar cache global
         });
 
@@ -1365,8 +1374,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         btnSaveDesign?.addEventListener('click', async () => {
             state.isEditingPositions = false;
+            window.jbLoading.show('Guardando diseño...');
             await saveTacticsCloud();
-            alert('DISEÑO GUARDADO CORRECTAMENTE');
+            window.jbLoading.hide();
+            window.jbToast('Diseño guardado correctamente', 'success');
             btnEditBoard.style.display = 'block';
             btnSaveDesign.style.display = 'none';
             btnResetDesign.style.display = 'none';
@@ -1884,6 +1895,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- SISTEMA DE TOASTS PREMIUM (v21.0.0) ---
+    // Tipos: 'success', 'error', 'info'
+    window.jbToast = (message, type = 'info', duration = 3500) => {
+        const container = document.getElementById('jb-toast-container');
+        if (!container) return;
+
+        const icons = { success: '✅', error: '❌', info: '💡' };
+        const titles = { success: 'ÉXITO', error: 'ERROR', info: 'INFO' };
+
+        const toast = document.createElement('div');
+        toast.className = `jb-toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="jb-toast-icon">${icons[type] || icons.info}</div>
+            <div class="jb-toast-body">
+                <div class="jb-toast-title">${titles[type] || titles.info}</div>
+                <div class="jb-toast-message">${escapeHTML(message)}</div>
+            </div>
+            <div class="jb-toast-progress" style="animation-duration: ${duration}ms;"></div>
+        `;
+
+        // Clic para cerrar manualmente
+        toast.onclick = () => dismissToast(toast);
+
+        container.appendChild(toast);
+
+        // Auto-dismiss
+        const timer = setTimeout(() => dismissToast(toast), duration);
+        toast._timer = timer;
+    };
+
+    function dismissToast(toast) {
+        if (toast._dismissed) return;
+        toast._dismissed = true;
+        clearTimeout(toast._timer);
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 400);
+    }
+
+    // --- jbAlert: Reemplazo del alert() nativo (v21.0.0) ---
+    // Usa el mismo diálogo global pero oculta el botón cancelar
+    window.jbAlert = (message) => {
+        return new Promise((resolve) => {
+            const dialog = document.getElementById('jb-global-dialog');
+            const msgEl = document.getElementById('jb-dialog-message');
+            const btnConfirm = document.getElementById('jb-dialog-btn-confirm');
+            const btnCancel = document.getElementById('jb-dialog-btn-cancel');
+
+            msgEl.innerText = message;
+            btnCancel.style.display = 'none';
+            btnConfirm.textContent = 'ACEPTAR';
+            dialog.style.display = 'flex';
+
+            const closeDialog = () => {
+                dialog.style.display = 'none';
+                btnCancel.style.display = '';
+                btnConfirm.textContent = 'CONFIRMAR';
+                btnConfirm.onclick = null;
+                resolve();
+            };
+
+            btnConfirm.onclick = () => closeDialog();
+        });
+    };
+
+    // --- LOADING OVERLAY (v21.0.0) ---
+    let loadingTimeout = null;
+    window.jbLoading = {
+        show: (text = 'Sincronizando...') => {
+            const overlay = document.getElementById('jb-loading-overlay');
+            if (!overlay) return;
+            const textEl = overlay.querySelector('.jb-loading-text');
+            if (textEl) textEl.textContent = text;
+            overlay.classList.add('active');
+            // Safety timeout: ocultar tras 15s por si la operación falla silenciosamente
+            clearTimeout(loadingTimeout);
+            loadingTimeout = setTimeout(() => window.jbLoading.hide(), 15000);
+        },
+        hide: () => {
+            clearTimeout(loadingTimeout);
+            const overlay = document.getElementById('jb-loading-overlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+    };
+
     window.confirmDelete = async (id) => {
         const player = state.players.find(p => p.id === id);
         if (!player) return;
@@ -1892,7 +1987,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSelf = player.user_id === state.user.auth.id;
 
         if (!isManager && !isSelf) {
-            return alert('Solo el Manager o tú mismo podéis realizar esta acción.');
+            window.jbToast('Solo el Manager o tú mismo podéis realizar esta acción.', 'error');
+            return;
         }
 
         const agreed = await window.jbConfirm(isManager ? `¿DESVINCULAR A ${player.name.toUpperCase()} DEL CLUB?` : '¿QUIERES ABANDONAR EL CLUB?');
@@ -1901,12 +1997,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. Eliminar membresía (Echar del club)
             const { error: memErr } = await supabase.from('memberships').delete().eq('user_id', player.userId || id).eq('team_id', state.team.id);
             
-            if (memErr) return alert('Error al expulsar: ' + memErr.message);
+            if (memErr) { window.jbToast('Error al expulsar: ' + memErr.message, 'error'); return; }
 
             // 2. Opcionalmente eliminar ficha (Solo si el usuario lo decide, para el MVP lo borramos)
             await supabase.from('players').delete().eq('id', id);
 
-            alert(isManager ? 'Contrato terminado.' : 'Has abandonado el club.');
+            window.jbToast(isManager ? 'Contrato terminado.' : 'Has abandonado el club.', 'success');
             location.reload();
         }
     };
@@ -2313,7 +2409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveGoalEvent() {
         if (!selectedGoalScorerId) {
-            alert('Debes seleccionar al menos un goleador');
+            window.jbToast('Debes seleccionar al menos un goleador', 'error');
             return;
         }
         currentMatch.events.push({
@@ -2761,12 +2857,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Inicialización final
-    setupNavigation();
-    setupAuth();
-    setupTeamSelectors();
-    setupPlantillaHandlers();
-    setupTacticHandlers();
-    setupSessionHandlers();
-    setupMatchHandlers();
 });

@@ -1,6 +1,30 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v21.0.0-TOAST] - 2026-04-11
+### Añadido (Sistema de Feedback Visual)
+- **Sistema de Toasts Premium**: Nuevo sistema de notificaciones no intrusivas con 3 variantes (✅ success, ❌ error, 💡 info). Cada toast incluye:
+  - Animación de entrada slide-in desde la derecha con efecto de escala
+  - Barra de progreso animada para auto-dismiss
+  - Clic para cerrar manualmente
+  - Máximo apilable con diseño glassmorphism coherente con el tema
+- **`window.jbAlert(message)`**: Reemplazo directo del `alert()` nativo. Usa el mismo diálogo global (`#jb-global-dialog`) pero oculta el botón "Cancelar" y muestra solo "ACEPTAR". Devuelve una Promise para flujos async.
+- **`window.jbLoading`**: Overlay global con spinner animado y texto personalizable. Incluye timeout de seguridad de 15 segundos para evitar bloqueos permanentes si una operación falla silenciosamente.
+  - Se usa en: Guardado de ficha de jugador y guardado de diseño táctico.
+
+### Corregido (Bugs Críticos)
+- **Eliminación de 23 `alert()` nativos**: Todos los `window.alert()` han sido reemplazados por `window.jbToast()` o `window.jbAlert()`, cumpliendo la regla "Cero Modales Nativos" del sistema de diseño.
+  - Errores de Supabase → `jbToast('...', 'error')`
+  - Confirmaciones exitosas → `jbToast('...', 'success')`
+  - Validaciones de seguridad → `jbToast('...', 'error')` con return
+- **Eliminación de funciones fantasma**: Removido bloque de inicialización al final de `app.js` que llamaba a 6 funciones inexistentes (`setupAuth`, `setupTeamSelectors`, `setupPlantillaHandlers`, `setupTacticHandlers`, `setupSessionHandlers`, `setupMatchHandlers`), previniendo errores silenciosos en consola.
+
+### Técnico
+- **CSS**: Nuevos tokens de color `--success`, `--success-glow`, `--error`, `--error-glow` en `:root`.
+- **CSS**: ~170 líneas nuevas para toasts, loading overlay, y animaciones (`toastSlideIn`, `toastSlideOut`, `toastProgress`, `spinLoader`).
+- **HTML**: Nuevos contenedores `#jb-toast-container` y `#jb-loading-overlay` inyectados al inicio del `<body>`.
+- **JS**: ~85 líneas nuevas para las funciones `jbToast`, `dismissToast`, `jbAlert` y `jbLoading`.
+
 ## [v20.4.4-STABLE] - 2026-04-09
 ### Corregido (Alineación Fotográfica)
 - **Eliminación de Distorsión en Nombres y Posiciones**: Se ha sustituido el modificador `transform: scale()` (que corrompía la posición interna de los textos y etiquetas al exportar en imagen) por un aumento volumétrico orgánico del contenedor `(+30% cqw)`.
