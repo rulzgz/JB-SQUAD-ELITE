@@ -926,6 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateTeamHeader() {
         const teamNameLabel = document.getElementById('display-team-name');
         const userWelcome = document.getElementById('display-user-welcome');
         
