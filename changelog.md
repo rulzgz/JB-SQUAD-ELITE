@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.2.0] - 2026-04-12
+### Añadido (UX Refinement & Polish)
+- **Inicio Inteligente**: Se ha refinado la lógica de entrada. Los usuarios con perfil activo ahora aterrizan directamente en el **Dashboard (Inicio)** para una gestión inmediata, mientras que los nuevos registros mantienen su flujo hacia el editor de ficha.
+- **Seguridad en Salida**: Implementado un diálogo de confirmación `jbConfirm` vinculado al botón "SALIR". Esto previene cierres de sesión accidentales durante la navegación.
+- **Iconografía Premium**: Sustitución de emojis por un sistema de iconos SVG minimalista de trazado uniforme (2px). Se han añadido efectos de iluminación (`gold-glow`) y animaciones de elevación vertical al interactuar con el menú inferior.
+
 ## [v22.0.0-DESKTOP] - 2026-04-12
 ### Añadido (Desktop UX Elite)
 - **Layout Divergente (Bento Box)**: Diseño web reescrito con enfoque dual. Ahora, en pantallas grandes (más de 1024px de ancho), el Dashboard abandona el estiramiento móvil antiestético y se distribuye en dos sobrias columnas asimétricas protegidas por un `max-width` dinámico.

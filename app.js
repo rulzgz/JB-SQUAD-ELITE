@@ -439,13 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Setup Eventos Globales
         setupEventListeners();
 
-        // Redirección forzada a 'Mi Perfil' (v4.2.3)
+        // Redirección Inteligente (v22.2.0)
         setTimeout(() => {
             if (state.userPlayer) {
-                switchView('my-profile');
-                renderMyProfile(state.userPlayer);
+                switchView('home'); // Prioridad al Dashboard para usuarios registrados
+                renderMyProfile(state.userPlayer); 
             } else {
-                switchView('add-player');
+                switchView('add-player'); // Flujo de bienvenida para nuevos registros
                 console.log(">>> Usuario sin ficha. Mostrando editor...");
                 const alertMsg = document.createElement('div');
                 alertMsg.className = 'card-elite fade-in shadow-premium';
@@ -670,8 +670,13 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Buscar y Solicitar';
     };
 
-        document.getElementById('btn-global-logout').onclick = () => supabase.auth.signOut();
-        document.getElementById('btn-logout-temp').onclick = () => supabase.auth.signOut();
+        const handleLogout = async () => {
+            const ok = await window.jbConfirm("¿Estás seguro de que deseas cerrar la sesión actual?");
+            if (ok) supabase.auth.signOut();
+        };
+
+        document.getElementById('btn-global-logout').onclick = handleLogout;
+        document.getElementById('btn-logout-temp').onclick = handleLogout;
     }
 
     async function migrateToCloud() {
