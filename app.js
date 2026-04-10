@@ -750,32 +750,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function savePlayerCloud(player) {
-        if (!supabase) return;
-        await supabase.from('players').upsert({
-            id: player.id,
-            name: player.name,
-            console_id: player.consoleID,
-            avatar_id: player.avatarID,
-            primary_pos: player.primaryPos,
-            secondary_pos: player.secondaryPos,
-            dorsal: player.dorsal,
-            photo_url: player.photo_url,
-            photo_scale: player.photo_scale,
-            photo_x: player.photo_x,
-            photo_y: player.photo_y,
-            stats: player.stats || { official: player.official, friendly: player.friendly }
-        });
+        if (!supabase || !state.team) return;
+        try {
+            const { error } = await supabase.from('players').upsert({
+                id: player.id,
+                team_id: state.team.id, // Requerido para integridad
+                name: player.name,
+                console_id: player.consoleID,
+                avatar_id: player.avatarID,
+                primary_pos: player.primaryPos,
+                secondary_pos: player.secondaryPos,
+                dorsal: player.dorsal,
+                photo_url: player.photo_url,
+                photo_scale: player.photo_scale,
+                photo_x: player.photo_x,
+                photo_y: player.photo_y,
+                stats: player.stats || { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } }
+            });
+            if (error) throw error;
+        } catch (err) {
+            console.error(">>> [ERROR] savePlayerCloud:", err.message);
+        }
     }
 
     async function saveSessionCloud(session) {
-        if (!supabase) return;
-        await supabase.from('sessions').upsert({
-            id: session.id,
-            date: session.date,
-            status: session.status,
-            matches: session.matches,
-            mvp_id: session.mvpId
-        });
+        if (!supabase || !state.team) return;
+        try {
+            const { error } = await supabase.from('sessions').upsert({
+                id: session.id,
+                team_id: state.team.id, // Requerido para integridad
+                date: session.date,
+                status: session.status,
+                matches: session.matches,
+                mvp_id: session.mvpId
+            });
+            if (error) throw error;
+        } catch (err) {
+            console.error(">>> [ERROR] saveSessionCloud:", err.message);
+        }
     }
 
     async function saveTacticsCloud() {
@@ -2260,20 +2272,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const isActive = state.activeSession && session.id === state.activeSession.id;
         switchView('active-session');
 
-        // Configurar UI según estado
-        document.getElementById('active-session-name').textContent = session.date;
+        const sessionNameEl = document.getElementById('active-session-name');
+        if (sessionNameEl) sessionNameEl.textContent = session.date;
         
         if (isActive) {
             sessionMgmtControls.style.display = 'flex';
             sessionHistorySummary.style.display = 'none';
             sessionMvpBanner.style.display = 'none';
             sessionFinalizeContainer.style.display = 'block';
-            document.getElementById('session-detail-title').innerHTML = `Jornada <span class="badge-live" style="font-size: 0.8rem; vertical-align: middle;">EN CURSO</span>`;
+            
+            const titleEl = document.getElementById('session-detail-title');
+            if (titleEl) {
+                // Conservar el span si existe, o reconstruir de forma que no se rompan IDs
+                titleEl.innerHTML = `Jornada <span class="badge-live" style="font-size: 0.8rem; vertical-align: middle;">EN CURSO</span> <span id="active-session-name" style="display:none">${session.date}</span>`;
+            }
         } else {
             sessionMgmtControls.style.display = 'none';
             sessionHistorySummary.style.display = 'block';
             sessionFinalizeContainer.style.display = 'none';
-            document.getElementById('session-detail-title').textContent = "Detalle de Jornada";
+            
+            const titleEl = document.getElementById('session-detail-title');
+            if (titleEl) {
+                titleEl.innerHTML = `Detalle de Jornada <span id="active-session-name" style="display:none">${session.date}</span>`;
+            }
             
             const wins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
             const draws = session.matches.filter(m => m.scoreHome === m.scoreAway).length;

@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.4.0] - 2026-04-12
+### Corregido (Persistencia & Estabilidad)
+- **Error de Renderizado Hotfix**: Corregido el fallo `TypeError: Cannot set properties of null` en la vista de Jornadas que impedía visualizar el resumen tras finalizar partidos.
+- **Integridad de Base de Datos**: Añadida la sincronización obligatoria de `team_id` en las operaciones `upsert` de Jugadores y Sesiones. Esto resuelve los errores 400 (Bad Request) y 500 (Internal Server Error) de Supabase.
+- **Robustez de Guardado**: Implementada gestión de errores `try-catch` con logs detallados para monitorizar fallos en la persistencia de datos en la nube.
+
 ## [v22.3.0] - 2026-04-12
 ### Corregido (Restauración de Jornadas)
 - **Capa de Permisos Reactivada**: Se ha restaurado la llamada crítica a `applyRolePermissions()` en el ciclo de carga inicial (`loadTeamData`). Esto soluciona el problema de los botones de gestión invisibles (Nueva Jornada, Añadir Partido, etc.) para los Managers y Capitanes.
