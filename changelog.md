@@ -1,6 +1,22 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v21.1.0-UX] - 2026-04-12
+### Añadido (Dashboard & Widgets)
+- **Dashboard Mejorado**: Se ha rediseñado la vista principal (`🏠 INICIO`) añadiendo tres componentes analíticos vitales:
+  1. **Top Asistentes**: Igual que con los goleadores, ahora se muestran los 3 jugadores con más asistencias del equipo, usando datos históricos combinados (Oficial + Amistoso). Posicionado junto a "Top Goleadores" en una cuadrícula simétrica `1fr 1fr`.
+  2. **Ratio de Victorias**: Una barra de progreso tricolor horizontal que mide instantáneamente el éxito del club en el historial total de partidos y muestra en formato texto los resultados brutos exactos (`x V | y E | z D`).
+  3. **Racha (Últimos 5 Partidos)**: Sistema de medallas de color dinámico que ilustra la tendencia inmediata del roster en los últimos 5 encuentros, mostrando tarjetas verdes, naranjas o rojas según V/E/D.
+
+### Alterado (Arquitectura SPA vs Recargas)
+- **Eliminación Total de Recargas Forzadas**: Reestructuración masiva del flujo de sesión. Se han eliminado todos los bloqueos derivados de llamadas a `location.reload()`:
+  - Guardar o actualizar la ficha de un jugador ahora sincroniza contextualmente a las memorias locales (`loadTeamData()`) en `~100ms`, permitiendo el salto instantáneo a "MI PERFIL" sin perder el estado local.
+  - Expulsar o abandonar el club ahora redirige el scope hacia autenticación sin la penalidad visual parpadeante de una recarga global del navegador.
+
+### Corregido (Flujos Huérfanos)
+- **Modal de Perfil (Plantilla)**: Se detectó que el evento de clic en jugadores de la pantalla `👥 PLANTILLA` activaba una búsqueda a un contenedor fantasma (`#profile-modal`). Se ha reimplementado desde cero usando el sistema de capas de `jb-global-dialog`, permitiendo a los capitanes analizar el perfil renderizado y las estadísticas del jugador seleccionado en un sub-modal en lugar de chocar contra un error silencioso de DOM nulo.
+- **Selector de Partido Inicial (Jornadas)**: Subsanado un error cruzado de etiquetas HTML donde el botón de "OFICIAL" forzaba "Amistoso" y viceversa en las métricas. Se ha estructurado bajo un group param (`name="sessionType"`) mediante Radio Buttons customizados.
+
 ## [v21.0.0-TOAST] - 2026-04-11
 ### Añadido (Sistema de Feedback Visual)
 - **Sistema de Toasts Premium**: Nuevo sistema de notificaciones no intrusivas con 3 variantes (✅ success, ❌ error, 💡 info). Cada toast incluye:

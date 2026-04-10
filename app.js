@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         joinBtn.textContent = 'UNIRSE';
                     } else {
                         window.jbToast(`¡Bienvenido a ${team.name}!`, 'success');
-                        location.reload();
+                        await handleUserSession(state.user.auth);
                     }
                 }
             };
@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.jbToast(`¡Club ${teamName} fundado con éxito! Bienvenido, Manager.`, 'success');
-        location.reload();
+        await handleUserSession(state.user.auth);
     };
 
     document.getElementById('join-team-form').onsubmit = async (e) => {
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.jbToast('Error al unirte: ' + mErr.message, 'error');
             } else {
                 window.jbToast(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`, 'success');
-                location.reload();
+                await handleUserSession(state.user.auth);
             }
         }
         
@@ -718,8 +718,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        window.jbToast('Migración Completada con Éxito. Recargando...', 'success');
-        location.reload();
+        window.jbToast('Migración Completada con Éxito.', 'success');
+        await loadTeamData();
     }
 
     async function saveTacticsCloud() {
@@ -1080,7 +1080,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.jbLoading.hide();
             window.jbToast('¡Ficha actualizada con éxito!', 'success');
-            location.reload(); // Recargamos para actualizar cache global
+            await loadTeamData();
+            switchView('my-profile');
         });
 
         // Listeners para Foto y Escalado/Posición
@@ -2003,7 +2004,15 @@ document.addEventListener('DOMContentLoaded', () => {
             await supabase.from('players').delete().eq('id', id);
 
             window.jbToast(isManager ? 'Contrato terminado.' : 'Has abandonado el club.', 'success');
-            location.reload();
+            
+            if (!isManager) {
+                // If abandoning, we lose team access, re-init session
+                state.team = null;
+                await handleUserSession(state.user.auth);
+            } else {
+                await loadTeamData();
+                switchView('plantilla');
+            }
         }
     };
 
@@ -2734,9 +2743,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderHomeDashboard() {
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
-        const scorersListEl = document.getElementById('home-top-scorers-list');
-        const displayUser = document.getElementById('display-user-welcome');
-        const displayTeam = document.getElementById('display-team-welcome');
+        const assistsListEl = document.getElementById('home-top-assists-list');
+        const winRatioText = document.getElementById('win-ratio-text');
+        const winRatioWVal = document.getElementById('win-ratio-w-val');
+        const winRatioDVal = document.getElementById('win-ratio-d-val');
+        const winRatioLVal = document.getElementById('win-ratio-l-val');
+        const winRatioBarW = document.getElementById('win-ratio-bar-w');
+        const winRatioBarD = document.getElementById('win-ratio-bar-d');
+        const winRatioBarL = document.getElementById('win-ratio-bar-l');
+        const formStreakContainer = document.getElementById('form-streak-container');
 
         if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
         if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
@@ -2747,10 +2762,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (displayUser) displayUser.textContent = username.toUpperCase();
         if (displayTeam) displayTeam.textContent = teamName.toUpperCase();
 
+        // --- 1. TOP GOLEADORES ---
         if (scorersListEl) {
             scorersListEl.innerHTML = '';
-            
-            // Calcular Goles Totales (Oficial + Amistoso)
             const scorers = state.players
                 .map(p => ({
                     name: p.name,
@@ -2764,21 +2778,123 @@ document.addEventListener('DOMContentLoaded', () => {
                 .slice(0, 3);
 
             if (scorers.length === 0) {
-                scorersListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos de goles registrados todavía.</p>';
+                scorersListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
             } else {
                 scorers.forEach((s, i) => {
                     const row = document.createElement('div');
                     row.className = 'card-elite';
-                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1);';
+                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
                     row.innerHTML = `
                         <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
                         <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                             ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                         </div>
-                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
                         <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
                     `;
                     scorersListEl.appendChild(row);
+                });
+            }
+        }
+
+        // --- 2. TOP ASISTENTES ---
+        if (assistsListEl) {
+            assistsListEl.innerHTML = '';
+            const assistants = state.players
+                .map(p => ({
+                    name: p.name,
+                    photo: p.photo_url,
+                    transform: getPlayerTransform(p),
+                    avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
+                    totalAssists: (p.stats?.official?.assists || 0) + (p.stats?.friendly?.assists || 0)
+                }))
+                .filter(s => s.totalAssists > 0)
+                .sort((a, b) => b.totalAssists - a.totalAssists)
+                .slice(0, 3);
+
+            if (assistants.length === 0) {
+                assistsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
+            } else {
+                assistants.forEach((s, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'card-elite';
+                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
+                    row.innerHTML = `
+                        <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
+                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalAssists} <small style="font-size:0.5rem;">AST</small></span>
+                    `;
+                    assistsListEl.appendChild(row);
+                });
+            }
+        }
+
+        // --- 3. RECOPILAR PARTIDOS PARA RATIO Y RACHA ---
+        let allMatches = [];
+        const allSessions = [...state.sessions];
+        if (state.activeSession) {
+            allSessions.push(state.activeSession);
+        }
+        
+        // Ordenamos las sesiones cronológicamente (las más antiguas primero, las nuevas después. IDs suelen ser timestamps)
+        allSessions.sort((a, b) => a.id - b.id).forEach(session => {
+            if (session.matches && session.matches.length > 0) {
+                allMatches = allMatches.concat(session.matches);
+            }
+        });
+
+        // --- RATIO DE VICTORIAS ---
+        let winC = 0, drawC = 0, lossC = 0;
+        allMatches.forEach(m => {
+            if (m.scoreHome > m.scoreAway) winC++;
+            else if (m.scoreHome === m.scoreAway) drawC++;
+            else lossC++;
+        });
+
+        const totalM = winC + drawC + lossC;
+        if (totalM > 0) {
+            const winP = Math.round((winC / totalM) * 100);
+            const drawP = Math.round((drawC / totalM) * 100);
+            const lossP = Math.round((lossC / totalM) * 100);
+
+            if (winRatioText) winRatioText.textContent = `${winP}%`;
+            if (winRatioWVal) winRatioWVal.textContent = `${winC} V`;
+            if (winRatioDVal) winRatioDVal.textContent = `${drawC} E`;
+            if (winRatioLVal) winRatioLVal.textContent = `${lossC} D`;
+
+            if (winRatioBarW) winRatioBarW.style.width = `${winP}%`;
+            if (winRatioBarD) winRatioBarD.style.width = `${drawP}%`;
+            if (winRatioBarL) winRatioBarL.style.width = `${lossP}%`;
+        } else {
+            if (winRatioText) winRatioText.textContent = '0%';
+        }
+
+        // --- RACHA (ÚLTIMOS 5 PARTIDOS) ---
+        if (formStreakContainer) {
+            formStreakContainer.innerHTML = '';
+            if (totalM === 0) {
+                formStreakContainer.innerHTML = '<span style="opacity:0.5; font-size:0.7rem;">Sin datos registrados</span>';
+            } else {
+                // Tomamos los últimos 5
+                const last5 = allMatches.slice(-5);
+                last5.forEach(m => {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'width: 25px; height: 25px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #000; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);';
+                    if (m.scoreHome > m.scoreAway) {
+                        badge.textContent = 'V';
+                        badge.style.background = '#4CAF50';
+                    } else if (m.scoreHome === m.scoreAway) {
+                        badge.textContent = 'E';
+                        badge.style.background = '#FFC107';
+                    } else {
+                        badge.textContent = 'D';
+                        badge.style.background = '#F44336';
+                        badge.style.color = '#fff';
+                    }
+                    formStreakContainer.appendChild(badge);
                 });
             }
         }
