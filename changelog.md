@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.3.0] - 2026-04-12
+### Corregido (Restauración de Jornadas)
+- **Capa de Permisos Reactivada**: Se ha restaurado la llamada crítica a `applyRolePermissions()` en el ciclo de carga inicial (`loadTeamData`). Esto soluciona el problema de los botones de gestión invisibles (Nueva Jornada, Añadir Partido, etc.) para los Managers y Capitanes.
+- **Sincronización de Controles**: Se ha refinado la lógica de visibilidad para asegurar que los contenedores de finalización de jornada y sumarios administrativos respeten estrictamente la jerarquía del club.
+
 ## [v22.2.0] - 2026-04-12
 ### Añadido (UX Refinement & Polish)
 - **Inicio Inteligente**: Se ha refinado la lógica de entrada. Los usuarios con perfil activo ahora aterrizan directamente en el **Dashboard (Inicio)** para una gestión inmediata, mientras que los nuevos registros mantienen su flujo hacia el editor de ficha.

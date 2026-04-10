@@ -422,6 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         updateTeamHeader();
+        applyRolePermissions(); // Restaurado: Aplica visibilidad de botones según rol
         renderPlayers();
         renderSessions();
         renderTacticsList();
@@ -486,10 +487,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const role = state.user.role || 'jugador';
         const isAdmin = role === 'manager' || role === 'capitan';
         
-        // Elementos que solo ven Admins
+        // Elementos que solo ven Admins (Manager/Capitán)
         document.querySelectorAll('[data-role-required="manager"]').forEach(el => {
             el.style.display = isAdmin ? 'block' : 'none';
         });
+
+        // Asegurar visibilidad de botones de acción específicos
+        const btnNewSession = document.getElementById('btn-new-session');
+        if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
+
+        const btnAddMatch = document.getElementById('btn-add-match');
+        if (btnAddMatch) btnAddMatch.style.display = isAdmin ? 'block' : 'none';
+
+        const finalizeContainer = document.getElementById('session-finalize-container');
+        if (finalizeContainer) finalizeContainer.style.display = isAdmin ? 'block' : 'none';
 
         // Botón "Mi Ficha" — visible para TODOS (Manager también juega)
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
