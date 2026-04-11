@@ -1,16 +1,15 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v22.10.0] - 2026-04-12
-### Añadido (Matchday Export Elite Overhaul)
-- **Cinematic Export View**: Implementación de un efecto de viñeteado radial y corrección de color (grading) cinematográfico en la imagen exportada para un look de broadcast profesional.
-- **Cartas Tácticas Gigantes Pro**: Aumento del 40% en el tamaño de las cartas en la exportación, mejorando drásticamente el impacto visual y la legibilidad en redes sociales.
-- **Detección y Saneamiento de Publicidad**: Eliminación completa de textos promocionales internos ("Elite Unit") en la cabecera del Matchday.
-- **Escalado Inteligente de Avatar**: Nuevo sistema de zoom dinámico en el contenedor de imagen que preserva la calibración personalizada del usuario pero adaptado a la nueva escala mayor de la carta.
-- **Gestión Estética de Slots Vacíos**: Los slots sin jugador asignado ahora se muestran con una opacidad reducida (30%) y sin iconos de acción, manteniendo la limpieza visual de la composición táctica.
-- **Estabilidad de Renderizado**: Incrementado el delay de captura a 1000ms para garantizar que todas las texturas de césped y fotos pesadas se rendericen antes de generar el PNG.
+## [v23.0.0] - 2026-04-12
+### Añadido (Pixel-Perfect Matchday Overhaul)
+- **Ingeniería de Píxeles Absolutos**: Reconstrucción total de la exportación usando dimensiones fijas en píxeles. Elimina el desplazamiento lateral y las deformaciones visuales dependientes del dispositivo (Adiós a los bugs de `cqw` y `rem`).
+- **Sanitización Profunda de Clon**: El sistema ahora "limpia" quirúrgicamente el campo clonado, eliminando escalas, fuentes y estilos de UI dinámicos que causaban la descompensación de las cartas.
+- **Expansión y Centrado de Avatares**: Nuevo contenedor de imagen con `object-fit: cover` y centrado absoluto equilibrado. Las fotos se expanden para llenar la carta con elegancia, preservando la calibración de zoom del usuario.
+- **Arquitectura de Centrado Matemático**: El campo se posiciona ahora con coordenadas absolutas respecto al centro de la imagen 1080x1440, garantizando una alineación perfecta con el fondo.
+- **Tipografía Broadcast 4K**: Marcadores y nombres re-estilizados con tamaños fijos y degradados premium. Los nombres se muestran siempre en mayúsculas para un look de élite.
 
-## [v22.8.0] - 2026-04-12
+## [v22.10.0] - 2026-04-12
 ### Rediseño (Táctica Móvil Definitivo)
 - **Barra Táctica Móvil Nativa**: Nuevo componente `mobile-tactic-topbar` exclusivo para móvil dentro de la vista de tácticas. Muestra nombre y formación, con cada botón en fila individual y estética premium.
 - **Cero Scroll Doble**: `app-wrapper` y `view-tacticas` en `overflow: hidden` en móvil, eliminando las dobles barras de scroll.

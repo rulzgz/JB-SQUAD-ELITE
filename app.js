@@ -3062,25 +3062,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(wrapper);
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
         
-        // 2. Clonar el campo y renderizarlo
+        // 2. Clonar el campo y sanearlo profundamente (v21.0.0 - Pixel Perfect)
         const pitchClone = pitch.cloneNode(true);
         pitchClone.id = 'pitch-clone-export';
         
-        // Limpieza de UI en el clon (v20.5.0)
-        pitchClone.querySelectorAll('.slot-control-panel, .btn-delete-slot, #btn-modify-drawing').forEach(el => el.remove());
+        // Limpieza de UI persistente y residuos interactivos
+        pitchClone.querySelectorAll('.slot-control-panel, .btn-delete-slot, #btn-modify-drawing, .plus-icon').forEach(el => el.remove());
         
-        // Estilizar slots vacíos para que sean menos intrusivos en la promo (v20.5.0)
-        pitchClone.querySelectorAll('.tactical-slot:not(.filled)').forEach(slot => {
-            slot.style.opacity = '0.3';
-            slot.style.border = '1px dashed rgba(255,255,255,0.2)';
-            const plus = slot.querySelector('.plus-icon');
-            if (plus) plus.remove();
+        // Sanear cada slot para eliminar herencia de estilos dinámivos del móvil/desktop
+        pitchClone.querySelectorAll('.tactical-slot').forEach(slot => {
+            // Preservar la posición pero limpiar el resto de inline styles
+            const top = slot.style.top;
+            const left = slot.style.left;
+            slot.removeAttribute('style');
+            slot.style.top = top;
+            slot.style.left = left;
+
+            // Si el slot está lleno, limpiar el contenido interno para el CSS de exportación
+            if (slot.classList.contains('filled')) {
+                const nameTag = slot.querySelector('h4');
+                if (nameTag) {
+                    nameTag.removeAttribute('style');
+                    nameTag.textContent = nameTag.textContent.toUpperCase();
+                }
+
+                const imgTag = slot.querySelector('.player-card-img img, .player-card-img svg');
+                // IMPORTANTE: NO eliminar el transform del imgTag porque contiene la calibración del usuario
+                // Pero sí nos aseguramos de que no tenga anchos/altos raros inyectados
+                if (imgTag) {
+                    imgTag.style.width = '100%';
+                    imgTag.style.height = '100%';
+                }
+            } else {
+                // Slots vacíos: Sutiliza extrema
+                slot.style.opacity = '0.2';
+                slot.style.border = '1px dashed rgba(255,255,255,0.1)';
+            }
         });
         
-        // Quitar estilos de control si los hubiera y forzar centrado
-        pitchClone.style.transform = 'none';
-        pitchClone.style.margin = '0 auto';
-        
+        // Neutralizar contenedor de pitch
+        pitchClone.removeAttribute('style');
         pitchAreaElement.appendChild(pitchClone);
         
         // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes (v20.5.0)
