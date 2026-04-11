@@ -1436,6 +1436,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.remove('editing-tactic');
             }
         });
+
+        // ====== HANDLERS DUPLICADOS PARA BARRA MÓVIL ======
+        const mBtnEdit = document.getElementById('mobile-btn-edit-board');
+        const mBtnSave = document.getElementById('mobile-btn-save-custom-positions');
+        const mBtnReset = document.getElementById('mobile-btn-reset-positions');
+        const mBtnExport = document.getElementById('mobile-btn-export-tactic');
+        const mBtnSaveTactic = document.getElementById('mobile-btn-save-tactic');
+
+        mBtnEdit?.addEventListener('click', () => btnEditBoard?.click());
+        mBtnSave?.addEventListener('click', () => btnSaveDesign?.click());
+        mBtnReset?.addEventListener('click', () => btnResetDesign?.click());
+        mBtnExport?.addEventListener('click', () => btnExportTactic?.click());
+        mBtnSaveTactic?.addEventListener('click', () => btnSaveTactic?.click());
     }
 
     function renderTacticsList() {
@@ -1488,24 +1501,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function syncMobileTopbar(activeTactic) {
+        if (window.innerWidth >= 1024) return;
+        const mobileTopbar = document.getElementById('mobile-tactic-topbar');
+        const mName = document.getElementById('mobile-tactic-name');
+        const mFormation = document.getElementById('mobile-tactic-formation');
+        if (mobileTopbar) mobileTopbar.style.display = 'flex';
+        if (mName && activeTactic) mName.textContent = activeTactic.name.toUpperCase();
+        if (mFormation && activeTactic) mFormation.textContent = activeTactic.formation;
+    }
+
     function openPitchView(tacticId) {
         state.activeTacticId = tacticId;
         tacticasList.style.display = 'none';
         tacticasInitial.style.display = 'none';
         tacticasField.style.display = 'flex';
         
-        if (headerTacticInfo) headerTacticInfo.style.display = 'flex';
-        
-        const tacticalActions = document.getElementById('tactical-header-actions');
-        if (tacticalActions) {
-            tacticalActions.style.display = 'flex';
-            const btnEditBoard = document.getElementById('btn-edit-board');
-            const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
-            if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'flex' : 'none';
+        const activeTactic = state.savedTactics.find(t => t.id === tacticId);
+        const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
+
+        if (window.innerWidth >= 1024) {
+            // En escritorio: mostrar header global
+            if (headerTacticInfo) headerTacticInfo.style.display = 'flex';
+            const tacticalActions = document.getElementById('tactical-header-actions');
+            if (tacticalActions) {
+                tacticalActions.style.display = 'flex';
+                const btnEditBoard = document.getElementById('btn-edit-board');
+                if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'flex' : 'none';
+            }
+        } else {
+            // En móvil: sincronizar barra táctica exclusiva
+            const mBtnEdit = document.getElementById('mobile-btn-edit-board');
+            if (mBtnEdit) mBtnEdit.style.display = isAdmin ? 'flex' : 'none';
+            syncMobileTopbar(activeTactic);
         }
 
-        state.isEditingPositions = false; // Resetear modo al entrar
-        
+        state.isEditingPositions = false;
         renderPitch();
     }
 

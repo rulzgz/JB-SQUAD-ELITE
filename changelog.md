@@ -1,6 +1,17 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.8.0] - 2026-04-12
+### Rediseño (Táctica Móvil Definitivo)
+- **Barra Táctica Móvil Nativa**: Nuevo componente `mobile-tactic-topbar` exclusivo para móvil dentro de la vista de tácticas. Muestra nombre y formación, con cada botón en fila individual y estética premium.
+- **Cero Scroll Doble**: `app-wrapper` y `view-tacticas` en `overflow: hidden` en móvil, eliminando las dobles barras de scroll.
+- **Cero Scroll Horizontal**: El campo ocupa el ancho exacto del viewport compensando el padding lateral del contenedor.
+- **Arquitectura Divergente**: En móvil se oculta el header global; en escritorio permanece intacto.
+
+## [v22.7.2] - 2026-04-12
+### Corregido (Rediseño Táctico)
+- **Controles de Dibujo**: Restaurados los botones de "Guardar Diseño" y "Restablecer" en el nuevo encabezado responsivo.
+
 ## [v22.7.1] - 2026-04-12
 ### Corregido (Hotfix)
 - **Error de Referencia**: Corregido el fallo `btnEditBoard is not defined` que bloqueaba la apertura del detalle de táctica.

@@ -462,6 +462,23 @@
 
                 <!-- Sub-vista: Campo Táctico (Visualización/Edición) -->
                 <div id="tacticas-field-view" class="tacticas-split-layout">
+
+                    <!-- ====== BARRA DE CONTROL SOLO PARA MÓVIL ====== -->
+                    <div id="mobile-tactic-topbar" class="mobile-tactic-topbar" style="display: none;">
+                        <div class="mobile-tactic-topbar__info">
+                            <span id="mobile-tactic-name" class="mobile-tactic-topbar__name">TÁCTICA</span>
+                            <span id="mobile-tactic-formation" class="mobile-tactic-topbar__formation">4-4-2</span>
+                        </div>
+                        <div class="mobile-tactic-topbar__actions">
+                            <button id="mobile-btn-edit-board" class="mobile-tactic-btn mobile-tactic-btn--ghost">✍️ DIBUJO</button>
+                            <button id="mobile-btn-reset-positions" class="mobile-tactic-btn mobile-tactic-btn--ghost" style="display: none;">🔄 RESTABLECER</button>
+                            <button id="mobile-btn-save-custom-positions" class="mobile-tactic-btn mobile-tactic-btn--gold" style="display: none;">💾 GUARDAR DISEÑO</button>
+                            <button id="mobile-btn-export-tactic" class="mobile-tactic-btn mobile-tactic-btn--ghost">📁 EXPORTAR</button>
+                            <button id="mobile-btn-save-tactic" class="mobile-tactic-btn mobile-tactic-btn--outline">GUARDAR EQUIPO</button>
+                        </div>
+                    </div>
+                    <!-- ====== / BARRA MÓVIL ====== -->
+
                     <div class="pitch-container" id="football-pitch">
                         <div class="pitch-lines">
                             <div class="pitch-midline"></div>
@@ -772,6 +789,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=22.7.1"></script>
+    <script src="app.js?v=22.8.0"></script>
 </body>
 </html>

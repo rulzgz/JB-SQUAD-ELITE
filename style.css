@@ -2608,41 +2608,136 @@ body.editing-tactic .tactical-slot {
     to { transform: rotate(360deg); }
 }
 
-/* --- OPTIMIZACIÓN TÁCTICA MÓVIL ELITE (v22.7.0) --- */
+/* --- OPTIMIZACIÓN TÁCTICA MÓVIL ELITE (v22.8.0) --- */
 @media (max-width: 1024px) {
-    /* Encabezado Compacto */
+
+    /* ==== BARRA TOPBAR TÁCTICA MÓVIL ==== */
+    .mobile-tactic-topbar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 0 12px 0;
+        border-bottom: 1px solid var(--glass-border);
+        margin-bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mobile-tactic-topbar__info {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+
+    .mobile-tactic-topbar__name {
+        font-size: 1.1rem;
+        font-weight: 900;
+        background: linear-gradient(90deg, var(--primary), #fff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+    }
+
+    .mobile-tactic-topbar__formation {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 2px;
+    }
+
+    .mobile-tactic-topbar__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .mobile-tactic-btn {
+        width: 100%;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        min-height: 44px; /* Área táctil mínima */
+    }
+
+    .mobile-tactic-btn--ghost {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--glass-border);
+        color: var(--primary);
+    }
+
+    .mobile-tactic-btn--ghost:hover, .mobile-tactic-btn--ghost:active {
+        background: rgba(240,165,0,0.1);
+        border-color: var(--primary);
+    }
+
+    .mobile-tactic-btn--gold {
+        background: linear-gradient(135deg, var(--primary) 0%, #d48a00 100%);
+        border: none;
+        color: #000;
+        box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .mobile-tactic-btn--outline {
+        background: rgba(240, 165, 0, 0.08);
+        border: 1px solid var(--primary);
+        color: var(--primary);
+    }
+
+    /* ==== OCULTAR HEADER GLOBAL AL ESTAR EN TÁCTICA ==== */
+    /* Los botones del header de escritorio no hace falta mostrarlos en móvil */
     #tactical-header-actions {
-        margin-left: 5px !important;
-        gap: 4px !important;
+        display: none !important;
+    }
+    #header-tactic-info {
+        display: none !important;
     }
 
-    #tactical-header-actions button {
-        padding: 5px 8px !important;
-        font-size: 0.6rem !important;
+    /* ==== CONTENEDOR SIN SCROLL ==== */
+    /* La app completa no debe hacer scroll doble. El campo es el rey. */
+    .app-wrapper {
+        overflow: hidden !important;
     }
 
-    #tactical-header-actions .btn-text {
-        display: none; /* Solo iconos en dispositivos muy estrechos */
+    #view-tacticas.active-view {
+        overflow: hidden !important;
+        height: 100%;
     }
 
-    /* Ajuste de Campo para evitar Scroll Horizontal */
+    /* ==== LAYOUT DEL CAMPO: CERO SCROLL HORIZONTAL ==== */
     .tacticas-split-layout {
         flex-direction: column;
-        padding: 0 !important;
-        overflow-x: hidden;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .pitch-container {
-        width: 100vw !important;
-        max-width: 100vw;
-        border-radius: 0;
-        margin: 0 !important;
-        aspect-ratio: 1 / 1.4;
-        border-left: none;
-        border-right: none;
+        width: calc(100% + 30px) !important; /* Extender para compensar el padding del app-wrapper */
+        max-width: calc(100% + 30px);
+        margin-left: -15px !important;
+        margin-right: -15px !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        flex: 1 1 0%;
+        min-height: 0;
+        height: auto !important;
+        max-height: none !important;
+        aspect-ratio: 1 / 1.35;
     }
 
-    /* Cartas Tácticas con Nombre Integrado */
+    /* ==== CARTAS TÁCTICAS CON NOMBRE INTEGRADO ==== */
     .tactical-slot {
         width: 15cqw !important;
         height: 20cqw !important;
@@ -2686,10 +2781,13 @@ body.editing-tactic .tactical-slot {
         display: none;
     }
 
+    /* ==== BANQUILLO COMPACTO ==== */
     .roster-panel {
         width: 100% !important;
-        margin-top: 20px;
-        border-left: none !important;
-        border-top: 1px solid var(--glass-border);
+        margin-top: 0 !important;
+        border-left: 1px solid var(--glass-border) !important;
+        border-top: 2px solid var(--primary);
+        max-height: 130px !important;
+        flex-shrink: 0;
     }
 }
