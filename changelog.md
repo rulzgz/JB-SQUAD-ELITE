@@ -1,15 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v23.0.0] - 2026-04-12
-### Añadido (Pixel-Perfect Matchday Overhaul)
-- **Ingeniería de Píxeles Absolutos**: Reconstrucción total de la exportación usando dimensiones fijas en píxeles. Elimina el desplazamiento lateral y las deformaciones visuales dependientes del dispositivo (Adiós a los bugs de `cqw` y `rem`).
-- **Sanitización Profunda de Clon**: El sistema ahora "limpia" quirúrgicamente el campo clonado, eliminando escalas, fuentes y estilos de UI dinámicos que causaban la descompensación de las cartas.
-- **Expansión y Centrado de Avatares**: Nuevo contenedor de imagen con `object-fit: cover` y centrado absoluto equilibrado. Las fotos se expanden para llenar la carta con elegancia, preservando la calibración de zoom del usuario.
-- **Arquitectura de Centrado Matemático**: El campo se posiciona ahora con coordenadas absolutas respecto al centro de la imagen 1080x1440, garantizando una alineación perfecta con el fondo.
-- **Tipografía Broadcast 4K**: Marcadores y nombres re-estilizados con tamaños fijos y degradados premium. Los nombres se muestran siempre en mayúsculas para un look de élite.
+## [v25.0.0] - 2026-04-12
+### Añadido (Bulletproof Image Coverage)
+- **Motor de Renderizado por Fondo (CSS Background)**: Migración total de etiquetas `<img>` a `background-image` en la exportación. Esta técnica garantiza que la imagen se expanda proporcionalmente (`cover`) cubriendo el 100% de la carta sin fallos de renderizado de `html2canvas`.
+- **Persistencia de Calibración 2.0**: Adaptada la lógica de zoom y desplazamiento del usuario al nuevo sistema de fondos, manteniendo la fidelidad del encuadre elegido.
+- **Cero Márgenes Internos**: Se ha forzado la cobertura total para eliminar los espacios negros accidentales que aparecían dentro de la carta.
 
-## [v22.10.0] - 2026-04-12
+## [v23.0.0] - 2026-04-12
 ### Rediseño (Táctica Móvil Definitivo)
 - **Barra Táctica Móvil Nativa**: Nuevo componente `mobile-tactic-topbar` exclusivo para móvil dentro de la vista de tácticas. Muestra nombre y formación, con cada botón en fila individual y estética premium.
 - **Cero Scroll Doble**: `app-wrapper` y `view-tacticas` en `overflow: hidden` en móvil, eliminando las dobles barras de scroll.
