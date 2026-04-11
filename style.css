@@ -2843,6 +2843,13 @@ body.editing-tactic .tactical-slot {
         max-height: 140px !important;
         flex-shrink: 0;
     }
+    
+    /* Evitar que las vistas se vean estrechas en escritorio */
+    .view {
+        width: 100% !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
 }
 
 /* ============================================================ */
@@ -2956,6 +2963,12 @@ body.editing-tactic .tactical-slot {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 15px;
     margin-bottom: 30px;
+}
+
+@media (min-width: 1024px) {
+    .team-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 .stat-card {

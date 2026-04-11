@@ -3302,8 +3302,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Escudo
         const crestDisplay = document.getElementById('team-crest-display');
+        const localCrest = localStorage.getItem(`jb_crest_${state.team.id}`);
+        
         if (state.team.crest_url) {
             crestDisplay.innerHTML = `<img src="${state.team.crest_url}" alt="Escudo">`;
+        } else if (localCrest) {
+            crestDisplay.innerHTML = `<img src="${localCrest}" alt="Escudo">`;
         } else {
             crestDisplay.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`;
         }
@@ -3338,6 +3342,10 @@ document.addEventListener('DOMContentLoaded', () => {
             membersListContainer.innerHTML = '<p style="text-align:center; opacity:0.5;">No se pudo cargar la lista.</p>';
             return;
         }
+
+        // ORDENAR POR RANGO: Manager (1) > Capitan (2) > Jugador (3)
+        const roleOrder = { 'manager': 1, 'capitan': 2, 'jugador': 3 };
+        members.sort((a, b) => (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99));
 
         document.getElementById('member-count-badge').textContent = `${members.length} MIEMBROS`;
         membersListContainer.innerHTML = '';
@@ -3437,7 +3445,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .eq('id', state.team.id);
 
         if (error) {
-            window.jbToast('Error al guardar escudo: ' + error.message, 'error');
+            console.warn(">>> [SQL ERROR] No se pudo guardar en Supabase (falta columna crest_url). Usando LocalStorage Fallback.");
+            // Error amigable y guardado local
+            localStorage.setItem(`jb_crest_${state.team.id}`, base64);
+            state.team.crest_url_local = base64; // Guardar temporalmente en el estado
+            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
+            window.jbToast('Escudo guardado localmente (Falta columna en DB)', 'info');
         } else {
             state.team.crest_url = base64;
             document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
