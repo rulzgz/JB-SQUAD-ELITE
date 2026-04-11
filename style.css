@@ -419,6 +419,27 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     box-shadow: 0 5px 15px var(--primary-glow);
 }
 
+.tactic-card-info {
+    flex: 1;
+}
+
+.tactic-card-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.active-badge {
+    background: var(--primary);
+    color: #000;
+    font-size: 0.55rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
 .tactic-card h3 {
     font-size: 1.2rem;
     margin-bottom: 5px;
@@ -3179,5 +3200,24 @@ body.editing-tactic .tactical-slot {
         justify-content: center !important;
         height: auto !important;
         min-height: 40px !important;
+    }
+
+    /* Tactic Card Mobile refinement v31.7.0 */
+    .tactic-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+        padding: 20px 15px !important;
+    }
+
+    .tactic-card-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 15px;
+    }
+
+    .tactic-card-info {
+        width: 100%;
     }
 }

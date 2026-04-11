@@ -1564,17 +1564,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
             
             card.innerHTML = `
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <h3 style="color: #fff; font-weight: 800; font-size: 0.9rem;">${tactic.name.toUpperCase()}</h3>
-                        ${tactic.isActive ? '<span class="active-badge" style="background: var(--primary); color: #000; font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; font-weight: 900; letter-spacing: 0.5px;">ACTIVA</span>' : ''}
+                <div class="tactic-card-info">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <h3 style="color: #fff; font-weight: 800; font-size: 1.1rem; margin: 0;">${tactic.name.toUpperCase()}</h3>
+                        ${tactic.isActive ? '<span class="active-badge">ACTIVA</span>' : ''}
                     </div>
-                    <p style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">FORMACIÓN: ${tactic.formation}</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px;">FORMACIÓN: ${tactic.formation}</p>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    ${isAdmin && !tactic.isActive ? `<button class="btn-activate-tactic" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 5px 10px; font-size: 0.65rem; border-radius: 4px; cursor: pointer; transition: 0.3s; font-weight: 700;">ACTIVAR</button>` : ''}
-                    ${isAdmin ? `<button class="btn-action btn-delete-tactic" style="color: #F44336; border-color: rgba(244,67,54,0.3);" title="Eliminar">🗑️</button>` : ''}
-                    <button class="btn-gold btn-open-tactic" style="width: auto; padding: 8px 15px; font-size: 0.75rem; letter-spacing: 1px;">ABRIR</button>
+                <div class="tactic-card-actions">
+                    ${isAdmin && !tactic.isActive ? `<button class="btn-activate-tactic" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.7rem; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700;">ACTIVAR</button>` : ''}
+                    ${isAdmin ? `<button class="btn-action btn-delete-tactic" style="color: #F44336; border-color: rgba(244,67,54,0.3); font-size: 1.2rem;" title="Eliminar">🗑️</button>` : ''}
+                    <button class="btn-gold btn-open-tactic" style="width: auto; padding: 10px 20px; font-size: 0.8rem; letter-spacing: 1px;">ABRIR</button>
                 </div>
             `;
             
