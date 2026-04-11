@@ -1014,6 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnBackToProfile.addEventListener('click', () => switchView('my-profile'));
         }
 
+        if (btnGoToAddPlayer) {
             btnGoToAddPlayer.addEventListener('click', () => {
                 if (state.userPlayer) {
                     viewPlayerProfileDetail(state.userPlayer.id);
