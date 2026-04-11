@@ -487,10 +487,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyRolePermissions() {
         const role = state.user.role || 'jugador';
         const isAdmin = role === 'manager' || role === 'capitan';
+        const isManager = role === 'manager';
         
         // Elementos que solo ven Admins (Manager/Capitán)
         document.querySelectorAll('[data-role-required="manager"]').forEach(el => {
-            el.style.display = isAdmin ? 'block' : 'none';
+            el.style.display = isManager ? 'block' : 'none';
         });
 
         // Asegurar visibilidad de botones de acción específicos (usando variables globales de scope)
@@ -507,10 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 spanEl.textContent = state.userPlayer ? 'EDITAR FICHA' : 'MI FICHA';
             }
         }
-
-
-
-        // Rol Badge removido del top header. Sekarang se maneja en el Dashboard de forma limpia.
     }
 
     function setupAuthHandlers() {
@@ -931,6 +928,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handleTacticViewDisplay();
         } else if (viewId === 'jornadas') {
             renderSessions();
+        } else if (viewId === 'mi-equipo') {
+            renderMiEquipoView();
         } else {
             if (headerTacticInfo) headerTacticInfo.style.display = 'none';
             if (btnSaveTactic) btnSaveTactic.style.display = 'none';
@@ -3288,6 +3287,161 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             // 4. Limpieza
             document.body.removeChild(wrapper);
+        }
+    }
+
+    // --- Lógica del Club "Mi Equipo" v31.0 ---
+    async function renderMiEquipoView() {
+        if (!state.team) return;
+        window.jbLoading.show('Sincronizando Club...');
+
+        // 1. Datos del Club
+        document.getElementById('mgmt-team-name').textContent = state.team.name.toUpperCase();
+        const foundationDate = new Date(state.team.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        document.getElementById('mgmt-team-foundation').textContent = `FUNDADO EL ${foundationDate}`;
+
+        // 2. Escudo
+        const crestDisplay = document.getElementById('team-crest-display');
+        if (state.team.crest_url) {
+            crestDisplay.innerHTML = `<img src="${state.team.crest_url}" alt="Escudo">`;
+        } else {
+            crestDisplay.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`;
+        }
+
+        // 3. Estadísticas Agregadas
+        let totalGoals = 0;
+        let totalAssists = 0;
+        state.players.forEach(p => {
+            totalGoals += (parseInt(p.stats?.official?.goals) || 0) + (parseInt(p.stats?.friendly?.goals) || 0);
+            totalAssists += (parseInt(p.stats?.official?.assists) || 0) + (parseInt(p.stats?.friendly?.assists) || 0);
+        });
+
+        document.getElementById('team-total-matches').textContent = state.sessions.length;
+        document.getElementById('team-total-goals').textContent = totalGoals;
+        document.getElementById('team-total-assists').textContent = totalAssists;
+        document.getElementById('team-total-members').textContent = state.players.length;
+
+        // 4. Lista de Miembros y Roles
+        await renderMembersList();
+        
+        window.jbLoading.hide();
+    }
+
+    async function renderMembersList() {
+        const membersListContainer = document.getElementById('team-members-list');
+        const { data: members, error } = await supabase
+            .from('memberships')
+            .select('role, user_id, profiles(full_name)')
+            .eq('team_id', state.team.id);
+
+        if (error || !members) {
+            membersListContainer.innerHTML = '<p style="text-align:center; opacity:0.5;">No se pudo cargar la lista.</p>';
+            return;
+        }
+
+        document.getElementById('member-count-badge').textContent = `${members.length} MIEMBROS`;
+        membersListContainer.innerHTML = '';
+
+        const isManager = state.user.role === 'manager';
+
+        members.forEach(m => {
+            const playerCard = state.players.find(p => p.user_id === m.user_id);
+            const avatar = playerCard ? AVATARS.find(av => av.id === (playerCard.avatarID || playerCard.avatar_id || 1)) : AVATARS[0];
+            const photo = playerCard?.photo_url;
+            
+            const row = document.createElement('div');
+            row.className = 'member-admin-row';
+            
+            row.innerHTML = `
+                <div class="member-admin-avatar">
+                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover;">` : (avatar ? avatar.svg : '')}
+                </div>
+                <div class="member-admin-info">
+                    <h4>${escapeHTML(m.profiles?.full_name?.toUpperCase() || 'ANÓNIMO')}</h4>
+                    <span class="member-role-badge role-${m.role}">${m.role.toUpperCase()}</span>
+                </div>
+                <div class="member-admin-actions">
+                    ${isManager && m.user_id !== state.user.auth.id ? `
+                        <select class="role-selector-elite" data-user-id="${m.user_id}">
+                            <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
+                            <option value="capitan" ${m.role === 'capitan' ? 'selected' : ''}>CAPITÁN</option>
+                            <option value="manager" ${m.role === 'manager' ? 'selected' : ''}>MANAGER</option>
+                        </select>
+                    ` : ''}
+                </div>
+            `;
+
+            if (isManager && m.user_id !== state.user.auth.id) {
+                const selector = row.querySelector('.role-selector-elite');
+                selector.onchange = async (e) => {
+                    const newRole = e.target.value;
+                    const confirmed = await window.jbConfirm(`¿Cambiar el rango de ${m.profiles.full_name.toUpperCase()} a ${newRole.toUpperCase()}?`);
+                    if (confirmed) {
+                        window.jbLoading.show('Actualizando rango...');
+                        await updateMemberRole(m.user_id, newRole);
+                        window.jbLoading.hide();
+                    } else {
+                        selector.value = m.role;
+                    }
+                };
+            }
+
+            membersListContainer.appendChild(row);
+        });
+    }
+
+    async function updateMemberRole(userId, newRole) {
+        const { error } = await supabase
+            .from('memberships')
+            .update({ role: newRole })
+            .eq('user_id', userId)
+            .eq('team_id', state.team.id);
+
+        if (error) {
+            window.jbToast('Error al actualizar: ' + error.message, 'error');
+        } else {
+            window.jbToast('Rango actualizado correctamente', 'success');
+            await renderMembersList();
+        }
+    }
+
+    // Configurar Handler de Escudo
+    const crestTrigger = document.getElementById('team-crest-trigger');
+    const crestInput = document.getElementById('team-crest-input');
+    
+    if (crestTrigger && crestInput) {
+        crestTrigger.onclick = () => {
+            if (state.user.role === 'manager') crestInput.click();
+            else window.jbToast('Solo el Manager puede cambiar el escudo.', 'error');
+        };
+        
+        crestInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const base64 = event.target.result;
+                    window.jbLoading.show('Subiendo Escudo...');
+                    await updateTeamCrest(base64);
+                    window.jbLoading.hide();
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+    }
+
+    async function updateTeamCrest(base64) {
+        const { error } = await supabase
+            .from('teams')
+            .update({ crest_url: base64 })
+            .eq('id', state.team.id);
+
+        if (error) {
+            window.jbToast('Error al guardar escudo: ' + error.message, 'error');
+        } else {
+            state.team.crest_url = base64;
+            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
+            window.jbToast('¡Escudo actualizado con éxito!', 'success');
         }
     }
 

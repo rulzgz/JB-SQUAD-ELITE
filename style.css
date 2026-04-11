@@ -2844,3 +2844,241 @@ body.editing-tactic .tactical-slot {
         flex-shrink: 0;
     }
 }
+
+/* ============================================================ */
+/* MI EQUIPO: DASHBOARD & GESTIÓN v31.0 */
+/* ============================================================ */
+
+.team-dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(23, 23, 23, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(240, 165, 0, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.team-crest-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.team-crest-container:hover {
+    transform: scale(1.05) rotate(3deg);
+}
+
+.team-crest-wrapper {
+    width: 100%;
+    height: 100%;
+    background: var(--card-bg);
+    border: 3px solid var(--primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.team-crest-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-crest-wrapper svg {
+    width: 60%;
+    height: 60%;
+    color: var(--primary);
+    opacity: 0.5;
+}
+
+.team-crest-container .edit-overlay {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 35px;
+    height: 35px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    border: 3px solid #111;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.team-crest-container:hover .edit-overlay {
+    opacity: 1;
+    transform: translateY(-5px);
+}
+
+.team-identity .glitch-text {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 20px rgba(240, 165, 0, 0.2);
+}
+
+.foundation-date {
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 3px;
+    opacity: 0.8;
+}
+
+/* Stats Grid */
+.team-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    border-color: rgba(240, 165, 0, 0.3);
+    background: rgba(240, 165, 0, 0.02);
+    transform: translateY(-5px);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+/* Members Panel */
+.member-management-panel {
+    padding: 25px;
+}
+
+.members-dynamic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.member-admin-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.member-admin-row:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+.member-admin-avatar {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(240, 165, 0, 0.2);
+}
+
+.member-admin-info h4 {
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.member-role-badge {
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.role-manager { background: rgba(240, 165, 0, 0.2); color: var(--primary); border: 1px solid var(--primary); }
+.role-capitan { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.role-jugador { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+
+.role-selector-elite {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+.role-selector-elite:hover {
+    border-color: var(--primary);
+}
+
+@media (max-width: 1023px) {
+    .team-dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 15px;
+    }
+    
+    .team-identity .glitch-text {
+        font-size: 1.6rem;
+    }
+    
+    .member-admin-row {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+    }
+    
+    .role-selector-elite {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 5px;
+    }
+}

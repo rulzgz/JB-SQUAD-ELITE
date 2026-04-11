@@ -632,6 +632,55 @@
                     </div>
                 </div>
             </section>
+            <!-- VIEW: Mi Equipo (Gestión de Club) v31.0 -->
+            <section id="view-mi-equipo" class="view" style="padding: 10px; max-width: 1200px; margin: 0 auto;">
+                <div class="team-dashboard-header fade-in">
+                    <div class="team-crest-container" id="team-crest-trigger" title="Cambiar Escudo">
+                        <div id="team-crest-display" class="team-crest-wrapper">
+                            <!-- SVG placeholder o Imagen cargada -->
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <input type="file" id="team-crest-input" accept="image/*" style="display: none;">
+                        <div class="edit-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+                    </div>
+                    <div class="team-identity">
+                        <h1 id="mgmt-team-name" class="glitch-text">MI CLUB</h1>
+                        <p id="mgmt-team-foundation" class="foundation-date">FUNDADO EL --/--/----</p>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="team-stats-grid fade-in">
+                    <div class="stat-card">
+                        <span class="stat-value" id="team-total-matches">0</span>
+                        <span class="stat-label">PARTIDOS</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="team-total-goals">0</span>
+                        <span class="stat-label">GOLES</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="team-total-assists">0</span>
+                        <span class="stat-label">ASISTENCIAS</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="team-total-members">0</span>
+                        <span class="stat-label">SQUAD</span>
+                    </div>
+                </div>
+
+                <!-- Member Management -->
+                <div class="member-management-panel card-elite fade-in">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 1.1rem; letter-spacing: 1px;">GESTIÓN DE PLANTILLA</h2>
+                        <span id="member-count-badge" class="badge-elite">0 MIEMBROS</span>
+                    </div>
+                    
+                    <div id="team-members-list" class="members-dynamic-list">
+                        <!-- Inyección vía JS -->
+                    </div>
+                </div>
+            </section>
         </main>
 
         <!-- Navegación Inferior Estilo App -->
@@ -659,6 +708,10 @@
                 <button class="nav-btn" data-view="tacticas">
                     <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
                     TÁCTICAS
+                </button>
+                <button class="nav-btn" data-view="mi-equipo" data-role-required="manager">
+                    <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="3"></circle></svg></span>
+                    MI EQUIPO
                 </button>
                 <button class="nav-btn" id="btn-global-logout" style="color: #F44336;">
                     <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>

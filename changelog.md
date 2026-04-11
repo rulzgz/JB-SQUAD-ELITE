@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v31.0.0] - 2026-04-12
+### Nuevo Módulo: Panel de Control "Mi Equipo"
+- **Gestión Administrativa**: Nueva sección exclusiva para Managers accesible desde el Navbar.
+- **Identidad del Club**: Implementación de subida de escudos personalizados para el equipo.
+- **Administración de Rangos**: Sistema de gestión de roles (Manager, Capitán, Jugador) con persistencia directa en Supabase.
+- **Dashboard de Estadísticas**: Resumen en tiempo real del desempeño global del equipo (Goles totales, asistencias y partidos).
+- **Control de Acceso**: El botón de gestión ahora utiliza el atributo `data-role-required="manager"`, restringiendo la administración solo a usuarios autorizados.
+
 ## [v30.0.0] - 2026-04-12
 ### Mejoras en Gestión Táctica
 - **Borrado Permanente en Cloud**: Se ha corregido el bug que permitía que las tácticas eliminadas reaparecieran al recargar. Ahora se ejecuta un comando `DELETE` físico en Supabase.
