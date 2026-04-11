@@ -1499,7 +1499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tacticalActions = document.getElementById('tactical-header-actions');
         if (tacticalActions) {
             tacticalActions.style.display = 'flex';
-            // Control interno de botones según rol
+            const btnEditBoard = document.getElementById('btn-edit-board');
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
             if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'flex' : 'none';
         }
