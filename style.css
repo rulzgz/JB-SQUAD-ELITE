@@ -2174,6 +2174,17 @@ body.editing-tactic .tactical-slot {
     overflow: hidden;
     background: #000 url('emerald_pitch.png') no-repeat center center;
     background-size: cover;
+    filter: contrast(110%) brightness(95%); /* Color grading elite */
+}
+
+/* Efecto Viñeteado Cinematográfico */
+.export-matchday-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+    z-index: 5;
 }
 
 .export-broadcast-container {
@@ -2216,12 +2227,13 @@ body.editing-tactic .tactical-slot {
 }
 
 .scorebug-team-name {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 950;
-    letter-spacing: -1px;
+    letter-spacing: -2px;
     margin: 0;
     text-transform: uppercase;
     color: #fff;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 .scorebug-subline {
@@ -2292,31 +2304,65 @@ body.editing-tactic .tactical-slot {
     display: none !important; /* Usar las líneas reales de emerald_pitch.png */
 }
 
-/* --- Realce de Cartas NATIVO en Exportación (v20.4.4) --- */
+/* --- Realce de Cartas NATIVO en Exportación (v20.4.5) --- */
 .export-matchday-wrapper .tactical-slot {
-    width: 16cqw !important; /* Nativamente más ancha (+30%) */
-    height: 21cqw !important; /* Nativamente más alta (+30%) */
-    transform: translate(-50%, -50%) !important; /* Sin distorsión de matrix */
+    width: 20cqw !important; /* Cartas más grandes y dominantes */
+    height: 26cqw !important; 
+    transform: translate(-50%, -50%) !important;
+    border-radius: 8px !important;
 }
 
 .export-matchday-wrapper .tactical-slot.filled {
-    box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(240, 165, 0, 0.25) !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.95), 0 0 40px rgba(240, 165, 0, 0.3) !important;
+    background: linear-gradient(135deg, rgba(15,15,15,0.98), rgba(0,0,0,1)) !important;
+    border: 2px solid rgba(240, 165, 0, 0.8) !important;
 }
 
-/* Escalado de textos para complementar la nueva anchura */
+/* Centrado y rediseño superior del avatar (v20.5.1) */
+.export-matchday-wrapper .player-card-img {
+    width: 100% !important;
+    height: 80% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: scale(1.25) !important; /* Zoom premium sin romper calibración interna */
+}
+
+.export-matchday-wrapper .tactical-slot.filled img, 
+.export-matchday-wrapper .tactical-slot.filled svg {
+    width: 100% !important;
+    height: 100% !important;
+    object-position: center bottom !important;
+}
+
+/* Escalado de textos para complementar la nueva anchura y evitar overflow */
 .export-matchday-wrapper .tactical-slot h4 {
-    font-size: 1.15rem !important;
-    margin-bottom: 2px !important;
+    font-size: 1.35rem !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, transparent 100%) !important;
+    padding: 15px 5px 6px 5px !important; /* Espacio para respirar el nombre */
 }
 
 .export-matchday-wrapper .dorsal-small {
-    font-size: 1.1rem !important;
+    font-size: 1.3rem !important;
+    top: 8px !important;
+    left: 8px !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
 }
 
 .export-matchday-wrapper .slot-pos {
-    font-size: 0.8rem !important;
-    padding: 3px 12px !important;
-    bottom: -25px !important; /* Adaptar caída para la etiqueta */
+    font-size: 0.95rem !important;
+    padding: 6px 16px !important;
+    bottom: -20px !important; /* Adaptar caída para la etiqueta de posición */
+    border-radius: 6px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
 }
 /* --- ESCRITORIO ÉLITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
 @media (min-width: 1024px) {

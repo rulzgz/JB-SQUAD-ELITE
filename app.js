@@ -3047,7 +3047,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="export-scorebug-banner">
                     <div class="scorebug-left">
                         <h1 class="scorebug-team-name">${escapeHTML(teamNameText)}</h1>
-                        <div class="scorebug-subline">JB-SQUAD <span style="color: var(--primary);">ELITE UNIT</span></div>
                     </div>
                     <div class="scorebug-right">
                         <div class="scorebug-matchday">MATCHDAY • ${escapeHTML(matchTimeText)}</div>
@@ -3067,8 +3066,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const pitchClone = pitch.cloneNode(true);
         pitchClone.id = 'pitch-clone-export';
         
-        // Limpieza de UI en el clon (v20.3.0)
+        // Limpieza de UI en el clon (v20.5.0)
         pitchClone.querySelectorAll('.slot-control-panel, .btn-delete-slot, #btn-modify-drawing').forEach(el => el.remove());
+        
+        // Estilizar slots vacíos para que sean menos intrusivos en la promo (v20.5.0)
+        pitchClone.querySelectorAll('.tactical-slot:not(.filled)').forEach(slot => {
+            slot.style.opacity = '0.3';
+            slot.style.border = '1px dashed rgba(255,255,255,0.2)';
+            const plus = slot.querySelector('.plus-icon');
+            if (plus) plus.remove();
+        });
         
         // Quitar estilos de control si los hubiera y forzar centrado
         pitchClone.style.transform = 'none';
@@ -3076,8 +3083,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         pitchAreaElement.appendChild(pitchClone);
         
-        // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes (v20.4.0)
-        await new Promise(r => setTimeout(r, 500));
+        // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes (v20.5.0)
+        await new Promise(r => setTimeout(r, 1000));
 
         try {
             const canvas = await html2canvas(wrapper, {

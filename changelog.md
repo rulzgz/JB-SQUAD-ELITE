@@ -1,6 +1,15 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.10.0] - 2026-04-12
+### Añadido (Matchday Export Elite Overhaul)
+- **Cinematic Export View**: Implementación de un efecto de viñeteado radial y corrección de color (grading) cinematográfico en la imagen exportada para un look de broadcast profesional.
+- **Cartas Tácticas Gigantes Pro**: Aumento del 40% en el tamaño de las cartas en la exportación, mejorando drásticamente el impacto visual y la legibilidad en redes sociales.
+- **Detección y Saneamiento de Publicidad**: Eliminación completa de textos promocionales internos ("Elite Unit") en la cabecera del Matchday.
+- **Escalado Inteligente de Avatar**: Nuevo sistema de zoom dinámico en el contenedor de imagen que preserva la calibración personalizada del usuario pero adaptado a la nueva escala mayor de la carta.
+- **Gestión Estética de Slots Vacíos**: Los slots sin jugador asignado ahora se muestran con una opacidad reducida (30%) y sin iconos de acción, manteniendo la limpieza visual de la composición táctica.
+- **Estabilidad de Renderizado**: Incrementado el delay de captura a 1000ms para garantizar que todas las texturas de césped y fotos pesadas se rendericen antes de generar el PNG.
+
 ## [v22.8.0] - 2026-04-12
 ### Rediseño (Táctica Móvil Definitivo)
 - **Barra Táctica Móvil Nativa**: Nuevo componente `mobile-tactic-topbar` exclusivo para móvil dentro de la vista de tácticas. Muestra nombre y formación, con cada botón en fila individual y estética premium.
