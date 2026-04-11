@@ -149,16 +149,15 @@
                 </div>
             </div>
             
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <!-- Botón para activar el Modo Diseño -->
-                <button id="btn-edit-board" title="Modificar posiciones de jugadores" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); padding: 10px 15px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase;">🖊️ Modificar Dibujo</button>
-
-                <!-- Botones de Edición Dinámica (Ocultos por defecto) -->
-                <button id="btn-reset-positions" title="Restablecer Formación" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 6px; cursor: pointer;">🔄</button>
-                <button id="btn-save-custom-positions" style="display: none; background: linear-gradient(135deg, var(--primary) 0%, #d48a00 100%); border: none; color: #000; padding: 10px 15px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px var(--primary-glow);">GUARDAR DISEÑO</button>
-
-                <button id="btn-export-tactic" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">📸 EXPORTAR</button>
-                <button id="btn-save-tactic" style="display: none; background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Guardar Equipo</button>
+            <!-- Controles Tácticos (v4.8.0) -->
+            <div id="tactical-header-actions" style="display: none; align-items: center; gap: 8px; margin-left: 15px;">
+                <button id="btn-edit-board" title="Modificar posiciones de jugadores" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); padding: 8px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 5px;">
+                    <span style="font-size: 1rem;">✍️</span> <span class="btn-text">DIBUJO</span>
+                </button>
+                <button id="btn-export-tactic" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <span style="font-size: 1rem;">📁</span> <span class="btn-text">EXPORTAR</span>
+                </button>
+                <button id="btn-save-tactic" style="background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">GUARDAR</button>
             </div>
         </header>
 
@@ -768,6 +767,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=22.6.0"></script>
+    <script src="app.js?v=22.7.0"></script>
 </body>
 </html>

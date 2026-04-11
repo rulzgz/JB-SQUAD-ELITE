@@ -917,6 +917,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tacticasList.style.display = 'block';
         tacticasInitial.style.display = 'none';
         tacticasField.style.display = 'none';
+        const tacticalActions = document.getElementById('tactical-header-actions');
+        if (tacticalActions) tacticalActions.style.display = 'none';
+        
         if (headerTacticInfo) headerTacticInfo.style.display = 'none';
         if (btnSaveTactic) btnSaveTactic.style.display = 'none';
         renderTacticsList();
@@ -1492,13 +1495,15 @@ document.addEventListener('DOMContentLoaded', () => {
         tacticasField.style.display = 'flex';
         
         if (headerTacticInfo) headerTacticInfo.style.display = 'flex';
-        if (btnSaveTactic) btnSaveTactic.style.display = 'block';
-        if (btnExportTactic) btnExportTactic.style.display = 'block';
+        
+        const tacticalActions = document.getElementById('tactical-header-actions');
+        if (tacticalActions) {
+            tacticalActions.style.display = 'flex';
+            // Control interno de botones según rol
+            const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
+            if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'flex' : 'none';
+        }
 
-        // Mostrar botón de editar pizarra (solo para managers/capitanes)
-        const btnEditBoard = document.getElementById('btn-edit-board');
-        const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
-        if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'block' : 'none';
         state.isEditingPositions = false; // Resetear modo al entrar
         
         renderPitch();

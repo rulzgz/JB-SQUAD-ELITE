@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.7.0] - 2026-04-12
+### Añadido (Rediseño Táctico Móvil Elite)
+- **Cartas "Integrated Name"**: Los nombres de los jugadores en móvil ahora se muestran en una banda inferior interna con degradado, eliminando solapamientos y mejorando la estética del campo.
+- **Header Responsivo**: Reorganización de los controles de táctica (Guardar, Exportar, Dibujo) en un contenedor compacto optimizado para pantallas táctiles.
+- **Scroll Cero**: Ajustes de viewport en el contenedor del campo para garantizar un ajuste perfecto al ancho de la pantalla en dispositivos móviles.
+- **Forzado de Caché**: Actualización a versión `?v=22.7.0` en el script principal.
+
 ## [v22.6.0] - 2026-04-12
 ### Corregido (Mitigación de Recursión RLS)
 - **Estrategia de Guardado Directo**: Sustitución de `upsert` por operaciones de `.update().eq('id', id)` dirigidas. Al evitar la lógica de "comprobación de existencia" de upsert, se reduce la probabilidad de disparar recursiones infinitas en las políticas de seguridad de Supabase.
