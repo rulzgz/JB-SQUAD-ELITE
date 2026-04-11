@@ -470,11 +470,30 @@
                             <span id="mobile-tactic-formation" class="mobile-tactic-topbar__formation">4-4-2</span>
                         </div>
                         <div class="mobile-tactic-topbar__actions">
-                            <button id="mobile-btn-edit-board" class="mobile-tactic-btn mobile-tactic-btn--ghost">✍️ DIBUJO</button>
-                            <button id="mobile-btn-reset-positions" class="mobile-tactic-btn mobile-tactic-btn--ghost" style="display: none;">🔄 RESTABLECER</button>
-                            <button id="mobile-btn-save-custom-positions" class="mobile-tactic-btn mobile-tactic-btn--gold" style="display: none;">💾 GUARDAR DISEÑO</button>
-                            <button id="mobile-btn-export-tactic" class="mobile-tactic-btn mobile-tactic-btn--ghost">📁 EXPORTAR</button>
-                            <button id="mobile-btn-save-tactic" class="mobile-tactic-btn mobile-tactic-btn--outline">GUARDAR EQUIPO</button>
+                            <!-- Botón Modificar Dibujo -->
+                            <button id="mobile-btn-edit-board" class="mobile-tactic-btn mobile-tactic-btn--edit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>DIBUJO</span>
+                            </button>
+                            <!-- Botones modo edición (ocultos por defecto) -->
+                            <button id="mobile-btn-reset-positions" class="mobile-tactic-btn mobile-tactic-btn--reset" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+                                <span>RESET</span>
+                            </button>
+                            <button id="mobile-btn-save-custom-positions" class="mobile-tactic-btn mobile-tactic-btn--save-design" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                <span>OK</span>
+                            </button>
+                            <!-- Exportar -->
+                            <button id="mobile-btn-export-tactic" class="mobile-tactic-btn mobile-tactic-btn--export">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>EXPORTAR</span>
+                            </button>
+                            <!-- Guardar Equipo -->
+                            <button id="mobile-btn-save-tactic" class="mobile-tactic-btn mobile-tactic-btn--save">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <span>GUARDAR</span>
+                            </button>
                         </div>
                     </div>
                     <!-- ====== / BARRA MÓVIL ====== -->
@@ -789,6 +808,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=22.8.0"></script>
+    <script src="app.js?v=22.9.0"></script>
 </body>
 </html>
