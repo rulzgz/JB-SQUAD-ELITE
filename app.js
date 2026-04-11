@@ -3094,7 +3094,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const scale = player.photo_scale || 1;
                     const posXVal = player.photo_pos_x || 0;
                     const posYVal = player.photo_pos_y || 0;
-                    photoHTML = `<img src="${player.photo_url}" style="transform: translate(${posXVal}px, ${posYVal}px) scale(${scale});">`;
+                    photoHTML = `<img src="${player.photo_url}" style="transform: translate(${posXVal}px, ${posYVal}px) scale(${scale}); transform-origin: center center; width: 100%; height: 100%; object-fit: cover;">`;
                 } else if (player.avatar_id) {
                     const avatar = AVATARS.find(a => a.id === player.avatar_id);
                     photoHTML = avatar ? avatar.svg : AVATARS[0].svg;

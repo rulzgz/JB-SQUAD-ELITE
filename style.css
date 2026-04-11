@@ -2210,14 +2210,14 @@ body.editing-tactic .tactical-slot {
     background: transparent;
 }
 
-/* Carta Táctica de Gran Formato */
+/* Carta Táctica de Gran Formato (Ajustada) */
 .tactical-slot-export {
     position: absolute;
-    width: 180px;
-    height: 240px;
+    width: 150px;
+    height: 205px;
     transform: translate(-50%, -50%);
     background: rgba(0,0,0,0.3);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2226,15 +2226,15 @@ body.editing-tactic .tactical-slot {
 
 .tactical-slot-export.filled {
     background: linear-gradient(135deg, #151515 0%, #000 100%);
-    border: 3px solid var(--primary);
-    box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 40px rgba(240, 165, 0, 0.2);
+    border: 2.5px solid var(--primary);
+    box-shadow: 0 35px 70px rgba(0,0,0,0.85), 0 0 30px rgba(240, 165, 0, 0.15);
     overflow: hidden;
 }
 
 /* Contenedor de Imagen de Expansión Total */
 .player-card-img-export {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 82%;
+    top: 0; left: 0; width: 100%; height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2244,9 +2244,8 @@ body.editing-tactic .tactical-slot {
 
 .player-card-img-export img,
 .player-card-img-export svg {
-    width: auto;
-    height: 110%;
-    min-width: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center top;
 }
@@ -2254,13 +2253,13 @@ body.editing-tactic .tactical-slot {
 /* Dorsal Premium */
 .dorsal-export {
     position: absolute;
-    top: 10px;
-    left: 12px;
-    font-size: 28px;
+    top: 8px;
+    left: 10px;
+    font-size: 24px;
     font-weight: 950;
     color: var(--primary);
     z-index: 10;
-    text-shadow: 0 0 15px rgba(0,0,0,1);
+    text-shadow: 0 0 12px rgba(0,0,0,1);
 }
 
 /* Banner de Nombre (Pixel-Solid) */
@@ -2269,15 +2268,15 @@ body.editing-tactic .tactical-slot {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 52px;
-    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.9) 70%, transparent 100%);
+    height: 44px;
+    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.95) 80%, transparent 100%);
     color: #fff;
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 950;
     text-align: center;
     text-transform: uppercase;
     margin: 0;
-    padding-top: 14px;
+    padding-top: 10px;
     z-index: 5;
     white-space: nowrap;
     overflow: hidden;
