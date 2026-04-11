@@ -994,7 +994,14 @@ document.addEventListener('DOMContentLoaded', () => {
         navButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const view = btn.getAttribute('data-view');
-                switchView(view);
+                
+                // Corrección: Si pulsamos "Mi Perfil", debemos forzar que se cargue MI jugador
+                // y no el último que hayamos consultado en la plantilla.
+                if (view === 'my-profile' && state.userPlayer) {
+                    viewPlayerProfileDetail(state.userPlayer.id);
+                } else {
+                    switchView(view);
+                }
             });
         });
 
