@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v28.0.0] - 2026-04-12
+### Solucionado (HTML5 Native Canvas Engine)
+- **Bypass de Bug en Motor de Captura**: Se ha reescrito por completo el pipeline de renderizado de las fotos para la exportación. En lugar de confiar en que `html2canvas` interprete correctamente el CSS (`object-fit`, `transform`, etc.) -el cual tiene bugs letales confirmados que causaban el efecto miniatura-, ahora usamos el estándar nativo de dibujo de HTML5 (`CanvasRenderingContext2D`).
+- **Píxeles Horneados (Baked Pixels)**: El nuevo motor descarga la imagen, aplica las matemáticas de escala y desplazamiento del usuario en la memoria de la tarjeta gráfica y dibuja un lienzo "plano" de exactamente 150x205px. `html2canvas` ahora solo tiene que hacer "copiar y pegar" de esta textura final, garantizando precisión absoluta.
+
 ## [v27.0.0] - 2026-04-12
 ### Solucionado (Pixel-Forced Img & Calibration Bug)
 - **Corrección de Variables de Calibración**: Se ha corregido un bug crítico de mapeo de datos donde el script de exportación intentaba leer `photo_pos_x` en lugar de la variable real guardada en base de datos (`photo_x`).

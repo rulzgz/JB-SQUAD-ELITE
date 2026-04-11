@@ -3071,11 +3071,85 @@ document.addEventListener('DOMContentLoaded', () => {
         const assignments = activeTactic.assignments || {};
         const customPositions = activeTactic.customPositions || {};
         
-        formationSlots.forEach(slotData => {
+        // 3. Función auxiliar para renderizar fotos nativamente en HTML5 Canvas (Bypass de bugs de html2canvas v28)
+        const renderPlayerPhotoToCanvas = async (player) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 150;
+            canvas.height = 205;
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '150px';
+            canvas.style.height = '205px';
+            const ctx = canvas.getContext('2d');
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+
+                img.onload = () => {
+                    if (player.photo_url) {
+                        // Matemáticas para simular object-fit: cover en canvas
+                        const imgRatio = img.width / img.height;
+                        const canvasRatio = canvas.width / canvas.height;
+                        let drawWidth, drawHeight, offsetX, offsetY;
+
+                        if (imgRatio > canvasRatio) {
+                            drawHeight = canvas.height;
+                            drawWidth = img.width * (canvas.height / img.height);
+                            offsetX = (canvas.width - drawWidth) / 2;
+                            offsetY = 0;
+                        } else {
+                            drawWidth = canvas.width;
+                            drawHeight = img.height * (canvas.width / img.width);
+                            offsetX = 0;
+                            offsetY = 0;
+                        }
+
+                        const scale = player.photo_scale || 1.0;
+                        const posXVal = player.photo_x || 0;
+                        const posYVal = player.photo_y || 0;
+
+                        ctx.save();
+                        // Mover origen al centro exacto para escalar como en CSS
+                        ctx.translate(canvas.width / 2, canvas.height / 2);
+                        ctx.translate(posXVal, posYVal);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+                        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                        ctx.restore();
+                    } else {
+                        // Es un SVG, forzar cobertura total pura
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    }
+                    resolve(canvas);
+                };
+
+                img.onerror = () => resolve(canvas); // Falla suave
+
+                if (player.photo_url) {
+                    img.src = player.photo_url;
+                } else {
+                    const avatar = player.avatar_id ? AVATARS.find(a => a.id === player.avatar_id) : AVATARS[0];
+                    let svgStr = avatar ? avatar.svg : AVATARS[0].svg;
+                    if (!svgStr.includes('xmlns=')) {
+                        svgStr = svgStr.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+                    }
+                    // Forzar medidas para el renderizado del SVG en Image
+                    if (!svgStr.includes('width=')) {
+                        svgStr = svgStr.replace('<svg ', '<svg width="150" height="205" ');
+                    }
+                    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+                }
+            });
+        };
+
+        const slotPromises = formationSlots.map(async slotData => {
             const slotEl = document.createElement('div');
             slotEl.className = 'tactical-slot-export';
             
-            // Posicionamiento (Priorizar customPositions si existen)
+            // Posicionamiento Intacto (Priorizar customPositions si existen)
             const posX = customPositions[slotData.id]?.x ?? slotData.x;
             const posY = customPositions[slotData.id]?.y ?? slotData.y;
             slotEl.style.left = `${posX}%`;
@@ -3087,35 +3161,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (player) {
                 slotEl.classList.add('filled');
                 
-                // Construcción manual de la carta premium
-                let photoHTML = '';
-                if (player.photo_url) {
-                    // Aplicar calibración del usuario (zoom/desplazamiento) - CORRECCIÓN DE VARIABLES
-                    const scale = player.photo_scale || 1;
-                    const posXVal = player.photo_x || 0;
-                    const posYVal = player.photo_y || 0;
-                    // v27.0.0: Renderizado duro por píxeles para evitar colapsos porcentuales en html2canvas
-                    photoHTML = `<img src="${player.photo_url}" style="position: absolute; top: 0; left: 0; width: 150px; height: 205px; object-fit: cover; object-position: center top; transform: translate(${posXVal}px, ${posYVal}px) scale(${scale}); transform-origin: center center;">`;
-                } else if (player.avatar_id) {
-                    const avatar = AVATARS.find(a => a.id === player.avatar_id);
-                    photoHTML = avatar ? avatar.svg : AVATARS[0].svg;
-                } else {
-                    photoHTML = AVATARS[0].svg;
-                }
-                
                 slotEl.innerHTML = `
-                    <div class="player-card-img-export">${photoHTML}</div>
+                    <div class="player-card-img-export"></div>
                     <div class="dorsal-export">${player.number || ''}</div>
                     <h4 class="name-export">${escapeHTML(player.name).toUpperCase()}</h4>
                     <div class="pos-badge-export">${slotData.pos}</div>
                 `;
+                
+                // Inject the heavy-duty pre-rendered Native Canvas
+                const photoCanvas = await renderPlayerPhotoToCanvas(player);
+                slotEl.querySelector('.player-card-img-export').appendChild(photoCanvas);
+                
             } else {
-                // Slot vacío: Solo la etiqueta de posición tenue
+                // Slot vacío
                 slotEl.innerHTML = `<div class="empty-pos-label">${slotData.pos}</div>`;
             }
             
-            pitchExport.appendChild(slotEl);
+            return slotEl;
         });
+        
+        // Wait for all canvases to bake, then append sequentially
+        const renderedSlots = await Promise.all(slotPromises);
+        renderedSlots.forEach(el => pitchExport.appendChild(el));
         
         pitchAreaElement.appendChild(pitchExport);
         
