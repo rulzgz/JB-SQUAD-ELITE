@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v30.0.0] - 2026-04-12
+### Mejoras en Gestión Táctica
+- **Borrado Permanente en Cloud**: Se ha corregido el bug que permitía que las tácticas eliminadas reaparecieran al recargar. Ahora se ejecuta un comando `DELETE` físico en Supabase.
+- **Sistema de Táctica Activa**: Implementación de un selector de táctica principal.
+  - **Badge "ACTIVA"**: Indicador visual claro para la táctica en uso por el equipo.
+  - **Botón "ACTIVAR"**: Permite a los Managers cambiar la táctica activa del club con un solo clic, sincronizando automáticamente el estado en la nube para todos los miembros.
+  - **Exclusividad**: El sistema asegura que solo una táctica puede estar marcada como activa por equipo por motivos de consistencia de datos.
+
 ## [v29.1.0] - 2026-04-12
 ### Corregido (Gestión de Perfiles)
 - **Modo Edición Amnésico**: Se ha corregido un bug crítico donde el modo edición siempre mostraba la foto del Manager al intentar editar a otro jugador.

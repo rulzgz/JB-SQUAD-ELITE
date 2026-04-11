@@ -851,6 +851,44 @@ document.addEventListener('DOMContentLoaded', () => {
         await supabase.from('sessions').delete().eq('id', sessionId);
     }
 
+    async function deleteTacticCloud(tacticId) {
+        if (!supabase || !state.team) return;
+        try {
+            const { error } = await supabase.from('tactics').delete().eq('id', tacticId);
+            if (error) throw error;
+        } catch (err) {
+            console.error(">>> [ERROR] deleteTacticCloud:", err.message);
+            window.jbToast('Error al eliminar de la nube: ' + err.message, 'error');
+        }
+    }
+
+    async function setActiveTacticInDB(tacticId) {
+        if (!supabase || !state.team) return;
+        try {
+            // 1. Desactivar todas las del equipo
+            await supabase.from('tactics')
+                .update({ is_active: false })
+                .eq('team_id', state.team.id);
+
+            // 2. Activar la seleccionada
+            const { error } = await supabase.from('tactics')
+                .update({ is_active: true })
+                .eq('id', tacticId);
+
+            if (error) throw error;
+
+            // 3. Actualizar estado local
+            state.savedTactics.forEach(t => {
+                t.isActive = (t.id === tacticId);
+            });
+            state.activeTacticId = tacticId;
+            
+        } catch (err) {
+            console.error(">>> [ERROR] setActiveTacticInDB:", err.message);
+            window.jbToast('Error al activar táctica:', 'error');
+        }
+    }
+
     function setupEventListeners() {
         // Mover los listeners aquí
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1512,20 +1550,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Ordenar alfabéticamente o por ID (más reciente último, preferimos más reciente primero)
+        // Ordenar alfabéticamente o por ID (más reciente primero)
         const displayTactics = [...state.savedTactics].reverse();
 
         displayTactics.forEach(tactic => {
             const card = document.createElement('div');
-            card.className = 'tactic-card';
+            card.className = 'tactic-card' + (tactic.isActive ? ' active-tactic-card' : '');
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
             
             card.innerHTML = `
                 <div style="flex: 1;">
-                    <h3 style="color: #fff; font-weight: 800; font-size: 0.9rem;">${tactic.name.toUpperCase()}</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="color: #fff; font-weight: 800; font-size: 0.9rem;">${tactic.name.toUpperCase()}</h3>
+                        ${tactic.isActive ? '<span class="active-badge" style="background: var(--primary); color: #000; font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; font-weight: 900; letter-spacing: 0.5px;">ACTIVA</span>' : ''}
+                    </div>
                     <p style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">FORMACIÓN: ${tactic.formation}</p>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
+                    ${isAdmin && !tactic.isActive ? `<button class="btn-activate-tactic" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 5px 10px; font-size: 0.65rem; border-radius: 4px; cursor: pointer; transition: 0.3s; font-weight: 700;">ACTIVAR</button>` : ''}
                     ${isAdmin ? `<button class="btn-action btn-delete-tactic" style="color: #F44336; border-color: rgba(244,67,54,0.3);" title="Eliminar">🗑️</button>` : ''}
                     <button class="btn-gold btn-open-tactic" style="width: auto; padding: 8px 15px; font-size: 0.75rem; letter-spacing: 1px;">ABRIR</button>
                 </div>
@@ -1533,14 +1575,28 @@ document.addEventListener('DOMContentLoaded', () => {
             
             card.querySelector('.btn-open-tactic').onclick = () => openPitchView(tactic.id);
             
+            const btnActivate = card.querySelector('.btn-activate-tactic');
+            if (btnActivate) {
+                btnActivate.onclick = async () => {
+                    await setActiveTacticInDB(tactic.id);
+                    renderTacticsList();
+                    window.jbToast('Táctica marcada como ACTIVA', 'success');
+                };
+                btnActivate.onmouseover = () => { btnActivate.style.borderColor = 'var(--primary)'; btnActivate.style.color = 'var(--primary)'; };
+                btnActivate.onmouseout = () => { btnActivate.style.borderColor = 'rgba(255,255,255,0.1)'; btnActivate.style.color = '#fff'; };
+            }
+
             if (isAdmin) {
                 card.querySelector('.btn-delete-tactic').onclick = async (e) => {
                     e.stopPropagation();
                     const agreed = await window.jbConfirm(`¿Eliminar la táctica ${tactic.name}?`);
                     if (agreed) {
+                        window.jbLoading.show('Eliminando...');
+                        await deleteTacticCloud(tactic.id);
                         state.savedTactics = state.savedTactics.filter(t => t.id !== tactic.id);
-                        await saveTacticsCloud();
+                        window.jbLoading.hide();
                         renderTacticsList();
+                        window.jbToast('Táctica eliminada correctamente', 'success');
                     }
                 };
             }
