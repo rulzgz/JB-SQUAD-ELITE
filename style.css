@@ -125,13 +125,17 @@ body {
         transform: none;
     }
 
+    .nav-label {
+        display: none !important;
+    }
+
     .nav-btn {
-        gap: 2px;
-        font-size: 0.65rem;
+        gap: 0 !important;
+        justify-content: center !important;
     }
 
     .nav-btn span.icon {
-        font-size: 1.1rem;
+        font-size: 1.4rem !important;
     }
 
     .app-wrapper {
@@ -232,6 +236,20 @@ body {
 
 .nav-btn.active {
     color: var(--primary);
+}
+
+#btn-global-logout {
+    color: var(--error);
+}
+
+#btn-global-logout.active {
+    color: var(--error);
+    filter: drop-shadow(0 0 8px var(--error-glow));
+}
+
+#btn-global-logout.active::after {
+    background: var(--error);
+    box-shadow: 0 0 10px var(--error);
 }
 
 .nav-btn.active::after {
