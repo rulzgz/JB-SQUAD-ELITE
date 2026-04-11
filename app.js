@@ -1016,14 +1016,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTeamHeader() {
         const teamNameLabel = document.getElementById('display-team-name');
-        const userWelcome = document.getElementById('display-user-welcome');
+        const userWelcome = document.getElementById('display-username'); // O el ID que corresponda
+        const userNameHeader = document.getElementById('display-user-name');
+        const teamCrestHeader = document.getElementById('header-crest-container');
         
-        const fullName = state.user.profile ? state.user.profile.full_name : 'Usuario Elite';
-        const teamName = state.team ? state.team.name : 'Mi Club';
+        if (state.team) {
+            if (teamNameLabel) teamNameLabel.textContent = state.team.name.toUpperCase();
+            
+            // Renderizar Escudo en Cabecera Global
+            if (teamCrestHeader) {
+                const crestSource = state.team.crest_url || localStorage.getItem(`jb_crest_${state.team.id}`);
+                if (crestSource) {
+                    teamCrestHeader.innerHTML = `<img src="${crestSource}" alt="Escudo">`;
+                } else {
+                    teamCrestHeader.innerHTML = '<span>🛡️</span>';
+                }
+            }
+        }
+        
+        if (state.user && state.user.profile) {
+            const fullName = state.user.profile.full_name || 'Usuario Elite';
+            if (userNameHeader) userNameHeader.textContent = fullName.toUpperCase();
+            if (userWelcome) userWelcome.textContent = fullName.split(' ')[0] || 'Capitán';
+        }
 
-        if (teamNameLabel) teamNameLabel.textContent = teamName.toUpperCase();
-        if (userWelcome) userWelcome.textContent = fullName.split(' ')[0] || 'Capitán';
-        
         const statsPlayers = document.getElementById('stats-total-players');
         if (statsPlayers) statsPlayers.textContent = state.players.length;
     }
@@ -3485,6 +3501,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
             window.jbToast('¡Escudo actualizado con éxito!', 'success');
         }
+        // NUEVO: Actualizar cabecera global al instante
+        updateTeamHeader();
     }
 
 });

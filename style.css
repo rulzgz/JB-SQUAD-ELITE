@@ -1274,10 +1274,48 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: var(--glass-bg);
     backdrop-filter: blur(10px);
     z-index: 1000;
+}
+
+.header-crest-container {
+    width: 36px;
+    height: 36px;
+    background: rgba(0,0,0,0.3);
+    border: 2px solid var(--glass-border);
+    border-radius: 10px;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px var(--primary-glow);
+    transition: all 0.3s ease;
+}
+
+.header-crest-container:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.header-crest-container img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+}
+
+.header-crest-container span {
+    font-size: 1.2rem;
+}
+
+.header-team-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#display-user-name {
+    margin-top: -2px;
+}    display: flex;
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease-out;
