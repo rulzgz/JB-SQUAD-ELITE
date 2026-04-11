@@ -752,9 +752,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function savePlayerCloud(player) {
         if (!supabase || !state.team) return;
         try {
-            const { error } = await supabase.from('players').upsert({
-                id: player.id,
-                team_id: state.team.id, // Requerido para integridad
+            const payload = {
+                team_id: state.team.id,
                 name: player.name,
                 console_id: player.consoleID,
                 avatar_id: player.avatarID,
@@ -766,8 +765,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 photo_x: player.photo_x,
                 photo_y: player.photo_y,
                 stats: player.stats || { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } }
-            });
+            };
+
+            // Solo enviar ID si es UUID (string largo con guiones). Si es numérico, omitimos para que Supabase genere UUID.
+            if (typeof player.id === 'string' && player.id.includes('-')) {
+                payload.id = player.id;
+            }
+
+            const { data, error } = await supabase.from('players').upsert(payload).select();
             if (error) throw error;
+            
+            // Sincronizar ID de vuelta si cambió
+            if (data && data[0]) player.id = data[0].id;
         } catch (err) {
             console.error(">>> [ERROR] savePlayerCloud:", err.message);
         }
@@ -776,15 +785,29 @@ document.addEventListener('DOMContentLoaded', () => {
     async function saveSessionCloud(session) {
         if (!supabase || !state.team) return;
         try {
-            const { error } = await supabase.from('sessions').upsert({
-                id: session.id,
-                team_id: state.team.id, // Requerido para integridad
+            const payload = {
+                team_id: state.team.id,
                 date: session.date,
                 status: session.status,
                 matches: session.matches,
                 mvp_id: session.mvpId
-            });
+            };
+
+            if (typeof session.id === 'string' && session.id.includes('-')) {
+                payload.id = session.id;
+            }
+
+            const { data, error } = await supabase.from('sessions').upsert(payload).select();
             if (error) throw error;
+
+            // Sincronizar ID de vuelta (CRÍTICO para evitar duplicados en el próximo upsert)
+            if (data && data[0]) {
+                const newUuid = data[0].id;
+                session.id = newUuid;
+                if (state.activeSession && (state.activeSession === session || state.activeSession.date === session.date)) {
+                    state.activeSession.id = newUuid;
+                }
+            }
         } catch (err) {
             console.error(">>> [ERROR] saveSessionCloud:", err.message);
         }
@@ -2460,7 +2483,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p.mvp_count === undefined) p.mvp_count = 0;
         };
 
-        // Actualizar estadísticas globales
+        // Usaremos un Set para identificar qué jugadores han cambiado para guardarlos UNA SOLA VEZ (Evitar recursión RLS)
+        const playersToSave = new Set();
+
+        // 1. Procesar eventos (Goles/Asistencias)
         for (let ev of currentMatch.events) {
             const scorer = state.players.find(p => p.id == ev.scorerId);
             const assistant = state.players.find(p => p.id == ev.assistantId);
@@ -2468,16 +2494,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (scorer) {
                 initStats(scorer);
                 scorer.stats[mType].goals++;
-                await savePlayerCloud(scorer);
+                playersToSave.add(scorer);
             }
             if (assistant) {
                 initStats(assistant);
                 assistant.stats[mType].assists++;
-                await savePlayerCloud(assistant);
+                playersToSave.add(assistant);
             }
         }
 
-        // PJ (Partidos Jugados) para la alineación activa
+        // 2. Procesar PJ (Partidos Jugados)
         const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         if (lastTactic) {
             const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
@@ -2485,9 +2511,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (assignedIds.includes(p.id.toString())) {
                     initStats(p);
                     p.stats[mType].matches++;
-                    await savePlayerCloud(p);
+                    playersToSave.add(p);
                 }
             }
+        }
+
+        // 3. Persistencia en la Nube optimizada (Secuencial para evitar saturar RLS)
+        for (let p of playersToSave) {
+            await savePlayerCloud(p);
         }
 
         state.activeSession.matches.push(currentMatch);

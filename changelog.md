@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.5.0] - 2026-04-12
+### Corregido (Sincronización Avanzada & UUID)
+- **Normalización de IDs**: Implementada lógica de limpieza de IDs. La aplicación ahora detecta IDs temporales (Timestamps) y permite que Supabase genere UUIDs válidos, sincronizándolos de vuelta a la app local tras el primer guardado.
+- **Optimizador de Persistencia**: Reescrita la función `finalizeMatch` para consolidar cambios de jugadores en memoria. Ahora se realiza un único guardado por jugador al finalizar el partido, mitigando errores de recursión en las políticas RLS de Supabase.
+- **Forzado de Caché**: Añadido parámetro de versión `?v=22.5.0` a la carga del script principal para asegurar el uso de la lógica corregida.
+
 ## [v22.4.0] - 2026-04-12
 ### Corregido (Persistencia & Estabilidad)
 - **Error de Renderizado Hotfix**: Corregido el fallo `TypeError: Cannot set properties of null` en la vista de Jornadas que impedía visualizar el resumen tras finalizar partidos.
