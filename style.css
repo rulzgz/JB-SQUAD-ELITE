@@ -2233,11 +2233,12 @@ body.editing-tactic .tactical-slot {
     position: absolute;
     top: 0; 
     left: 0; 
-    width: 100%; 
-    height: 100%;
+    width: 150px; 
+    height: 205px;
     background: #000;
     overflow: hidden;
     z-index: 1;
+    border-radius: 9px;
 }
 
 .player-card-img-export svg {
