@@ -3149,11 +3149,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const slotEl = document.createElement('div');
             slotEl.className = 'tactical-slot-export';
             
-            // Posicionamiento Intacto (Priorizar customPositions si existen)
+            // Posicionamiento Intacto por Calc (Priorizar customPositions si existen)
             const posX = customPositions[slotData.id]?.x ?? slotData.x;
             const posY = customPositions[slotData.id]?.y ?? slotData.y;
-            slotEl.style.left = `${posX}%`;
-            slotEl.style.top = `${posY}%`;
+            slotEl.style.left = `calc(${posX}% - 75px)`;
+            slotEl.style.top = `calc(${posY}% - 102.5px)`;
             
             const playerId = assignments[slotData.id];
             const player = playerId ? state.players.find(p => p.id === playerId) : null;
