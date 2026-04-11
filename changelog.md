@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.7.1] - 2026-04-12
+### Corregido (Hotfix)
+- **Error de Referencia**: Corregido el fallo `btnEditBoard is not defined` que bloqueaba la apertura del detalle de táctica.
+
 ## [v22.7.0] - 2026-04-12
 ### Añadido (Rediseño Táctico Móvil Elite)
 - **Cartas "Integrated Name"**: Los nombres de los jugadores en móvil ahora se muestran en una banda inferior interna con degradado, eliminando solapamientos y mejorando la estética del campo.
