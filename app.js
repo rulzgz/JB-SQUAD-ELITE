@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activeSession: null,
         activeTacticId: null,
         currentView: 'auth',
-        isEditingPositions: false // Nuevo: Estado para bloquear/desbloquear diseño dinámico
+        isEditingPositions: false, // Nuevo: Estado para bloquear/desbloquear diseño dinámico
+        editingPlayer: null // Nuevo: Para rastrear qué ficha se está editando (Propia o de compañero)
     };
 
     const FORMATIONS = {
@@ -1085,28 +1086,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 .map(s => s.value)
                 .filter(v => v !== "" && v !== primaryPosSelect.value);
 
+            const targetPlayer = state.editingPlayer || state.userPlayer;
+
             const newPlayer = {
-                user_id: state.user.auth.id,
+                user_id: targetPlayer ? (targetPlayer.user_id || targetPlayer.id) : state.user.auth.id,
                 team_id: state.team.id,
                 name: document.getElementById('playerName').value,
                 console_id: document.getElementById('consoleID').value,
                 dorsal: document.getElementById('dorsal').value,
                 primary_pos: primaryPosSelect.value,
                 secondary_pos: [...new Set(secondaryPositions)].slice(0, 3),
-                photo_url: currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null),
+                photo_url: currentPhotoBase64 || (targetPlayer ? targetPlayer.photo_url : null),
                 photo_scale: parseFloat(document.getElementById('photoScale')?.value || 1.0),
                 photo_x: parseInt(document.getElementById('photoX')?.value || 0),
                 photo_y: parseInt(document.getElementById('photoY')?.value || 0),
                 avatar_id: parseInt(document.getElementById('selected-avatar-id').value) || 1,
-                stats: state.userPlayer ? state.userPlayer.stats : { 
+                stats: targetPlayer ? targetPlayer.stats : { 
                     official: { matches: 0, goals: 0, assists: 0, mvps: 0 },
                     friendly: { matches: 0, goals: 0, assists: 0, mvps: 0 }
                 }
             };
 
-            // Si ya existe ficha, incluir el ID para actualizar (upsert)
-            if (state.userPlayer) {
-                newPlayer.id = state.userPlayer.id;
+            // Si estamos editando una ficha existente, incluir el ID
+            if (targetPlayer && targetPlayer.id) {
+                newPlayer.id = targetPlayer.id;
             }
 
             const { error: insErr } = await supabase.from('players').upsert(newPlayer);
@@ -2686,7 +2689,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlayerPreview() {
         const previewContainer = document.getElementById('live-player-preview');
         if (!previewContainer) return;
-        if (state.userPlayer) renderPlayerStats(state.userPlayer);
+        
+        const targetPlayerForStats = state.editingPlayer || state.userPlayer;
+        if (targetPlayerForStats) renderPlayerStats(targetPlayerForStats);
 
         const name = document.getElementById('playerName').value || 'TU NOMBRE';
         const dorsal = document.getElementById('dorsal').value || '00';
@@ -2698,8 +2703,9 @@ document.addEventListener('DOMContentLoaded', () => {
             photo_y: parseInt(document.getElementById('photoY')?.value || 0)
         });
         
-        // Prioridad: Foto recién subida > Foto guardada > Avatar
-        const photo = currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null);
+        // Prioridad: Foto recién subida > Foto del jugador en edición > Avatar
+        const targetPlayer = state.editingPlayer || state.userPlayer;
+        const photo = currentPhotoBase64 || (targetPlayer ? targetPlayer.photo_url : null);
         const avatarId = parseInt(document.getElementById('selected-avatar-id').value) || 1;
         const avatar = AVATARS.find(av => av.id === avatarId);
 
@@ -2797,7 +2803,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populatePlayerForm(player) {
-        if (!player) return;
+        if (!player) {
+            state.editingPlayer = null;
+            currentPhotoBase64 = null;
+            return;
+        }
+        
+        // Establecer estado de edición
+        state.editingPlayer = player;
+        currentPhotoBase64 = null; // Resetear carga temporal al abrir ficha nueva
+        
         document.getElementById('playerName').value = player.name || '';
         document.getElementById('consoleID').value = player.consoleID || player.console_id || '';
         document.getElementById('dorsal').value = player.dorsal || '';

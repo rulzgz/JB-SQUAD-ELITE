@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v29.1.0] - 2026-04-12
+### Corregido (Gestión de Perfiles)
+- **Modo Edición Amnésico**: Se ha corregido un bug crítico donde el modo edición siempre mostraba la foto del Manager al intentar editar a otro jugador.
+- **Estado `editingPlayer`**: Introducción de un estado de rastreo dedicado para desacoplar la ficha en edición del usuario activo.
+- **Persistencia Dinámica**: El motor de guardado ahora detecta automáticamente si se está editando una ficha ajena (vía Manager) y aplica los cambios (incluyendo nuevas fotos y ajustes de escala) al registro correcto sin afectar el perfil del administrador.
+- **Seguridad de Datos**: Limpieza automática de estados temporales de imagen al cambiar entre perfiles para evitar "leaks" visuales.
+
 ## [v29.0.0] - 2026-04-12
 ### Mejoras en Experiencia de Usuario (UX)
 - **Migración de Perfiles a Pantalla Completa**: Se ha eliminado el modal pop-up que se mostraba al pulsar sobre un jugador en la plantilla. Ahora, el sistema redirige dinámicamente a una vista inmersiva de pantalla completa (basada en el diseño de "Mi Perfil Elite").
