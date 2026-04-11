@@ -1437,16 +1437,55 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // ====== HANDLERS DUPLICADOS PARA BARRA MÓVIL ======
+        // ====== HANDLERS MÓVIL CON TOGGLE DE MODO DIBUJO ======
         const mBtnEdit = document.getElementById('mobile-btn-edit-board');
         const mBtnSave = document.getElementById('mobile-btn-save-custom-positions');
         const mBtnReset = document.getElementById('mobile-btn-reset-positions');
         const mBtnExport = document.getElementById('mobile-btn-export-tactic');
         const mBtnSaveTactic = document.getElementById('mobile-btn-save-tactic');
 
-        mBtnEdit?.addEventListener('click', () => btnEditBoard?.click());
-        mBtnSave?.addEventListener('click', () => btnSaveDesign?.click());
-        mBtnReset?.addEventListener('click', () => btnResetDesign?.click());
+        // Función para alternar entre modo normal y modo dibujo en móvil
+        function setMobileDrawMode(editing) {
+            if (!mBtnEdit) return;
+            if (editing) {
+                // Modo edición: mostrar ACEPTAR (✔) y CANCELAR (✗), ocultar el resto
+                mBtnEdit.style.display = 'none';
+                mBtnExport.style.display = 'none';
+                mBtnSaveTactic.style.display = 'none';
+                // Reutilizamos mBtnSave como ACEPTAR y mBtnReset como CANCELAR
+                mBtnSave.style.display = 'flex';
+                mBtnSave.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>ACEPTAR</span>`;
+                mBtnReset.style.display = 'flex';
+                mBtnReset.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>CANCELAR</span>`;
+            } else {
+                // Modo normal: restaurar botones y texto
+                mBtnEdit.style.display = 'flex';
+                mBtnExport.style.display = 'flex';
+                mBtnSaveTactic.style.display = 'flex';
+                mBtnSave.style.display = 'none';
+                mBtnReset.style.display = 'none';
+            }
+        }
+
+        // Al pulsar DIBUJO en móvil → activar modo edición
+        mBtnEdit?.addEventListener('click', () => {
+            btnEditBoard?.click(); // Activar lógica de escritorio (isEditingPositions, renderPitch, etc.)
+            setMobileDrawMode(true);
+        });
+
+        // ACEPTAR → guardar diseño y volver al modo normal
+        mBtnSave?.addEventListener('click', () => {
+            btnSaveDesign?.click();
+            setMobileDrawMode(false);
+        });
+
+        // CANCELAR → restablecer y volver al modo normal
+        mBtnReset?.addEventListener('click', () => {
+            btnResetDesign?.click();
+            setMobileDrawMode(false);
+        });
+
+        // EXPORTAR y GUARDAR EQUIPO → delegación directa
         mBtnExport?.addEventListener('click', () => btnExportTactic?.click());
         mBtnSaveTactic?.addEventListener('click', () => btnSaveTactic?.click());
     }
