@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v34.0.1] - 2026-04-12
+### Corregido (Hotfix)
+- **ReferenceError 'runClose'**: Solucionado un error crítico donde se hacía referencia a un nombre de función obsoleto al pulsar el botón "Cerrar y Alinear", impidiendo acceder a la pizarra táctica tras el cierre de una convocatoria.
+
 ## [v34.0.0] - 2026-04-12
 ### Añadido (Historial Táctico y Convocatorias v3)
 - **Persistencia Táctica en Nube**: Trackeo activo del `currentPollId` al pasar del modo "Convocatoria" al modo "Alineación". Al exportar o guardar una táctica (`exportTacticAsImage`), la app genera un snapshot de la formación y la guarda permanentemente como JSONB (`final_alignment`) en esa jornada específica dentro de la tabla `availability_polls`.

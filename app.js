@@ -4070,8 +4070,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbLoading.hide();
         };
 
-        btnAlign.onclick = () => runClose(true);
-        btnOnlyClose.onclick = () => runClose(false);
+        btnAlign.onclick = () => withAlignmentData(true);
+        btnOnlyClose.onclick = () => withAlignmentData(false);
         btnBack.onclick = () => dialog.style.display = 'none';
     };
     window.jbSharePoll = () => {
