@@ -44,8 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         activePoll: null, // Nuevo v31.9.0
         activeTacticId: null,
         currentView: 'auth',
-        isEditingPositions: false, // Nuevo: Estado para bloquear/desbloquear diseño dinámico
-        editingPlayer: null // Nuevo: Para rastrear qué ficha se está editando (Propia o de compañero)
+        isEditingPositions: false, 
+        editingPlayer: null,
+        // Contexto de alineación inteligente v33.0
+        alignmentMode: {
+            active: false,
+            voters: {} // userId -> status ('yes', 'no', 'late')
+        }
     };
 
     const FORMATIONS = {
@@ -1094,6 +1099,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const view = btn.getAttribute('data-view');
                 
+                // RESET: Si navegamos manualmente desde el menú, limpiamos el modo alineación de convocatoria
+                if (view === 'tacticas') state.alignmentMode.active = false;
+
                 // Corrección: Si pulsamos "Mi Perfil", debemos forzar que se cargue MI jugador
                 // y no el último que hayamos consultado en la plantilla.
                 if (view === 'my-profile' && state.userPlayer) {
@@ -1767,6 +1775,22 @@ document.addEventListener('DOMContentLoaded', () => {
             slotEl.style.left = `${customPos.x}%`;
             slotEl.style.top = `${customPos.y}%`;
             slotEl.dataset.slotId = slot.id;
+
+            // --- Lógica de Resaltado Alineación Inteligente (v33.0) ---
+            if (state.alignmentMode.active) {
+                const assignedPlayerId = activeTactic.assignments ? activeTactic.assignments[slot.id] : null;
+                const assignedPlayer = state.players.find(p => p.id === assignedPlayerId);
+                
+                if (assignedPlayer && assignedPlayer.userId) {
+                    const status = state.alignmentMode.voters[assignedPlayer.userId];
+                    if (status === 'yes') slotEl.classList.add('status-si');
+                    else if (status === 'late') slotEl.classList.add('status-late');
+                    else slotEl.classList.add('status-off');
+                } else if (assignedPlayerId) {
+                    // Si tiene asignación pero no hay voto (o no es usuario registrado)
+                    slotEl.classList.add('status-off');
+                }
+            }
 
             // BLOQUEO DE GESTIÓN: Si estamos editando posiciones, desactivar clics de cambio de jugador
             slotEl.onclick = (e) => {
@@ -3835,12 +3859,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sel) sel.style.display = sel.style.display === 'flex' ? 'none' : 'flex';
     };
     window.jbClosePoll = async (id) => {
-        const agreed = await window.jbConfirm('¿Seguro que quieres cerrar esta convocatoria? Ya no se podrán recibir más votos.');
-        if (agreed) {
-            await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
-            window.jbToast('Convocatoria cerrada y archivada', 'success');
-            renderAvailabilityPanel();
-        }
+        const dialog = document.getElementById('jb-poll-close-dialog');
+        const btnAlign = document.getElementById('btn-poll-close-align');
+        const btnOnlyClose = document.getElementById('btn-poll-close-only');
+        const btnBack = document.getElementById('btn-poll-close-back');
+
+        if (!dialog) return;
+        dialog.style.display = 'flex';
+
+        const runClose = async (withAlignment = false) => {
+            dialog.style.display = 'none';
+            window.jbLoading.show('Archivando convocatoria...');
+            
+            // Si vamos a alinear, capturamos los votos primero
+            if (withAlignment && state.activePoll) {
+                state.alignmentMode.active = true;
+                state.alignmentMode.voters = {};
+                state.activePoll.votes.forEach(v => {
+                    state.alignmentMode.voters[v.user_id] = v.vote;
+                });
+            }
+
+            const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
+            
+            if (error) {
+                window.jbToast('Error al cerrar: ' + error.message, 'error');
+            } else {
+                window.jbToast('Convocatoria cerrada y archivada.', 'success');
+                await renderAvailabilityPanel();
+                if (withAlignment) switchView('tacticas');
+            }
+            window.jbLoading.hide();
+        };
+
+        btnAlign.onclick = () => runClose(true);
+        btnOnlyClose.onclick = () => runClose(false);
+        btnBack.onclick = () => dialog.style.display = 'none';
     };
     window.jbSharePoll = () => {
         if (state.activePoll) sharePollWhatsApp(state.activePoll);
