@@ -1781,8 +1781,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const assignedPlayerId = activeTactic.assignments ? activeTactic.assignments[slot.id] : null;
                 const assignedPlayer = state.players.find(p => p.id === assignedPlayerId);
                 
-                if (assignedPlayer && assignedPlayer.userId) {
-                    const status = state.alignmentMode.voters[assignedPlayer.userId];
+                if (assignedPlayer && assignedPlayer.user_id) {
+                    const status = state.alignmentMode.voters[assignedPlayer.user_id.toString()];
                     if (status === 'yes') slotEl.classList.add('status-si');
                     else if (status === 'late') slotEl.classList.add('status-late');
                     else slotEl.classList.add('status-off');
@@ -2005,8 +2005,8 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'player-roster-card fade-in';
             
             // --- Resaltado Alineación Inteligente v33.1 ---
-            if (state.alignmentMode.active && player.userId) {
-                const status = state.alignmentMode.voters[player.userId];
+            if (state.alignmentMode.active && player.user_id) {
+                const status = state.alignmentMode.voters[player.user_id.toString()];
                 if (status === 'yes') card.classList.add('status-si');
                 else if (status === 'late') card.classList.add('status-late');
                 else card.classList.add('status-off');
@@ -3889,7 +3889,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.alignmentMode.active = true;
                 state.alignmentMode.voters = {};
                 state.activePoll.votes.forEach(v => {
-                    state.alignmentMode.voters[v.user_id] = v.vote;
+                    if (v.user_id) state.alignmentMode.voters[v.user_id.toString()] = v.vote;
                 });
 
                 // 2. Localizar y VACIAR la táctica activa
@@ -3913,12 +3913,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (withAlignment) {
                     const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
+                    // IMPORTANTE: Cambiamos a la vista de tácticas global primero
+                    switchView('tacticas');
+                    
                     if (tacticId) {
                         openPitchView(tacticId);
-                        renderPitch();
-                        renderRosterPanel();
-                    } else {
-                        switchView('tacticas');
                     }
                 }
             }
