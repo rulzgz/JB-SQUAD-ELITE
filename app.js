@@ -3585,7 +3585,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .eq('status', 'open')
             .order('created_at', { ascending: false })
             .limit(1)
-            .single();
+            .maybeSingle();
 
         if (error && error.code !== 'PGRST116') console.error('Error poll:', error);
         return data || null;
@@ -3594,8 +3594,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPollVotes(pollId) {
         const { data, error } = await supabase
             .from('availability_votes')
-            .select('*, profiles:user_id(id, username, avatar_url, primary_pos)')
+            .select('*, profiles(id, full_name, avatar_url)')
             .eq('poll_id', pollId);
+
 
         if (error) console.error('Error votes:', error);
         return data || [];
@@ -3612,13 +3613,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .from('availability_polls')
             .insert([{
                 team_id: state.team.id,
-                created_by: state.user.id,
+                created_by: state.user.auth.id,
                 title: title,
                 scheduled_time: scheduledTime,
                 status: 'open'
             }])
             .select()
-            .single();
+            .maybeSingle();
 
         if (error) {
             window.jbToast('Error al crear: ' + error.message, 'error');
@@ -3637,7 +3638,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .from('availability_votes')
             .upsert([{
                 poll_id: state.activePoll.id,
-                user_id: state.user.id,
+                user_id: state.user.auth.id,
                 vote: vote,
                 minutes_late: minutes,
                 voted_at: new Date().toISOString()
@@ -3676,7 +3677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const votes = await fetchPollVotes(poll.id);
-        const myVote = votes.find(v => v.user_id === state.user?.id);
+        const myVote = votes.find(v => v.user_id === state.user.auth.id);
         
         const yesVotes = votes.filter(v => v.vote === 'yes');
         const lateVotes = votes.filter(v => v.vote === 'late');
@@ -3751,7 +3752,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const style = player.avatar_url ? `style="background-image: url('${player.avatar_url}');"` : '';
         const lateLabel = vote.vote === 'late' ? `<span class="late-tag">+${vote.minutes_late}m</span>` : '';
         return `
-            <div class="voter-avatar-mini" ${style} title="${player.username} (${player.primary_pos})">
+            <div class="voter-avatar-mini" ${style} title="${player.full_name}">
                 ${lateLabel}
             </div>
         `;
@@ -3830,7 +3831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const votes = await fetchPollVotes(poll.id);
-        const myVote = votes.find(v => v.user_id === state.user.id);
+        const myVote = votes.find(v => v.user_id === state.user.auth.id);
         
         if (!myVote) {
             if (navPollBadge) navPollBadge.style.display = 'block';
