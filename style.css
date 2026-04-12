@@ -2953,17 +2953,13 @@ body.editing-tactic .tactical-slot {
     /* Evitar que las vistas se vean estrechas en escritorio */
     .view {
         width: 100% !important;
-        max-width: 1200px !important;
-        margin: 0 auto !important;
-    }
-
-    /* Expansión Selectiva: Solo Mi Equipo v31.3.0 */
-    #view-mi-equipo {
-        max-width: 100% !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
+        max-width: 100% !important; /* Estándar Elite: Expansión total en escritorio */
+        margin: 0 !important;
+        padding: 40px 20px !important;
     }
 }
+
+
 
 /* ============================================================ */
 /* MI EQUIPO: DASHBOARD & GESTIÓN v31.0 */
@@ -3472,14 +3468,6 @@ body.editing-tactic .tactical-slot {
 
 /* Ajustes para el contenedor de historial en escritorio */
 @media (min-width: 1024px) {
-    #view-convocatorias {
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding-top: 40px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-    
     #polls-history-container {
         margin-top: 50px;
         padding: 0 40px;

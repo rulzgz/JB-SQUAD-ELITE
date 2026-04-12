@@ -20,7 +20,7 @@ Este archivo define la personalidad y las reglas de operación para Antigravity 
     -   **Tipografía Adaptable**: Asegurar legibilidad sin necesidad de zoom, usando unidades relativas y espaciado generoso.
     -   **Validación Estricta**: Cada nueva funcionalidad debe ser verificada primero en un ancho de viewport móvil (360px-430px) antes de optimizar para escritorio.
 6.  **Cero Modales Nativos**: Queda estrictamente prohibido el uso de `window.alert`, `window.confirm` o sus equivalentes nativos del navegador. Cualquier requerimiento de confirmación debe resolverse visualmente con la UI nativa configurada en el sistema mediante promesas (ej. `window.jbConfirm`).
-7.  **Arquitectura de Diseño Divergente (Desktop vs Mobile)**: Se prohíbe el uso de diseños "estirados". Si una funcionalidad requiere una disposición distinta para brillar en escritorio (ej: paneles divididos, multi-columnas), se debe implementar una estructura divergente mediante Media Queries `@media (min-width: 1024px)`, tratando cada plataforma como una experiencia independiente pero conectada.
+7.  **Arquitectura de Diseño Divergente (Desktop vs Mobile)**: Se prohíbe el uso de diseños "estirados". En la versión **Web/Desktop**, todas las vistas deben ocupar el **100% del ancho disponible** (sin límites de 1200px) para maximizar el layout Élite. En móvil, se mantiene el diseño vertical optimizado. Toda nueva funcionalidad debe tratarse con Media Queries `@media (min-width: 1024px)`.
 8.  **Despliegue Continuo (Git Push)**: Tras realizar y guardar cambios significativos en la funcionalidad o interfaz, el agente DEBE ejecutar un `git push` al repositorio. Esto garantiza que el usuario pueda visualizar los cambios en tiempo real en el entorno desplegado.
 
 ## Objetivos de Diseño
