@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v31.8.4] - 2026-04-12
+### Ajustado (Optimización Mobile Viewport)
+- **Barra de Scroll Premium**: Se ha forzado globalmente la ocultación visual de la barra de scroll amarilla (`::-webkit-scrollbar`) en dispositivos móviles, ya que afeaba la experiencia táctil cruzando el campo táctico. Se mantiene el desplazamiento fluido nativo sin rastro visual.
+- **Centrado de Extremos (MI/MD)**: Se han modificado las coordenadas nativas en formaciones anchas (3-5-2, 3-4-1-2, 3-1-4-2). Los extremos y medios por banda se han acercado un `4%` más hacia el centro del campo para evitar que las tarjetas de los jugadores queden cortadas por los bordes laterales de la pantalla de los teléfonos.
+
 ## [v31.8.3] - 2026-04-12
 ### Corregido (Persistencia Botones Tácticos)
 - **Ocultación global en Desktop**: Se ha arreglado un bug donde los botones de "DIBUJO" y "EXPORTAR" de la cabecera en escritorio se quedaban visibles ("clavados") al navegar hacia otras secciones de la aplicación (Inicio, Jornadas, Plantilla, etc.). Ya se limpian correctamente al cambiar de vista.

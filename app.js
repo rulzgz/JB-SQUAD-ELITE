@@ -65,13 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'GK', pos: 'POR', x: 50, y: 92 },
             { id: 'DFC1', pos: 'DFC', x: 75, y: 68 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 68 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 68 },
             { id: 'MCD1', pos: 'MCD', x: 68, y: 51 }, { id: 'MCD2', pos: 'MCD', x: 32, y: 51 },
-            { id: 'MD', pos: 'MD', x: 90, y: 34 }, { id: 'MC', pos: 'MC', x: 50, y: 36 }, { id: 'MI', pos: 'MI', x: 10, y: 34 },
+            { id: 'MD', pos: 'MD', x: 86, y: 34 }, { id: 'MC', pos: 'MC', x: 50, y: 36 }, { id: 'MI', pos: 'MI', x: 14, y: 34 },
             { id: 'DC1', pos: 'DC', x: 62, y: 15 }, { id: 'DC2', pos: 'DC', x: 38, y: 15 }
         ],
         '3-4-1-2': [
             { id: 'GK', pos: 'POR', x: 50, y: 92 },
             { id: 'DFC1', pos: 'DFC', x: 75, y: 72 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 72 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 72 },
-            { id: 'MD', pos: 'MD', x: 88, y: 51 }, { id: 'MC1', pos: 'MC', x: 62, y: 51 }, { id: 'MC2', pos: 'MC', x: 38, y: 51 }, { id: 'MI', pos: 'MI', x: 12, y: 51 },
+            { id: 'MD', pos: 'MD', x: 86, y: 51 }, { id: 'MC1', pos: 'MC', x: 62, y: 51 }, { id: 'MC2', pos: 'MC', x: 38, y: 51 }, { id: 'MI', pos: 'MI', x: 14, y: 51 },
             { id: 'MCO', pos: 'MCO', x: 50, y: 32 },
             { id: 'DC1', pos: 'DC', x: 62, y: 14 }, { id: 'DC2', pos: 'DC', x: 38, y: 14 }
         ],
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'GK', pos: 'POR', x: 50, y: 92 },
             { id: 'DFC1', pos: 'DFC', x: 75, y: 78 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 78 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 78 },
             { id: 'MCD', pos: 'MCD', x: 50, y: 62 },
-            { id: 'MD', pos: 'MD', x: 90, y: 44 }, { id: 'MC1', pos: 'MC', x: 65, y: 44 }, { id: 'MC2', pos: 'MC', x: 35, y: 44 }, { id: 'MI', pos: 'MI', x: 10, y: 44 },
+            { id: 'MD', pos: 'MD', x: 86, y: 44 }, { id: 'MC1', pos: 'MC', x: 65, y: 44 }, { id: 'MC2', pos: 'MC', x: 35, y: 44 }, { id: 'MI', pos: 'MI', x: 14, y: 44 },
             { id: 'DC1', pos: 'DC', x: 62, y: 16 }, { id: 'DC2', pos: 'DC', x: 38, y: 16 }
         ]
     };

@@ -2743,10 +2743,15 @@ body.editing-tactic .tactical-slot {
     .app-wrapper {
         overflow-y: auto !important;
         overflow-x: hidden !important;
+        -ms-overflow-style: none; /* IE y Edge */
+        scrollbar-width: none;    /* Firefox */
     }
-    /* Ocultar scrollbar visualmente pero mantener funcionalidad */
-    .app-wrapper::-webkit-scrollbar { display: none; }
-    .app-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Ocultar scrollbar visualmente en todo el viewport móvil pero mantener funcionalidad */
+    *::-webkit-scrollbar { 
+        display: none !important; 
+        width: 0 !important;
+    }
 
     #view-tacticas.active-view {
         overflow: visible !important;
