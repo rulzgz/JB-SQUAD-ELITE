@@ -3442,10 +3442,24 @@ body.editing-tactic .tactical-slot {
         grid-column: span 3 !important;
     }
 
-    /* Elevar cabecera Convocatorias */
+    /* Elevar cabecera Convocatorias - Ajuste Extremo */
+    #view-convocatorias {
+        padding-top: 5px !important;
+    }
+
     #view-convocatorias .profile-header-flex {
-        margin-top: -10px !important;
-        margin-bottom: 1rem !important;
+        margin-top: -25px !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Forzar tarjeta al 100% ancho móvil */
+    .poll-active-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 15px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
     }
 
     /* Botón Nueva más ancho, bajo y centrado */
@@ -3465,8 +3479,21 @@ body.editing-tactic .tactical-slot {
         display: none !important;
     }
 
+    /* Botones de Voto al 100% de ancho */
+    .poll-vote-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+
+    .btn-vote {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
     .btn-vote.vote-late {
         grid-column: span 2 !important;
+        width: 100% !important;
         padding: 12px !important;
         justify-content: center !important;
         font-size: 0.75rem !important;
