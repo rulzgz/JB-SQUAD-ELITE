@@ -170,6 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBackToTacticsList = document.getElementById('btn-back-to-tactics-list');
     const btnSaveTactic = document.getElementById('btn-save-tactic');
     const btnExportTactic = document.getElementById('btn-export-tactic');
+    const btnSavePollAlignment = document.getElementById('btn-save-poll-alignment');
+    const mobileBtnSavePollAlignment = document.getElementById('mobile-btn-save-poll-alignment');
     const savedTacticsList = document.getElementById('saved-tactics-list');
     const newTacticNameInput = document.getElementById('newTacticName');
 
@@ -1434,6 +1436,41 @@ document.addEventListener('DOMContentLoaded', () => {
             handleTacticViewDisplay();
         });
 
+        if (btnSavePollAlignment) btnSavePollAlignment.addEventListener('click', savePollSnapshot);
+        if (mobileBtnSavePollAlignment) mobileBtnSavePollAlignment.addEventListener('click', savePollSnapshot);
+
+        async function savePollSnapshot() {
+            if (!state.alignmentMode.active || !state.alignmentMode.currentPollId) return;
+            const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+            if (!activeTactic) return;
+
+            window.jbLoading.show('Guardando alineación histórica...');
+            try {
+                // Sincronizar la táctica con supabase (banquillo)
+                await saveTacticsCloud();
+
+                const snapshot = {
+                    tactic_id: state.activeTacticId,
+                    formation: activeTactic.formation,
+                    assignments: activeTactic.assignments
+                };
+                const { error } = await supabase.from('availability_polls').update({ final_alignment: snapshot }).eq('id', state.alignmentMode.currentPollId);
+                if (error) throw error;
+                
+                // Limpiar modo alineación
+                state.alignmentMode.active = false;
+                state.alignmentMode.currentPollId = null;
+                
+                window.jbToast('Jornada archivada con éxito', 'success');
+                switchView('jornadas'); // Redirigir a jornadas
+            } catch (err) {
+                console.error(">>> [ERROR] Falló el guardado del snapshot:", err);
+                window.jbToast('Error al guardar registro', 'error');
+            }            
+            window.jbLoading.hide();
+        }
+
+
         // Exportar Táctica (v4.8.0)
         btnExportTactic.addEventListener('click', () => {
             exportTimeModal.style.display = 'flex';
@@ -1725,6 +1762,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 tacticalActions.style.display = 'flex';
                 const btnEditBoard = document.getElementById('btn-edit-board');
                 if (btnEditBoard) btnEditBoard.style.display = isAdmin ? 'flex' : 'none';
+                
+                if (state.alignmentMode.active) {
+                    if (btnSaveTactic) btnSaveTactic.style.display = 'none';
+                    if (btnSavePollAlignment) btnSavePollAlignment.style.display = 'block';
+                } else {
+                    if (btnSaveTactic) btnSaveTactic.style.display = 'flex';
+                    if (btnSavePollAlignment) btnSavePollAlignment.style.display = 'none';
+                }
             }
         } else {
             // En móvil: sincronizar barra táctica exclusiva
@@ -1733,12 +1778,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const mBtnReset = document.getElementById('mobile-btn-reset-positions');
             const mBtnExport = document.getElementById('mobile-btn-export-tactic');
             const mBtnSaveTactic = document.getElementById('mobile-btn-save-tactic');
+            const mBtnSavePoll = document.getElementById('mobile-btn-save-poll-alignment');
             
             if (mBtnEdit) mBtnEdit.style.display = isAdmin ? 'flex' : 'none';
             if (mBtnSave) mBtnSave.style.display = 'none';
             if (mBtnReset) mBtnReset.style.display = 'none';
             if (mBtnExport) mBtnExport.style.display = 'flex';
-            if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'flex';
+            
+            if (state.alignmentMode.active) {
+                if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'none';
+                if (mBtnSavePoll) mBtnSavePoll.style.display = 'flex';
+            } else {
+                if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'flex';
+                if (mBtnSavePoll) mBtnSavePoll.style.display = 'none';
+            }
             
             syncMobileTopbar(activeTactic);
         }
@@ -3267,21 +3320,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // --- Persistencia Táctica vinculada a la jornada (v34.0) ---
-        if (state.alignmentMode.active && state.alignmentMode.currentPollId) {
-            console.log(">>> [LOG] Modo alineación detectado. Guardando snapshot en el historial...");
-            try {
-                const snapshot = {
-                    tactic_id: state.activeTacticId,
-                    formation: activeTactic.formation,
-                    assignments: activeTactic.assignments
-                };
-                await supabase.from('availability_polls').update({ final_alignment: snapshot }).eq('id', state.alignmentMode.currentPollId);
-                window.jbToast('Alineación guardada en el historial de la jornada', 'success');
-            } catch (snapErr) {
-                console.error(">>> [ERROR] Falló el guardado del snapshot:", snapErr);
-            }
-        }
 
         document.body.appendChild(wrapper);
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');

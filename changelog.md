@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v34.1.0] - 2026-04-12
+### Añadido (Botones de Cierre de Jornada Nativos)
+- **Cerrar Jornada Contextual**: Implementación de botones dedicados ("ALINEAR" en Móvil y "✔️ CERRAR JORNADA" en PC) en la pizarra táctica. 
+- **Ocultación Dinámica**: Estos botones son inteligentes: sólo aparecen si el usuario accede a la pizarra táctica desde el flujo de "Cerrar Convocatoria" (`alignmentMode`). En este estado específico, el botón clásico "GUARDAR" de tácticas base se oculta para no generar confusión, garantizando que el usuario cierre el proceso guardando la jornada completa en la nube (Snapshot) de manera limpia y visual.
+
 ## [v34.0.1] - 2026-04-12
 ### Corregido (Hotfix)
 - **ReferenceError 'runClose'**: Solucionado un error crítico donde se hacía referencia a un nombre de función obsoleto al pulsar el botón "Cerrar y Alinear", impidiendo acceder a la pizarra táctica tras el cierre de una convocatoria.
