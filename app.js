@@ -3706,6 +3706,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const votes = await fetchPollVotes(poll.id);
+        state.activePoll.votes = votes; // Sincronizamos votos con el estado para el cierre
         const myVote = votes.find(v => v.user_id === state.user.auth.id);
         
         const yesVotes = votes.filter(v => v.vote === 'yes');
@@ -3872,7 +3873,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbLoading.show('Archivando convocatoria...');
             
             // Si vamos a alinear, capturamos los votos primero
-            if (withAlignment && state.activePoll) {
+            if (withAlignment && state.activePoll && state.activePoll.votes) {
                 state.alignmentMode.active = true;
                 state.alignmentMode.voters = {};
                 state.activePoll.votes.forEach(v => {
