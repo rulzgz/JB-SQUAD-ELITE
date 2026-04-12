@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v32.0.8] - 2026-04-12
+### Mejorado (Navigation & UX)
+- **Nueva Iconografía**: Actualizado el icono de **VOTAR** en la navegación para distinguirlo visualmente de la sección de Plantilla.
+- **Optimización Mobile NavBar**: Eliminado el botón de "Salir" del navbar inferior en dispositivos móviles para reducir el ruido visual y evitar clics accidentales.
+- **Reubicación de Logout**: El botón de "Cerrar Sesión" ahora reside al final de la sección **Mi Perfil**, con un diseño táctil rojo premium y aviso de versión de la app.
+
 ## [v32.0.5] - 2026-04-12
 ### Añadido (Voter UI Enhancement)
 - **Visualización Detallada de Votos**: Sustitución de la rejilla de avatares por una lista detallada que incluye **Nombre del Jugador** y **Posición en el campo**.

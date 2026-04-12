@@ -3358,9 +3358,16 @@ body.editing-tactic .tactical-slot {
     padding: 20px;
     margin-bottom: 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(240,165,0,0.1);
-    max-width: 600px; /* Base móvil/tablet */
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+}
+
+@media (max-width: 1023px) {
+    .poll-active-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
 }
 
 .poll-header {
@@ -3406,6 +3413,34 @@ body.editing-tactic .tactical-slot {
     background: rgba(255,255,255,0.03);
     color: #fff;
     text-transform: uppercase;
+}
+
+.vote-icon {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 1023px) {
+    .poll-vote-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .btn-vote {
+        flex-direction: row;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px 5px;
+        font-size: 0.65rem;
+        border-radius: 8px;
+    }
+
+    .vote-icon {
+        font-size: 1rem;
+    }
+
+    .minutes-selector {
+        grid-column: span 3 !important;
+    }
 }
 
 .btn-vote.vote-yes { border-color: #4CAF50; color: #4CAF50; }

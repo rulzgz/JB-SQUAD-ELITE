@@ -3702,15 +3702,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <div class="poll-vote-grid">
                             <button class="btn-vote vote-yes ${myVote?.vote === 'yes' ? 'active' : ''}" onclick="window.jbVote('yes')">
-                                <span style="font-size: 1.5rem;">✅</span>
+                                <span class="vote-icon">✅</span>
                                 <span>SÍ</span>
                             </button>
                             <button class="btn-vote vote-no ${myVote?.vote === 'no' ? 'active' : ''}" onclick="window.jbVote('no')">
-                                <span style="font-size: 1.5rem;">❌</span>
+                                <span class="vote-icon">❌</span>
                                 <span>NO</span>
                             </button>
                             <button class="btn-vote vote-late ${myVote?.vote === 'late' ? 'active' : ''}" onclick="window.jbToggleLateSelector()">
-                                <span style="font-size: 1.5rem;">🕐</span>
+                                <span class="vote-icon">🕐</span>
                                 <span>TARDE</span>
                             </button>
 
