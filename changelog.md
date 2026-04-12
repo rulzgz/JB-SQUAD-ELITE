@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v31.8.1] - 2026-04-12
+### Corregido (Alineación de Modales)
+- **Centrado de Diálogos Restaurado**: Solucionado un error sintáctico en `style.css` donde las propiedades Flexbox responsables de centrar los modales (`.modal-overlay`) se habían cortado y desplazado accidentalmente a otro identificador, provocando que todos los menús de diálogo aparecieran fijados en la esquina superior izquierda. Ahora todos los modales vuelven a emerger centrados armónicamente en el viewport.
+
 ## [v31.8.0] - 2026-04-12
 ### Añadido: Integración de Escudo en Cabecera Global
 - **Branding Dinámico**: Inserción del escudo del club en el `#global-header`, visible en todas las secciones de la aplicación para reforzar la identidad del equipo.

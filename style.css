@@ -1277,6 +1277,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .header-crest-container {
@@ -1315,10 +1319,6 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 #display-user-name {
     margin-top: -2px;
-}    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
