@@ -925,15 +925,31 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mainApp) mainApp.style.setProperty('display', 'flex', 'important');
         }
 
+        if (viewId !== 'tacticas') {
+            if (headerTacticInfo) headerTacticInfo.style.display = 'none';
+            const tacticalActions = document.getElementById('tactical-header-actions');
+            if (tacticalActions) tacticalActions.style.display = 'none';
+
+            // Limpieza del estado de "Modificar Dibujo"
+            state.isEditingPositions = false;
+            document.body.classList.remove('editing-tactic');
+            document.getElementById('tactic-roster-panel')?.classList.remove('locked');
+            
+            // Restablecer visibilidad botones escritorio
+            const btnEditBoard = document.getElementById('btn-edit-board');
+            const btnSaveDesign = document.getElementById('btn-save-custom-positions');
+            const btnResetDesign = document.getElementById('btn-reset-positions');
+            if (btnEditBoard) btnEditBoard.style.display = (state.user?.role === 'manager' || state.user?.role === 'capitan') ? 'flex' : 'none';
+            if (btnSaveDesign) btnSaveDesign.style.display = 'none';
+            if (btnResetDesign) btnResetDesign.style.display = 'none';
+        }
+
         if (viewId === 'tacticas') {
             handleTacticViewDisplay();
         } else if (viewId === 'jornadas') {
             renderSessions();
         } else if (viewId === 'mi-equipo') {
             renderMiEquipoView();
-        } else {
-            if (headerTacticInfo) headerTacticInfo.style.display = 'none';
-            if (btnSaveTactic) btnSaveTactic.style.display = 'none';
         }
 
         // Actualizar estado del Nav Bar
@@ -1651,7 +1667,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // En móvil: sincronizar barra táctica exclusiva
             const mBtnEdit = document.getElementById('mobile-btn-edit-board');
+            const mBtnSave = document.getElementById('mobile-btn-save-custom-positions');
+            const mBtnReset = document.getElementById('mobile-btn-reset-positions');
+            const mBtnExport = document.getElementById('mobile-btn-export-tactic');
+            const mBtnSaveTactic = document.getElementById('mobile-btn-save-tactic');
+            
             if (mBtnEdit) mBtnEdit.style.display = isAdmin ? 'flex' : 'none';
+            if (mBtnSave) mBtnSave.style.display = 'none';
+            if (mBtnReset) mBtnReset.style.display = 'none';
+            if (mBtnExport) mBtnExport.style.display = 'flex';
+            if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'flex';
+            
             syncMobileTopbar(activeTactic);
         }
 

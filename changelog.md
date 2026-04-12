@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v31.8.3] - 2026-04-12
+### Corregido (Persistencia Botones Tácticos)
+- **Ocultación global en Desktop**: Se ha arreglado un bug donde los botones de "DIBUJO" y "EXPORTAR" de la cabecera en escritorio se quedaban visibles ("clavados") al navegar hacia otras secciones de la aplicación (Inicio, Jornadas, Plantilla, etc.). Ya se limpian correctamente al cambiar de vista.
+- **Limpieza de estado visual**: Ahora al salir de la vista táctica se reinicia correctamente el estado visual en el DOM (removiendo flags de estado como la clase \`editing-tactic\` y limpiando los botones temporales) para asegurar una experiencia limpia al regresar.
+
 ## [v31.8.2] - 2026-04-12
 ### Ajustado (Layout Navbar Desktop)
 - **Alineación Vertical de Menú**: En la versión de escritorio, el grupo de botones de la barra de navegación lateral ya no se centra en el medio. Se han alineado a la parte superior (`flex-start`) aprovechando el alto completo de la pantalla, mientras que el botón de cerrar sesión (`SALIR`) ha sido empujado de manera aislada hasta la base final de la barra para evitar pulsaciones accidentales y equilibrar el diseño visual.
