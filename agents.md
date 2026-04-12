@@ -1,4 +1,5 @@
 # Instrucciones del Agente - JB-SQUAD
+**URL de Producción:** https://jb-squad.netlify.app/
 
 Este archivo define la personalidad y las reglas de operación para Antigravity en el proyecto JB-Squad.
 

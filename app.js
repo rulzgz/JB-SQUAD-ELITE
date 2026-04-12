@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         savedTactics: [],
         sessions: [],
         activeSession: null,
+        activePoll: null, // Nuevo v31.9.0
         activeTacticId: null,
         currentView: 'auth',
         isEditingPositions: false, // Nuevo: Estado para bloquear/desbloquear diseño dinámico
@@ -950,6 +951,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderSessions();
         } else if (viewId === 'mi-equipo') {
             renderMiEquipoView();
+        } else if (viewId === 'convocatorias') {
+            renderAvailabilityPanel();
         }
 
         // Actualizar estado del Nav Bar
@@ -1434,6 +1437,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Vaciar Equipo
         const btnEmptyTeam = document.getElementById('btn-empty-team');
+    
+    // Elementos Convocatorias v31.9.0
+    const btnNewPoll = document.getElementById('btn-new-poll');
+    const newPollContainer = document.getElementById('new-poll-form-container');
+    const btnSavePoll = document.getElementById('btn-save-poll');
+    const btnCancelPoll = document.getElementById('btn-cancel-poll');
+    const activePollContainer = document.getElementById('active-poll-container');
+    const pollHistoryList = document.getElementById('polls-history-list');
+    const navPollBadge = document.getElementById('nav-poll-badge');
         if (btnEmptyTeam) {
             btnEmptyTeam.addEventListener('click', async () => {
                 const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
@@ -1447,6 +1459,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+
+        // --- HANDLERS CONVOCATORIAS v31.9.0 ---
+        btnNewPoll?.addEventListener('click', () => {
+            newPollContainer.style.display = 'block';
+            btnNewPoll.style.display = 'none';
+        });
+
+        btnCancelPoll?.addEventListener('click', () => {
+            newPollContainer.style.display = 'none';
+            btnNewPoll.style.display = 'flex';
+        });
+
+        btnSavePoll?.addEventListener('click', async () => {
+            const title = document.getElementById('poll-title').value.trim();
+            const time = document.getElementById('poll-time').value;
+            if (!title) return window.jbToast.show('Ponle un título al evento 🏆', 'warning');
+            
+            await createPoll(title, time);
+            
+            // Limpiar y ocultar
+            document.getElementById('poll-title').value = '';
+            newPollContainer.style.display = 'none';
+            btnNewPoll.style.display = 'flex';
+        });
 
         // Seleccionar formación para crear
         document.querySelectorAll('.tactic-option').forEach(opt => {
@@ -3503,26 +3539,317 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    async function updateTeamCrest(base64) {
-        const { error } = await supabase
-            .from('teams')
-            .update({ crest_url: base64 })
-            .eq('id', state.team.id);
-
-        if (error) {
-            console.warn(">>> [SQL ERROR] No se pudo guardar en Supabase (falta columna crest_url). Usando LocalStorage Fallback.");
-            // Error amigable y guardado local
-            localStorage.setItem(`jb_crest_${state.team.id}`, base64);
-            state.team.crest_url_local = base64; // Guardar temporalmente en el estado
-            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
-            window.jbToast('Escudo guardado localmente (Falta columna en DB)', 'info');
-        } else {
-            state.team.crest_url = base64;
-            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
-            window.jbToast('¡Escudo actualizado con éxito!', 'success');
-        }
         // NUEVO: Actualizar cabecera global al instante
         updateTeamHeader();
     }
 
-});
+    /* ==========================================================================
+       LÓGICA DE DISPONIBILIDAD (CONVOCATORIAS) - v31.9.0
+       ========================================================================== */
+
+    async function fetchActivePoll() {
+        if (!state.team) return null;
+        const { data, error } = await supabase
+            .from('availability_polls')
+            .select('*')
+            .eq('team_id', state.team.id)
+            .eq('status', 'open')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (error && error.code !== 'PGRST116') console.error('Error poll:', error);
+        return data || null;
+    }
+
+    async function fetchPollVotes(pollId) {
+        const { data, error } = await supabase
+            .from('availability_votes')
+            .select(`
+                *,
+                profiles:user_id (id, username, avatar_url, primary_pos)
+            `)
+            .eq('poll_id', pollId);
+
+        if (error) console.error('Error votes:', error);
+        return data || [];
+    }
+
+    async function createPoll(title, time) {
+        if (!state.team || !state.user) return;
+        
+        // Fecha de hoy combinada con la hora elegida
+        const today = new Date().toISOString().split('T')[0];
+        const scheduledTime = `${today}T${time}:00Z`;
+
+        const { data, error } = await supabase
+            .from('availability_polls')
+            .insert([{
+                team_id: state.team.id,
+                created_by: state.user.id,
+                title: title,
+                scheduled_time: scheduledTime,
+                status: 'open'
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            window.jbToast.show('Error al crear: ' + error.message, 'error');
+        } else {
+            state.activePoll = data;
+            window.jbToast.show('¡Convocatoria creada!', 'success');
+            sharePollWhatsApp(data);
+            renderAvailabilityPanel();
+        }
+    }
+
+    async function votePoll(vote, minutes = 0) {
+        if (!state.activePoll || !state.user) return;
+
+        const { error } = await supabase
+            .from('availability_votes')
+            .upsert([{
+                poll_id: state.activePoll.id,
+                user_id: state.user.id,
+                vote: vote,
+                minutes_late: minutes,
+                voted_at: new Date().toISOString()
+            }], { onConflict: 'poll_id,user_id' });
+
+        if (error) {
+            window.jbToast.show('Error al votar: ' + error.message, 'error');
+        } else {
+            window.jbToast.show('¡Voto registrado!', 'success');
+            renderAvailabilityPanel();
+        }
+    }
+
+    function sharePollWhatsApp(poll) {
+        const url = `https://jb-squad.netlify.app/?poll=${poll.id}`;
+        const timeStr = poll.scheduled_time.split('T')[1].substring(0, 5);
+        const text = `⚽ *CONVOCATORIA JB-SQUAD* ⚽\n\n📅 ${poll.title} — Hoy ${timeStr}\n\n¿Estás disponible? Vota aquí 👇\n🔗 ${url}\n\nPowered by JB-SQUAD 🏆`;
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(waUrl, '_blank');
+    }
+
+    async function renderAvailabilityPanel() {
+        if (!state.team) return;
+        
+        // Mostrar/Ocultar botón de nueva según rango
+        const isManagerOrCapitan = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+        if (btnNewPoll) btnNewPoll.style.display = isManagerOrCapitan ? 'flex' : 'none';
+
+        const poll = await fetchActivePoll();
+        state.activePoll = poll;
+
+        if (!poll) {
+            activePollContainer.innerHTML = `<p style="text-align: center; opacity: 0.5; padding: 40px;">No hay ninguna convocatoria activa.</p>`;
+            renderPollHistory();
+            return;
+        }
+
+        const votes = await fetchPollVotes(poll.id);
+        const myVote = votes.find(v => v.user_id === state.user?.id);
+        
+        const yesVotes = votes.filter(v => v.vote === 'yes');
+        const lateVotes = votes.filter(v => v.vote === 'late');
+        const noVotes = votes.filter(v => v.vote === 'no');
+
+        const scheduledTime = new Date(poll.scheduled_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        activePollContainer.innerHTML = `
+            <div class="poll-active-card fade-in">
+                <div class="poll-header">
+                    <div class="poll-info">
+                        <h2>${poll.title}</h2>
+                        <p>🕒 Hoy ${scheduledTime}</p>
+                    </div>
+                    ${isManagerOrCapitan ? `<button onclick="window.jbClosePoll('${poll.id}')" class="poll-status-tag open" style="cursor:pointer; border:none;">CERRAR</button>` : `<span class="poll-status-tag open">ABIERTA</span>`}
+                </div>
+
+                <div class="poll-vote-grid">
+                    <button class="btn-vote vote-yes ${myVote?.vote === 'yes' ? 'active' : ''}" onclick="window.jbVote('yes')">
+                        <span style="font-size: 1.5rem;">✅</span>
+                        <span>SÍ</span>
+                    </button>
+                    <button class="btn-vote vote-no ${myVote?.vote === 'no' ? 'active' : ''}" onclick="window.jbVote('no')">
+                        <span style="font-size: 1.5rem;">❌</span>
+                        <span>NO</span>
+                    </button>
+                    <button class="btn-vote vote-late ${myVote?.vote === 'late' ? 'active' : ''}" onclick="window.jbToggleLateSelector()">
+                        <span style="font-size: 1.5rem;">🕐</span>
+                        <span>TARDE</span>
+                    </button>
+
+                    <div id="late-minutes-selector" class="minutes-selector" style="${myVote?.vote === 'late' ? 'display:flex;' : 'display:none;'}">
+                        <button class="min-btn ${myVote?.minutes_late === 15 ? 'active' : ''}" onclick="window.jbVote('late', 15)">+15m</button>
+                        <button class="min-btn ${myVote?.minutes_late === 30 ? 'active' : ''}" onclick="window.jbVote('late', 30)">+30m</button>
+                        <button class="min-btn ${myVote?.minutes_late === 45 ? 'active' : ''}" onclick="window.jbVote('late', 45)">+45m</button>
+                        <button class="min-btn ${myVote?.minutes_late === 60 ? 'active' : ''}" onclick="window.jbVote('late', 60)">+1h</button>
+                    </div>
+                </div>
+
+                <div class="poll-results-summary">
+                    <div class="results-group">
+                        <div class="results-group-title">DISPONIBLES <span>${yesVotes.length}</span></div>
+                        <div class="results-avatars-flex">
+                            ${yesVotes.map(v => renderVoterAvatar(v)).join('')}
+                        </div>
+                    </div>
+                    <div class="results-group">
+                        <div class="results-group-title">LLEGAN TARDE <span>${lateVotes.length}</span></div>
+                        <div class="results-avatars-flex">
+                            ${lateVotes.map(v => renderVoterAvatar(v)).join('')}
+                        </div>
+                    </div>
+                    <div class="results-group">
+                        <div class="results-group-title">NO PUEDEN <span>${noVotes.length}</span></div>
+                        <div class="results-avatars-flex">
+                            ${noVotes.map(v => renderVoterAvatar(v)).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                ${isManagerOrCapitan ? `
+                <button onclick="window.jbSharePoll('${poll.id}')" style="width:100%; margin-top:15px; background:rgba(37,211,102,0.1); color:#25D366; border:1px solid #25D366; padding:10px; border-radius:8px; font-weight:800; font-size:0.7rem;">RE-ENVIAR A WHATSAPP</button>
+                ` : ''}
+            </div>
+        `;
+
+        renderPollHistory();
+    }
+
+    function renderVoterAvatar(vote) {
+        const player = vote.profiles;
+        const style = player.avatar_url ? `style="background-image: url('${player.avatar_url}');"` : '';
+        const lateLabel = vote.vote === 'late' ? `<span class="late-tag">+${vote.minutes_late}m</span>` : '';
+        return `
+            <div class="voter-avatar-mini" ${style} title="${player.username} (${player.primary_pos})">
+                ${lateLabel}
+            </div>
+        `;
+    }
+
+    async function renderPollHistory() {
+        if (!state.team) return;
+        const { data, error } = await supabase
+            .from('availability_polls')
+            .select('*')
+            .eq('team_id', state.team.id)
+            .eq('status', 'closed')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+        if (error) return;
+        
+        if (!data || data.length === 0) {
+            pollHistoryList.innerHTML = `<p style="font-size:0.7rem; opacity:0.4;">No hay convocatorias pasadas.</p>`;
+            return;
+        }
+
+        pollHistoryList.innerHTML = data.map(p => `
+            <div class="poll-history-item">
+                <div>
+                    <strong>${p.title}</strong>
+                    <div style="font-size:0.65rem; opacity:0.6;">${new Date(p.created_at).toLocaleDateString()}</div>
+                </div>
+                <span class="poll-status-tag closed">FINALIZADA</span>
+            </div>
+        `).join('');
+    }
+
+    // Exponer funciones globales para los onclick
+    window.jbVote = (vote, minutes = 0) => votePoll(vote, minutes);
+    window.jbToggleLateSelector = () => {
+        const sel = document.getElementById('late-minutes-selector');
+        if (sel) sel.style.display = sel.style.display === 'flex' ? 'none' : 'flex';
+    };
+    window.jbClosePoll = async (id) => {
+        const agreed = await window.jbConfirm('¿Seguro que quieres cerrar esta convocatoria? Ya no se podrán recibir más votos.');
+        if (agreed) {
+            await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
+            window.jbToast.show('Convocatoria cerrada y archivada', 'success');
+            renderAvailabilityPanel();
+        }
+    };
+    window.jbSharePoll = () => {
+        if (state.activePoll) sharePollWhatsApp(state.activePoll);
+    };
+
+    // Deep Linking y Notificaciones
+    async function checkPollFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const pollId = params.get('poll');
+        if (pollId) {
+            // Guardar en session por si tiene que loguearse
+            sessionStorage.setItem('pendingPollVote', pollId);
+            
+            // Si ya está logueado, ir directo
+            if (state.user && state.team) {
+                switchView('convocatorias');
+                // Limpiar URL sin recargar
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+    }
+
+    async function renderAvailabilityBanner() {
+        if (!state.user || !state.team) return;
+        
+        const poll = await fetchActivePoll();
+        if (!poll) {
+            if (navPollBadge) navPollBadge.style.display = 'none';
+            return;
+        }
+
+        const votes = await fetchPollVotes(poll.id);
+        const myVote = votes.find(v => v.user_id === state.user.id);
+        
+        if (!myVote) {
+            if (navPollBadge) navPollBadge.style.display = 'block';
+            
+            // Mostrar banner flotante si aún no ha votado
+            const existingBanner = document.querySelector('.availability-banner');
+            if (!existingBanner) {
+                const banner = document.createElement('div');
+                banner.className = 'availability-banner shadow-premium';
+                banner.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:1.2rem;">📋</span>
+                        <div>
+                            <p style="font-size:0.8rem; font-weight:800; margin:0;">CONVOCATORIA ABIERTA</p>
+                            <p style="font-size:0.6rem; opacity:0.8; margin:0;">${poll.title} - ${poll.scheduled_time.split('T')[1].substring(0,5)}</p>
+                        </div>
+                    </div>
+                    <button class="btn-gold" style="width:auto; padding:5px 15px; font-size:0.7rem;" onclick="this.parentElement.remove(); window.jbSwitchToPoll()">VOTAR</button>
+                `;
+                document.body.appendChild(banner);
+                window.jbSwitchToPoll = () => switchView('convocatorias');
+            }
+        } else {
+            if (navPollBadge) navPollBadge.style.display = 'none';
+        }
+    }
+
+    // Integrar check inicial
+    window.addEventListener('load', () => {
+        setTimeout(checkPollFromURL, 1000); // Dar tiempo a que cargue el estado
+    });
+
+    // Escuchar cambios de autenticación para activar el banner
+    const originalRenderHome = renderHome;
+    window.renderHome = async () => {
+        await originalRenderHome();
+        renderAvailabilityBanner();
+        // Verificar si hay voto pendiente de enlace
+        const pendingPoll = sessionStorage.getItem('pendingPollVote');
+        if (pendingPoll) {
+            sessionStorage.removeItem('pendingPollVote');
+            switchView('convocatorias');
+        }
+    };
+
+}
+
+);
