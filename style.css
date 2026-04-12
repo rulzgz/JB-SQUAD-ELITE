@@ -3441,7 +3441,7 @@ body.editing-tactic .tactical-slot {
 
 @media (min-width: 1024px) {
     .poll-active-card {
-        max-width: 1100px;
+        max-width: 1200px;
         padding: 40px;
     }
 
@@ -3473,7 +3473,7 @@ body.editing-tactic .tactical-slot {
 /* Ajustes para el contenedor de historial en escritorio */
 @media (min-width: 1024px) {
     #view-convocatorias {
-        max-width: 1100px;
+        max-width: 1200px;
         margin: 0 auto;
         padding-top: 40px;
     }
