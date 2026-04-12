@@ -3017,9 +3017,41 @@ body.editing-tactic .tactical-slot {
     #view-mi-equipo, #view-my-profile, #view-convocatorias {
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 40px 20px !important; /* Padding estandar elite */
+        padding: 5px 20px 40px 20px !important; /* Elevación Elite */
     }
 }
+
+/* --- Botones Elite v5.0 --- */
+.btn-elite {
+    background: var(--btn-gold);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    text-decoration: none;
+}
+
+.btn-elite:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-elite:active {
+    transform: translateY(0);
+}
+
 
 
 
@@ -3305,8 +3337,9 @@ body.editing-tactic .tactical-slot {
     /* Refinamiento Cabecera de Perfil v31.5.0 */
     .profile-header-flex {
         flex-direction: column !important;
-        align-items: flex-start !important;
+        align-items: center !important; /* Centrado Elite */
         gap: 12px !important;
+        margin-top: -15px !important; /* Subida Extra */
         margin-bottom: 25px !important;
     }
 
