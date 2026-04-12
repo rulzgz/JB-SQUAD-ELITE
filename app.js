@@ -3697,7 +3697,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h2>${poll.title}</h2>
                                 <p>🕒 Hoy ${scheduledTime}</p>
                             </div>
-                            ${isManagerOrCapitan ? `<button onclick="window.jbClosePoll('${poll.id}')" class="poll-status-tag open" style="cursor:pointer; border:none;">CERRAR</button>` : `<span class="poll-status-tag open">ABIERTA</span>`}
+                            <div class="poll-header-actions">
+                                ${isManagerOrCapitan ? `
+                                    <button onclick="window.jbSharePoll()" class="btn-share-wa-circle" title="Re-enviar a WhatsApp">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-2.321 0-4.59.542-6.57 1.57l-.468.242-4.008-1.051 1.07 3.912-.266.422a8.326 8.326 0 0 0-1.275 4.453c0 4.59 3.734 8.325 8.324 8.325 2.126 0 4.125-.783 5.628-2.206 1.503-1.422 2.33-3.313 2.33-5.325 0-4.59-3.734-8.324-8.324-8.324zm5.022 11.233c-.097.265-.561.493-.811.536-.25.044-.572.073-.918.073-.418 0-.965-.044-1.508-.222-2.352-.772-3.868-3.134-3.986-3.295-.117-.162-.962-1.278-.962-2.438 0-1.16.606-1.729.822-1.961.215-.233.471-.291.628-.291.157 0 .314.001.452.008.145.007.34-.029.531.434.191.464.654 1.591.71 1.708.057.116.094.252.018.406-.076.153-.114.252-.228.384-.113.131-.237.293-.339.393-.113.111-.232.233-.102.456.13.223.578.955 1.241 1.545.854.76 1.571 1 1.789 1.103.221.103.352.074.484-.077.132-.152.569-.661.722-.888.152-.226.305-.19.513-.113.208.077 1.32.622 1.548.736.228.114.381.168.438.265.056.097.056.561-.041.826z"/></svg>
+                                    </button>
+                                    <button onclick="window.jbClosePoll('${poll.id}')" class="btn-close-poll">CERRAR</button>
+                                ` : `<span class="poll-status-tag open">ABIERTA</span>`}
+                            </div>
                         </div>
 
                         <div class="poll-vote-grid">
@@ -3722,8 +3729,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
 
-                        ${isManagerOrCapitan ? `
-                        <button onclick="window.jbSharePoll()" class="btn-share-wa">RE-ENVIAR A WHATSAPP</button>
                         ` : ''}
                     </div>
 

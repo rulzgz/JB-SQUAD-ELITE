@@ -3442,16 +3442,8 @@ body.editing-tactic .tactical-slot {
         grid-column: span 3 !important;
     }
 
-    /* Botón WhatsApp más discreto en móvil */
-    .btn-share-wa {
-        width: auto !important;
-        max-width: fit-content;
-        margin: 15px auto 0 auto !important;
-        padding: 8px 15px !important;
-        font-size: 0.65rem !important;
-        border-radius: 20px !important;
-        background: rgba(37,211,102,0.05) !important;
-        opacity: 0.8;
+    .minutes-selector {
+        grid-column: span 3 !important;
     }
 }
 
@@ -3516,6 +3508,62 @@ body.editing-tactic .tactical-slot {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.poll-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-share-wa-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(37, 211, 102, 0.1);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    color: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-share-wa-circle:hover {
+    background: #25D366;
+    color: #000;
+    transform: scale(1.1);
+}
+
+.btn-share-wa-circle:active {
+    transform: scale(0.9);
+}
+
+.btn-close-poll {
+    background: #dc2626;
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-close-poll:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 38, 38, 0.4);
+}
+
+.btn-close-poll:active {
+    transform: translateY(0);
 }
 
 .poll-main-layout {
