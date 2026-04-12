@@ -3918,28 +3918,33 @@ body.editing-tactic .tactical-slot {
 
 }
 
-/* --- Estados de Alineación Inteligente v33.0 --- */
-.tactical-slot.status-si .player-card-fut {
+/* --- Estados de Alineación Inteligente v33.1 --- */
+/* Selectores combinados para Campo y Banquillo */
+.tactical-slot.status-si .player-card-fut,
+.player-roster-card.status-si {
     box-shadow: 0 0 15px rgba(76, 175, 80, 0.8), 0 0 30px rgba(76, 175, 80, 0.3) !important;
     border: 2px solid #4CAF50 !important;
     transform: scale(1.05);
     z-index: 10;
 }
 
-.tactical-slot.status-late .player-card-fut {
+.tactical-slot.status-late .player-card-fut,
+.player-roster-card.status-late {
     box-shadow: 0 0 15px rgba(255, 152, 0, 0.8), 0 0 30px rgba(255, 152, 0, 0.3) !important;
     border: 2px solid #FF9800 !important;
     transform: scale(1.02);
 }
 
-.tactical-slot.status-off .player-card-fut {
+.tactical-slot.status-off .player-card-fut,
+.player-roster-card.status-off {
     opacity: 0.35 !important;
     filter: grayscale(1) !important;
-    pointer-events: auto; /* Permite selección aunque esté apagado */
+    pointer-events: auto;
 }
 
 /* Brillo adicional para el nombre en modo SI */
-.tactical-slot.status-si .name-banner-large h2 {
+.tactical-slot.status-si .name-banner-large h2,
+.player-roster-card.status-si .roster-card-name {
     color: #fff !important;
     text-shadow: 0 0 10px rgba(76, 175, 80, 1);
 }

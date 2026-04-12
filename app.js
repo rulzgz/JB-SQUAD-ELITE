@@ -2003,6 +2003,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const card = document.createElement('div');
             card.className = 'player-roster-card fade-in';
+            
+            // --- Resaltado Alineación Inteligente v33.1 ---
+            if (state.alignmentMode.active && player.userId) {
+                const status = state.alignmentMode.voters[player.userId];
+                if (status === 'yes') card.classList.add('status-si');
+                else if (status === 'late') card.classList.add('status-late');
+                else card.classList.add('status-off');
+            } else if (state.alignmentMode.active) {
+                card.classList.add('status-off');
+            }
+
             card.draggable = true;
 
             const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
@@ -3872,13 +3883,24 @@ document.addEventListener('DOMContentLoaded', () => {
             dialog.style.display = 'none';
             window.jbLoading.show('Archivando convocatoria...');
             
-            // Si vamos a alinear, capturamos los votos primero
+            // Si vamos a alinear, capturamos los votos y PREPARAMOS EL CAMPO
             if (withAlignment && state.activePoll && state.activePoll.votes) {
+                // 1. Activar Modo Alineación
                 state.alignmentMode.active = true;
                 state.alignmentMode.voters = {};
                 state.activePoll.votes.forEach(v => {
                     state.alignmentMode.voters[v.user_id] = v.vote;
                 });
+
+                // 2. Localizar y VACIAR la táctica activa
+                const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
+                if (tacticId) {
+                    const activeTactic = state.savedTactics.find(t => t.id === tacticId);
+                    if (activeTactic) {
+                        activeTactic.assignments = {}; // Limpieza total para alinear de cero
+                        await saveTacticsCloud(); // Guardar el vaciado en la nube
+                    }
+                }
             }
 
             const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
@@ -3886,9 +3908,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error) {
                 window.jbToast('Error al cerrar: ' + error.message, 'error');
             } else {
-                window.jbToast('Convocatoria cerrada y archivada.', 'success');
+                window.jbToast('Convocatoria cerrada. Iniciando alineación...', 'success');
                 await renderAvailabilityPanel();
-                if (withAlignment) switchView('tacticas');
+                
+                if (withAlignment) {
+                    const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
+                    if (tacticId) {
+                        openPitchView(tacticId);
+                        renderPitch();
+                        renderRosterPanel();
+                    } else {
+                        switchView('tacticas');
+                    }
+                }
             }
             window.jbLoading.hide();
         };
