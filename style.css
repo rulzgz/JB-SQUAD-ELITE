@@ -2953,9 +2953,16 @@ body.editing-tactic .tactical-slot {
     /* Evitar que las vistas se vean estrechas en escritorio */
     .view {
         width: 100% !important;
-        max-width: 100% !important; /* Estándar Elite: Expansión total en escritorio */
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+
+    /* Expansión Selectiva: Secciones Elite */
+    #view-mi-equipo, #view-my-profile, #view-convocatorias {
+        max-width: 100% !important;
         margin: 0 !important;
-        padding: 40px 20px !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
     }
 }
 
