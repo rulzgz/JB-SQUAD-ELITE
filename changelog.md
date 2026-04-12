@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v32.0.5] - 2026-04-12
+### Añadido (Voter UI Enhancement)
+- **Visualización Detallada de Votos**: Sustitución de la rejilla de avatares por una lista detallada que incluye **Nombre del Jugador** y **Posición en el campo**.
+- **Badges de Posición**: Integración de los colores de posición oficiales de la app (POR, DFC, MCD, etc.) en la lista de resultados.
+- **Micro-interacciones**: Efectos de hover y transición lateral en las filas de jugadores para una navegación más fluida.
+- **Limpieza de Layout Elite**: Eliminados estilos inline residuales y unificada la cabecera de convocatorias con el estándar de Perfiles.
+
 ## [v32.0.0] - 2026-04-12
 ### Añadido (Divergent Desktop Design)
 - **Layout Split-View para Convocatorias**: Rediseño completo de la sección de votación para PC. Ahora utiliza un sistema de dos paneles (L-Control / R-Resultados) que aprovecha todo el ancho de la pantalla (1100px), eliminando el aspecto de tarjeta móvil estirada.

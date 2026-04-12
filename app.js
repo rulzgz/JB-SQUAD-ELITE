@@ -3594,7 +3594,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPollVotes(pollId) {
         const { data, error } = await supabase
             .from('availability_votes')
-            .select('*, profiles(id, full_name, avatar_id, primary_pos)')
+            .select('*, profiles(id, full_name, avatar_id)')
             .eq('poll_id', pollId);
 
 
@@ -3761,7 +3761,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!profile) return `<div class="voter-row empty">?</div>`;
         
         const avatar = AVATARS.find(a => a.id === parseInt(profile.avatar_id)) || AVATARS[0];
-        const posClass = getPositionColorClass(profile.primary_pos);
+        // Buscar la posición en el estado global (state.players)
+        const player = state.players.find(p => p.user_id === vote.user_id);
+        const position = player ? player.primaryPos : 'N/A';
+        const posClass = getPositionColorClass(position);
         
         let lateInfo = '';
         if (vote.vote === 'late' && vote.minutes_late) {
@@ -3775,7 +3778,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="voter-row-info">
                     <span class="voter-row-name">${profile.full_name}</span>
-                    <span class="voter-row-pos ${posClass}">${profile.primary_pos || 'N/A'}</span>
+                    <span class="voter-row-pos ${posClass}">${position}</span>
                 </div>
                 ${lateInfo}
             </div>
