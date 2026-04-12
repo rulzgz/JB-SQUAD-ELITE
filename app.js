@@ -1175,6 +1175,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.jbLoading.hide();
             window.jbToast('¡Ficha actualizada con éxito!', 'success');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'CONFIRMAR FICHA';
             await loadTeamData();
             switchView('my-profile');
         });
