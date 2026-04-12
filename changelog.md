@@ -7,6 +7,8 @@
 - **Centrado de Extremos (MI/MD)**: Se han modificado las coordenadas nativas en formaciones anchas (3-5-2, 3-4-1-2, 3-1-4-2). Los extremos y medios por banda se han acercado un `4%` más hacia el centro del campo.
 - **Escalado Inteligente del Terreno (Zoom Out)**: Se ha dejado de forzar el campo táctico a un 100% estricto del ancho (`calc(100% + 30px)`); ahora se renderiza a un `94%` absoluto y se autocentra (`margin: 0 auto`). Esto permite ganar unos píxeles de "respiro" en cada lateral, haciendo que el campo entero y los jugadores se vean ligeramente más pequeños y no choquen visualmente contra los biseles del teléfono, permitiendo posiciones en banda más cómodas incluso si la gente edita su propio dibujo.
 - **Contraste de Badge de Posición**: Solucionado un bug en el modo móvil donde el texto de la posición de la carta (ej. "POR", "MCD") era de color negro puro sobre un fondo negro profundo, haciéndolo ilegible. Ahora el texto se renderiza en oro/ámbar eléctrico (`var(--primary)`) devolviendo la alta visibilidad a los roles tácticos.
+- **Badge de Posición Reubicado**: En móvil, el badge de posición (ej. "DC", "MCD", "POR") ya no se superpone en la esquina superior derecha tapando la imagen del jugador. Ahora aparece centrado debajo de cada carta como una pequeña etiqueta con borde dorado, liberando la visualización completa del avatar.
+- **Campo Táctico Más Alto**: Se ha cambiado el `aspect-ratio` del campo de `1/1.35` a `1/1.45`, generando más espacio vertical especialmente en la zona baja del campo para que la carta del portero no quede cortada por el borde inferior.
 
 ## [v31.8.3] - 2026-04-12
 ### Corregido (Persistencia Botones Tácticos)
