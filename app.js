@@ -333,7 +333,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         joinBtn.textContent = 'UNIRSE';
                     } else {
                         window.jbToast(`¡Bienvenido a ${team.name}!`, 'success');
-                        await handleUserSession(state.user.auth);
+                        // Forzamos recarga para sincronizar sesión con membresía nueva
+                        setTimeout(() => window.location.reload(), 1500);
                     }
                 }
             };
@@ -688,7 +689,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.jbToast('Error al unirte: ' + mErr.message, 'error');
             } else {
                 window.jbToast(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`, 'success');
-                await handleUserSession(state.user.auth);
+                // Forzamos recarga para sincronizar sesión con membresía nueva
+                setTimeout(() => window.location.reload(), 1500);
             }
         }
         
