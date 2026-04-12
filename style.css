@@ -3442,9 +3442,60 @@ body.editing-tactic .tactical-slot {
         grid-column: span 3 !important;
     }
 
-    .minutes-selector {
-        grid-column: span 3 !important;
+    /* Elevar cabecera Convocatorias */
+    #view-convocatorias .profile-header-flex {
+        margin-top: -10px !important;
+        margin-bottom: 1rem !important;
     }
+
+    /* Botón Nueva más ancho y bajo */
+    #btn-new-poll {
+        width: 100% !important;
+        padding: 8px 0 !important;
+        margin-top: 10px;
+        font-size: 0.8rem !important;
+    }
+
+    /* Layout Votos 2+1 */
+    .poll-vote-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .btn-vote.vote-late {
+        grid-column: span 2 !important;
+        padding: 12px !important;
+    }
+
+    /* Secciones Colapsables */
+    .results-group.collapsed-mobile .results-voters-list {
+        display: none;
+    }
+
+    .results-group.collapsed-mobile.expanded .results-voters-list {
+        display: block !important;
+    }
+
+    .results-group-title {
+        cursor: pointer;
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .results-group-title::after {
+        content: '▼';
+        font-size: 0.5rem;
+        opacity: 0.5;
+        transition: transform 0.3s ease;
+    }
+
+    .results-group.expanded .results-group-title::after {
+        transform: rotate(180deg);
+        opacity: 1;
+        color: var(--primary);
+    }
+
 
     /* Lista de votantes compacta en móvil (sin imagen) */
     .voter-row {
