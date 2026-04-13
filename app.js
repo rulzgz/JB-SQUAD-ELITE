@@ -2648,7 +2648,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.jbLoading.hide();
     }
 
-    async function renderMembersList() {
+    window.renderMembersList = async function() {
         const membersListContainer = document.getElementById('team-members-list');
         const { data: members, error } = await supabase
             .from('memberships')
@@ -2726,7 +2726,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const confirmed = await window.jbConfirm(`¿Cambiar el rango de ${m.profiles.full_name.toUpperCase()} a ${newRole.toUpperCase()}?`);
                     if (confirmed) {
                         window.jbLoading.show('Actualizando rango...');
-                        await updateMemberRole(m.user_id, newRole);
+                        await updateMemberRoleCloud(m.user_id, newRole);
                         window.jbLoading.hide();
                     } else {
                         selector.value = m.role;
@@ -2738,20 +2738,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function updateMemberRole(userId, newRole) {
-        const { error } = await supabase
-            .from('memberships')
-            .update({ role: newRole })
-            .eq('user_id', userId)
-            .eq('team_id', state.team.id);
-
-        if (error) {
-            window.jbToast('Error al actualizar: ' + error.message, 'error');
-        } else {
-            window.jbToast('Rango actualizado correctamente', 'success');
-            await renderMembersList();
-        }
-    }
 
     // Configurar Handler de Escudo
     const crestTrigger = document.getElementById('team-crest-trigger');

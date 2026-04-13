@@ -229,3 +229,47 @@ async function saveTeamCloud() {
         manager_name: state.team.manager_name
     });
 }
+
+/**
+ * Actualiza el rango de un miembro en Supabase.
+ */
+async function updateMemberRoleCloud(userId, newRole) {
+    if (!supabase || !state.team) return;
+    try {
+        const { error } = await supabase
+            .from('memberships')
+            .update({ role: newRole })
+            .eq('user_id', userId)
+            .eq('team_id', state.team.id);
+
+        if (error) throw error;
+        window.jbToast('Rango actualizado correctamente', 'success');
+        
+        // Refrescar UI si la función existe
+        if (typeof renderMembersList === 'function') await renderMembersList();
+    } catch (err) {
+        console.error(">>> [ERROR] updateMemberRoleCloud:", err.message);
+        window.jbToast('Error al actualizar rango: ' + err.message, 'error');
+    }
+}
+
+/**
+ * Elimina a un miembro del equipo en Supabase.
+ */
+async function deleteMemberCloud(userId) {
+    if (!supabase || !state.team) return;
+    try {
+        const { error } = await supabase
+            .from('memberships')
+            .delete()
+            .eq('user_id', userId)
+            .eq('team_id', state.team.id);
+
+        if (error) throw error;
+        window.jbToast('Miembro eliminado del club', 'success');
+        if (typeof renderMembersList === 'function') await renderMembersList();
+    } catch (err) {
+        console.error(">>> [ERROR] deleteMemberCloud:", err.message);
+        window.jbToast('Error al eliminar miembro: ' + err.message, 'error');
+    }
+}

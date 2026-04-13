@@ -1,7 +1,10 @@
+## [v35.1.2] - 2026-04-13 | 20:07
+### Corregido (Gestión de Miembros)
+- **Persistencia de Roles**: Se ha migrado la lógica `updateMemberRole` al módulo de datos como `updateMemberRoleCloud`, asegurando una ejecución atómica y sincronizada con Supabase.
+- **Sincronización de UI**: Se ha expuesto `renderMembersList` globalmente para permitir que el módulo de datos refresque la lista de miembros inmediatamente después de un cambio de rango exitoso.
+- **Mantenimiento**: Eliminada lógica duplicada en `app.js` y añadida función `deleteMemberCloud` para futuras implementaciones de bajas de equipo.
+
 ## [v35.1.1] - 2026-04-13 | 19:59
-### Corregido (Persistencia de Datos)
-- **Restauración de Operaciones Cloud**: Se han recuperado e integrado en `js/data.js` las funciones críticas que fueron omitidas durante la modularización inicial: `deleteTacticCloud`, `deleteSessionCloud`, `setActiveTacticInDB` y `saveTeamCloud`.
-- **Eliminación de ReferenceErrors**: Se garantiza que las llamadas desde la interfaz para borrar tácticas o jornadas se resuelven correctamente contra el cliente de Supabase.
 
 ## [v35.1.0] - 2026-04-13 | 16:10
 ### Corregido (Secuencia de Arranque)
