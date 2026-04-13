@@ -2346,7 +2346,7 @@ body.editing-tactic .tactical-slot {
     top: -5000px;
     left: 0;
     z-index: -1000;
-    background: #000 url('emerald_pitch.png') no-repeat center center;
+    background: #000 url('img/emerald_pitch.png') no-repeat center center;
     background-size: cover;
     filter: contrast(105%) brightness(90%);
     font-family: 'Outfit', sans-serif;

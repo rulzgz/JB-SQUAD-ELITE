@@ -29,6 +29,15 @@ Este documento describe la estructura, flujos y reglas técnicas del proyecto JB
 - **`js/config.js`**: Constantes estáticas (Formaciones, Avatares, Posiciones, Paleta de colores).
 - **`js/data.js`**: Orquestador de sincronización. Contiene todas las llamadas a Supabase (`loadTeamData`, `savePlayerCloud`, etc.).
 - **`js/auth.js`**: Gestor de sesiones. Controla el login, registro y la redirección inicial post-autenticación.
+- **`js/utils.js`**: Funciones auxiliares reutilizables (escapeHTML, helpers de UI, etc.).
+
+### 3.3. Recursos Gráficos (`/img`)
+- **`img/emerald_pitch.png`**: Textura de césped profesional con líneas de cal. Utilizada como fondo del campo táctico y en la exportación de alineaciones.
+
+### 3.4. Documentación (`/docs`)
+- **`docs/architecture.md`**: Este documento. Manual de arquitectura técnica.
+- **`docs/changelog.md`**: Registro histórico de cambios por versión (con trazabilidad horaria).
+- **`docs/agents.md`**: Manual del agente IA con las reglas de oro del proyecto.
 
 ---
 
@@ -69,4 +78,5 @@ El objeto `state` es el cerebro de la aplicación. Estructura principal:
 
 ---
 
-*Última actualización: v36.0.0 - 2026-04-13*
+*Última actualización: v36.1.0 - 2026-04-13 | 23:54*
+

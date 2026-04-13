@@ -1,3 +1,10 @@
+## [v36.1.0] - 2026-04-13 | 23:54
+### Reorganización (Estructura de Proyecto)
+- **Nueva Carpeta `/img`**: Creada para alojar todos los recursos gráficos. Movido `emerald_pitch.png` desde la raíz.
+- **Nueva Carpeta `/docs`**: Creada para centralizar la documentación técnica. Movidos `architecture.md`, `changelog.md` y `agents.md` desde la raíz.
+- **Actualización de Referencias**: Corregidas las rutas en `style.css` (fondo de exportación táctica) y `calibration_probe.html` para apuntar a `img/emerald_pitch.png`.
+- **Mapa de Módulos Actualizado**: La sección 3 de `architecture.md` ahora documenta las nuevas carpetas `/img` (§3.3) y `/docs` (§3.4), además de incluir `js/utils.js` (§3.2).
+
 ## [v35.2.0] - 2026-04-13 | 20:17
 ### Añadido (UI/UX Tácticas)
 - **Unificación de Modal de Jugadores**: Se ha implementado la clase `.modal-player-grid` para asegurar que el selector de jugadores en escritorio utilice el mismo diseño de tarjetas verticales que la versión móvil, mejorando drásticamente la claridad visual.
