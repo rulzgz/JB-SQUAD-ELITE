@@ -3937,6 +3937,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tacticList = document.getElementById('report-tactic-list');
         const noTactic = document.getElementById('report-no-tactic');
         const pitchContainer = document.getElementById('report-mini-pitch-container');
+        const btnDeleteReport = document.getElementById('btn-delete-report');
 
         if (!overlay) return;
         window.jbLoading.show('Generando reporte...');
@@ -4034,6 +4035,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             noTactic.style.display = 'flex';
             pitchContainer.style.display = 'none';
+        }
+
+        if (btnDeleteReport) {
+            if (state.user && state.user.role === 'manager') {
+                btnDeleteReport.style.display = 'block';
+                btnDeleteReport.onclick = async () => {
+                    const confirmed = await window.jbConfirm('¿Borrar esta jornada histórica de forma permanente?');
+                    if (confirmed) {
+                        window.jbLoading.show('Eliminando historial...');
+                        const { error: delErr } = await supabase.from('availability_polls').delete().eq('id', id);
+                        window.jbLoading.hide();
+                        if (delErr) {
+                            window.jbToast('Error: ' + delErr.message, 'error');
+                        } else {
+                            window.jbToast('Historial eliminado', 'success');
+                            overlay.style.display = 'none';
+                            renderPollHistory();
+                        }
+                    }
+                };
+            } else {
+                btnDeleteReport.style.display = 'none';
+            }
         }
 
         overlay.style.display = 'flex';

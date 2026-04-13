@@ -888,7 +888,12 @@
                     <h2 id="report-poll-title" class="gradient-text" style="font-size: 1.4rem; margin-bottom: 5px;">REPORTE DE JORNADA</h2>
                     <p id="report-poll-date" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">FECHA NO DISPONIBLE</p>
                 </div>
-                <button id="close-poll-detail" class="btn-close" style="position: static;">✕</button>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button id="btn-delete-report" style="display: none; background: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.5); border-radius: 6px; padding: 6px 12px; font-size: 0.75rem; color: #F44336; cursor: pointer; font-weight: 800; transition: all 0.2s;">
+                        BORRAR
+                    </button>
+                    <button id="close-poll-detail" class="btn-close" style="position: static;">✕</button>
+                </div>
             </div>
 
             <!-- Cuerpo del Reporte (Scrollable) -->
