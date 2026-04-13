@@ -1,8 +1,9 @@
+## [v35.2.0] - 2026-04-13 | 20:17
+### Añadido (UI/UX Tácticas)
+- **Unificación de Modal de Jugadores**: Se ha implementado la clase `.modal-player-grid` para asegurar que el selector de jugadores en escritorio utilice el mismo diseño de tarjetas verticales que la versión móvil, mejorando drásticamente la claridad visual.
+- **Diseño Responsivo de Modal**: La rejilla se adapta automáticamente al ancho de la pantalla, mostrando más o menos columnas de "cromos" de jugadores de forma fluida.
+
 ## [v35.1.2] - 2026-04-13 | 20:07
-### Corregido (Gestión de Miembros)
-- **Persistencia de Roles**: Se ha migrado la lógica `updateMemberRole` al módulo de datos como `updateMemberRoleCloud`, asegurando una ejecución atómica y sincronizada con Supabase.
-- **Sincronización de UI**: Se ha expuesto `renderMembersList` globalmente para permitir que el módulo de datos refresque la lista de miembros inmediatamente después de un cambio de rango exitoso.
-- **Mantenimiento**: Eliminada lógica duplicada en `app.js` y añadida función `deleteMemberCloud` para futuras implementaciones de bajas de equipo.
 
 ## [v35.1.1] - 2026-04-13 | 19:59
 

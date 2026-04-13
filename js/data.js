@@ -236,16 +236,22 @@ async function saveTeamCloud() {
 async function updateMemberRoleCloud(userId, newRole) {
     if (!supabase || !state.team) return;
     try {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('memberships')
             .update({ role: newRole })
             .eq('user_id', userId)
-            .eq('team_id', state.team.id);
+            .eq('team_id', state.team.id)
+            .select();
 
         if (error) throw error;
+
+        if (!data || data.length === 0) {
+            console.error(">>> [RLS] No se pudo actualizar el rango. Verifica las políticas de Supabase.");
+            window.jbToast('Error: No tienes permisos suficientes para cambiar rangos en este club.', 'error', 5000);
+            return;
+        }
+
         window.jbToast('Rango actualizado correctamente', 'success');
-        
-        // Refrescar UI si la función existe
         if (typeof renderMembersList === 'function') await renderMembersList();
     } catch (err) {
         console.error(">>> [ERROR] updateMemberRoleCloud:", err.message);
