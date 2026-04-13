@@ -4009,18 +4009,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                 row.className = 'voter-row fade-in';
                                 row.style.cssText = `background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; gap: 15px;`;
                                 
-                                row.innerHTML = \`
+                                row.innerHTML = `
                                     <div style="width: 38px; height: 38px; border-radius: 5px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; position: relative;">
-                                        \${player.photo_url ? \`<img src="\${player.photo_url}" style="width: 100%; height: 100%; object-fit: cover;">\` : \`<div style="width: 80%; height: 80%;">\${avatar.svg}</div>\`}
-                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: \${statusColor};"></div>
+                                        ${player.photo_url ? `<img src="${player.photo_url}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div style="width: 80%; height: 80%;">${avatar.svg}</div>`}
+                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: ${statusColor};"></div>
                                     </div>
                                     <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                                        <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">\${player.name.toUpperCase()}</span>
+                                        <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">${player.name.toUpperCase()}</span>
                                     </div>
                                     <div>
-                                        <span class="voter-row-pos \${posClass}" style="font-size: 0.75rem; padding: 4px 8px;">\${slot.pos}</span>
+                                        <span class="voter-row-pos ${posClass}" style="font-size: 0.75rem; padding: 4px 8px;">${slot.pos}</span>
                                     </div>
-                                \`;
+                                `;
                                 tacticList.appendChild(row);
                             }
                         }
