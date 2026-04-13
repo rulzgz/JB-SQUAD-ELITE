@@ -5,7 +5,8 @@
 // Configuración de Supabase
 const SUPABASE_URL = 'https://drzwawwlpsunprtfbytu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_dJK1GrVDtroLy4zqHUwdfQ_QRIVCmi3';
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+// Inicialización del cliente (se adjunta a window para acceso global sin colisiones de const)
+window.supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 // Estado Global de la Aplicación
 window.state = {
