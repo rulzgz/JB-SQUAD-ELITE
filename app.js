@@ -2038,12 +2038,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mvpId) {
                 const mvpPlayer = state.players.find(p => p.id == mvpId);
                 if (mvpPlayer) {
-                    mvpPlayer.mvp_count = (mvpPlayer.mvp_count || 0) + 1;
+                    mvpPlayer.stats.official.mvps = (mvpPlayer.stats.official.mvps || 0) + 1;
                     await savePlayerCloud(mvpPlayer);
                 }
             }
             
             await saveSessionCloud(state.activeSession);
+            
+            // Mover al historial local antes de limpiar la sesión activa
+            state.sessions.push(state.activeSession);
+            
             state.activeSession = null;
             localStorage.removeItem('jb_active_session');
         }

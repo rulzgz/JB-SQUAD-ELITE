@@ -1,3 +1,9 @@
+## [v36.1.1] - 2026-04-15 | 00:10
+### Corregido (Estadísticas y Persistencia)
+- **Ruta de MVP**: Corregido el guardado de MVPs para que apunte a `stats.official.mvps` en lugar de una propiedad huérfana.
+- **Sincronización UUID**: Mejora en `saveSessionCloud` para capturar y asignar el UUID real de la base de datos tras la inserción.
+- **Historial Local**: Ahora la sesión se integra en el array `state.sessions` antes de limpiarse al finalizar la jornada.
+
 ## [v36.1.0] - 2026-04-13 | 23:54
 ### Reorganización (Estructura de Proyecto)
 - **Nueva Carpeta `/img`**: Creada para alojar todos los recursos gráficos. Movido `emerald_pitch.png` desde la raíz.

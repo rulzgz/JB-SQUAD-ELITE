@@ -157,9 +157,14 @@ async function saveSessionCloud(session) {
         };
 
         if (session.id && session.id.toString().includes('-')) {
+            // UUID válido → UPDATE
             await supabase.from('sessions').update(payload).eq('id', session.id);
         } else {
+            // ID temporal (timestamp) → INSERT y sincronizar UUID de vuelta
             const { data } = await supabase.from('sessions').insert(payload).select();
+            if (data && data[0]) {
+                session.id = data[0].id;
+            }
         }
     } catch (err) {
         console.error(">>> [ERROR] saveSessionCloud:", err.message);
