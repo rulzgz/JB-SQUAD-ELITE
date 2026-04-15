@@ -3335,16 +3335,17 @@ body.editing-tactic .tactical-slot {
     grid-template-columns: 40px 1fr 80px 40px 40px 40px auto;
     align-items: center;
     gap: 15px;
-    padding: 12px 15px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px;
-    transition: 0.3s;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 @media (min-width: 1024px) {
     .member-table-header, .member-admin-row {
-        grid-template-columns: 50px 1.5fr 1fr 80px 80px 80px 160px;
+        grid-template-columns: 50px 1.5fr 0.8fr 80px 80px 80px 180px;
     }
 }
 

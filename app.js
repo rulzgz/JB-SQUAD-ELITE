@@ -230,6 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lógica de Vistas (checkLoginState removido)
 
     window.switchView = function(viewId) {
+        // Bloqueo de seguridad: Solo el Manager accede a gestión de equipo
+        if (viewId === 'mi-equipo' && state.user?.role !== 'manager') {
+            window.jbToast('Acceso denegado: Solo el Manager puede gestionar el club.', 'error');
+            viewId = 'home';
+        }
+
         views.forEach(v => v.classList.remove('active-view'));
         const targetView = document.getElementById(`view-${viewId}`);
         if (targetView) {
@@ -1539,6 +1545,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.kickMemberFromAdmin = async (userId, userName) => {
+        if (state.user?.role !== 'manager') return;
+        
+        const agreed = await window.jbConfirm(`¿ESTÁS SEGURO DE QUE QUIERES EXPULSAR A ${userName.toUpperCase()} DEL CLUB?`);
+        if (!agreed) return;
+
+        window.jbLoading.show('Terminando contrato...');
+        try {
+            // deleteMemberCloud está en js/data.js
+            await deleteMemberCloud(userId);
+            
+            // Limpieza de ficha de jugador si existe
+            const player = state.players.find(p => p.user_id === userId);
+            if (player) {
+                await supabase.from('players').delete().eq('id', player.id);
+            }
+            
+            await loadTeamData(); // Recarga integral
+        } catch (err) {
+            console.error(">>> [ERROR] Expulsión fallida:", err);
+            window.jbToast('Error al expulsar miembro', 'error');
+        }
+        window.jbLoading.hide();
+    };
+
     // --- LÓGICA DE JORNADAS Y PARTIDOS ---
     window.setupSessionHandlers = function() {
         btnNewSession.addEventListener('click', () => {
@@ -2743,11 +2774,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="member-stat-cell a">${totalA}</div>
                 <div class="member-admin-actions" style="text-align:right;">
                     ${isManager && m.user_id !== state.user.auth.id ? `
-                        <select class="role-selector-elite" data-user-id="${m.user_id}">
-                            <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
-                            <option value="capitan" ${m.role === 'capitan' ? 'selected' : ''}>CAPITÁN</option>
-                            <option value="manager" ${m.role === 'manager' ? 'selected' : ''}>MANAGER</option>
-                        </select>
+                        <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px;">
+                            <select class="role-selector-elite" data-user-id="${m.user_id}">
+                                <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
+                                <option value="capitan" ${m.role === 'capitan' ? 'selected' : ''}>CAPITÁN</option>
+                                <option value="manager" ${m.role === 'manager' ? 'selected' : ''}>MANAGER</option>
+                            </select>
+                            <button class="btn-delete-row" style="width:28px; height:28px; font-size:0.7rem;" onclick="window.kickMemberFromAdmin('${m.user_id}', '${escapeHTML(m.profiles?.full_name || 'ANÓNIMO')}')" title="Expulsar del Club">🗑️</button>
+                        </div>
                     ` : ''}
                 </div>
             `;
@@ -2776,6 +2810,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const crestTrigger = document.getElementById('team-crest-trigger');
     const crestInput = document.getElementById('team-crest-input');
     
+    // Handler para Editar Nombre del Club
+    const btnEditTeamName = document.getElementById('btn-edit-team-name');
+    if (btnEditTeamName) {
+        btnEditTeamName.onclick = async () => {
+            if (state.user?.role !== 'manager') return;
+            const newName = await window.jbPrompt('Nuevo nombre para el club:', state.team.name);
+            if (newName && newName.trim() !== "" && newName !== state.team.name) {
+                window.jbLoading.show('Actualizando identidad...');
+                state.team.name = newName.trim();
+                await saveTeamCloud(); // js/data.js
+                updateTeamHeader();
+                document.getElementById('mgmt-team-name').textContent = state.team.name.toUpperCase();
+                window.jbLoading.hide();
+                window.jbToast('Nombre del club actualizado', 'success');
+            }
+        };
+    }
+
     if (crestTrigger && crestInput) {
         crestTrigger.onclick = () => {
             if (state.user.role === 'manager') crestInput.click();
