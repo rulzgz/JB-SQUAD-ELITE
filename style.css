@@ -4142,6 +4142,53 @@ body.editing-tactic .tactical-slot {
 }
 
 /* --- Calendario de Asistencia Elite v36.3 --- */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.calendar-title {
+    font-size: 1.1rem;
+    border-left: 3px solid var(--primary);
+    padding-left: 15px;
+    margin: 0;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#calendar-month-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    min-width: 100px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .calendar-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .calendar-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    #calendar-month-label {
+        flex: 1;
+    }
+}
+
 .calendar-grid-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
