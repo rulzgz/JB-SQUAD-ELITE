@@ -3240,6 +3240,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // --- MEJORA ELITE: Auto-voto NO para no-votantes (v36.0) ---
+            if (state.players && state.activePoll && state.activePoll.votes) {
+                const votedUserIds = state.activePoll.votes.map(v => v.user_id);
+                const nonVoters = state.players
+                    .filter(p => p.user_id && !votedUserIds.includes(p.user_id));
+
+                if (nonVoters.length > 0) {
+                    const autoVotes = nonVoters.map(p => ({
+                        poll_id: id,
+                        user_id: p.user_id,
+                        vote: 'no',
+                        voted_at: new Date().toISOString()
+                    }));
+                    
+                    const { error: autoVoteErr } = await supabase
+                        .from('availability_votes')
+                        .upsert(autoVotes, { onConflict: 'poll_id,user_id' });
+                    
+                    if (!autoVoteErr) {
+                        window.jbToast(`Se han marcado ${nonVoters.length} jugadores como NO (sin voto)`, 'info');
+                    }
+                }
+            }
+
             const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
             
             if (error) {

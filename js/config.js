@@ -50,3 +50,10 @@ const AVATARS = [
     { id: 7, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#F0A500"/><path d="M20 19C20 16.24 16.42 14 12 14C7.58 14 4 16.24 4 19V20H20V19Z" fill="#F0A500"/></svg>` },
     { id: 8, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 20C9.11 20 6.57 18.52 5.12 16.32C5.16 14.04 8.72 12.8 12 12.8C15.26 12.8 18.84 14.04 18.88 16.32C17.43 18.52 14.89 20 12 20Z" fill="#B8860B"/></svg>` }
 ];
+
+const EXPORT_BACKGROUNDS = [
+    { id: 'emerald', name: 'Esmeralda Pro', url: 'img/emerald_pitch.png', preview: 'img/emerald_pitch.png' },
+    { id: 'stadium', name: 'Estadio Noche', url: 'img/stadium_bg.png', preview: 'img/stadium_bg.png' },
+    { id: 'dark', name: 'Obsidiana Gold', url: 'img/pitch_dark.png', preview: 'img/pitch_dark.png' },
+    { id: 'classic', name: 'Clásico Retro', url: 'img/pitch_retro.png', preview: 'img/pitch_retro.png' }
+];
