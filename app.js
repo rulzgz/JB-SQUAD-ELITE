@@ -3240,28 +3240,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // --- MEJORA ELITE: Auto-voto NO para no-votantes (v36.0) ---
-            if (state.players && state.activePoll && state.activePoll.votes) {
-                const votedUserIds = state.activePoll.votes.map(v => v.user_id);
-                const nonVoters = state.players
-                    .filter(p => p.user_id && !votedUserIds.includes(p.user_id));
+            // --- MEJORA ELITE: Auto-voto NO para no-votantes (v36.1 Robust) ---
+            try {
+                // 1. Obtener los IDs de quienes YA votaron directamente de la DB (fresco)
+                const { data: dbVotes, error: dbVotesErr } = await supabase
+                    .from('availability_votes')
+                    .select('user_id')
+                    .eq('poll_id', id);
 
-                if (nonVoters.length > 0) {
-                    const autoVotes = nonVoters.map(p => ({
-                        poll_id: id,
-                        user_id: p.user_id,
-                        vote: 'no',
-                        voted_at: new Date().toISOString()
-                    }));
+                if (!dbVotesErr && state.players && state.players.length > 0) {
+                    const votedUserIds = (dbVotes || []).map(v => String(v.user_id));
                     
-                    const { error: autoVoteErr } = await supabase
-                        .from('availability_votes')
-                        .upsert(autoVotes, { onConflict: 'poll_id,user_id' });
-                    
-                    if (!autoVoteErr) {
-                        window.jbToast(`Se han marcado ${nonVoters.length} jugadores como NO (sin voto)`, 'info');
+                    // 2. Identificar quién falta (que tenga user_id y no esté en la lista)
+                    const nonVoters = state.players.filter(p => {
+                        return p.user_id && !votedUserIds.includes(String(p.user_id));
+                    });
+
+                    if (nonVoters.length > 0) {
+                        const autoVotes = nonVoters.map(p => ({
+                            poll_id: id,
+                            user_id: p.user_id,
+                            vote: 'no',
+                            voted_at: new Date().toISOString()
+                        }));
+
+                        const { error: autoVoteErr } = await supabase
+                            .from('availability_votes')
+                            .upsert(autoVotes, { onConflict: 'poll_id,user_id' });
+                        
+                        if (!autoVoteErr) {
+                            window.jbToast(`Auto-marcados ${nonVoters.length} jugadores como NO`, 'info');
+                            console.log(`>>> [CONVOCATORIAS] Auto-voto exitoso para ${nonVoters.length} jugadores.`);
+                        } else {
+                            console.error(">>> [ERROR] Auto-voto falló (posible RLS):", autoVoteErr);
+                        }
                     }
                 }
+            } catch (err) {
+                console.error(">>> [ERROR] Excepción en auto-voto:", err);
             }
 
             const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
