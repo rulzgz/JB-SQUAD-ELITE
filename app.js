@@ -1246,14 +1246,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // BLOQUEO DE GESTIÓN: Si estamos editando posiciones, desactivar clics de cambio de jugador
-            slotEl.onclick = (e) => {
-                if (state.isEditingPositions) {
-                    e.stopPropagation();
-                    return;
-                }
-                renderPlayerModal(slot.pos);
-            };
+
 
             // --- Lógica de Arrastre de Posiciones (v19.2.0 - Separada por Modos) ---
             if (targetPitch === pitch) {
@@ -1395,10 +1388,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 slotEl.addEventListener('click', () => {
                     if (state.isEditingPositions) return; // BLOQUEO: No abrir modal en edición de dibujo
-                    if (!isAdmin) {
-                        window.jbToast('Solo la directiva puede editar la pizarra.', 'error');
-                        return;
-                    }
+                    if (!isAdmin) return; // BLOQUEO SILENCIOSO: No hace nada
                     activeSlotId = slot.id;
                     renderPlayerModal(slot.pos);
                 });
