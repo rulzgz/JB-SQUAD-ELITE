@@ -203,6 +203,7 @@ async function handleUserSession(authUser) {
         }
         
         let { data: membership } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
+        let { data: playerCard } = await supabase.from('players').select('*').eq('user_id', authUser.id).maybeSingle();
         
         window.state.user = { 
             auth: authUser,
@@ -211,30 +212,26 @@ async function handleUserSession(authUser) {
             role: membership ? membership.role : null 
         };
 
-        if (membership) {
-            window.state.team = membership.teams;
+        if (membership || playerCard) {
+            if (membership) window.state.team = membership.teams;
+            
             switchAuthView('main');
             await loadTeamData();
             if (window.updateJoinRequestsBadge) window.updateJoinRequestsBadge();
             
-            // Redirección Inteligente (v35.0.2)
+            // Redirección Inteligente (v47.2 - Soporte Sin Club)
             setTimeout(() => {
                 if (window.state.userPlayer) {
                     window.switchView('home'); 
                     window.viewPlayerProfileDetail(window.state.userPlayer.id); 
                 } else {
                     window.switchView('add-player');
-                    console.log(">>> Usuario sin ficha. Mostrando editor...");
-                    const alertMsg = document.createElement('div');
-                    alertMsg.className = 'card-elite fade-in shadow-premium';
-                    alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
-                    alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
-                    document.body.appendChild(alertMsg);
-                    setTimeout(() => alertMsg.remove(), 5000);
+                    window.jbToast('💡 Crea tu ficha de jugador para empezar.', 'info');
                 }
                 hideAppLoader();
             }, 300);
         } else {
+            // Usuario totalmente nuevo (Sin club y sin ficha)
             switchAuthView('team-select');
             await fetchAvailableClubs(); 
             hideAppLoader();
@@ -281,7 +278,10 @@ function renderClubBrowser(teams) {
                 const { error } = await sendTeamRequest(team.id);
                 if (error) window.jbToast(error, 'error');
                 else {
-                    window.jbToast(`¡Solicitud enviada con éxito!`, 'success');
+                    window.jbToast(`¡Solicitud enviada! Ahora crea tu ficha.`, 'success');
+                    // Redirigir al editor de ficha inmediatamente
+                    switchAuthView('main');
+                    window.switchView('add-player');
                 }
             }
         };

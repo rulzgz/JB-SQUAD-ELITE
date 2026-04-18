@@ -161,34 +161,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    window.updateTeamHeader = function() {
+        const teamNameEl = document.getElementById('display-team-name');
+        const userNameEl = document.getElementById('display-user-name');
+        if (teamNameEl) {
+            teamNameEl.textContent = state.team ? state.team.name.toUpperCase() : 'SIN EQUIPO';
+        }
+        if (userNameEl) {
+            const username = state.user?.profile?.full_name || state.user?.profile?.username || 'JUGADOR';
+            userNameEl.textContent = username.toUpperCase();
+        }
+    }
+
     window.applyRolePermissions = function() {
-        if (!state.user || !state.user.role) return;
+        if (!state.user) return;
         
-        const role = state.user.role.toLowerCase();
+        const role = (state.user.role || 'jugador').toLowerCase();
         const isAdmin = role === 'manager' || role === 'capitan';
-        const isManager = role === 'manager';
         
-        // Elementos con roles requeridos (soporta "manager,capitan")
+        // --- RESTRICCIONES SIN CLUB (v47.2) ---
+        const hasTeam = !!state.team;
+        const navButtons = document.querySelectorAll('.nav-btn');
+        
+        navButtons.forEach(btn => {
+            const view = btn.dataset.view;
+            // Solo dejamos "home" (Dashboard) y "my-profile" visibles sin club
+            const isAllowedWithoutTeam = view === 'home' || view === 'my-profile';
+            if (!hasTeam && !isAllowedWithoutTeam) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = 'flex';
+            }
+        });
+
+        // Elementos con roles requeridos
         document.querySelectorAll('[data-role-required]').forEach(el => {
             const requiredRoles = el.getAttribute('data-role-required').toLowerCase().split(',');
-            const hasPermission = requiredRoles.includes(role);
+            const hasPermission = hasTeam && requiredRoles.includes(role);
             
-            // Determinar display base
             let displayType = 'block';
             if (el.id === 'btn-new-poll' || el.id === 'btn-mgmt-team-shortcut' || el.classList.contains('btn-gold')) {
                 displayType = 'flex';
             }
-            
             el.style.display = hasPermission ? displayType : 'none';
         });
 
-        // Asegurar visibilidad de botones de acción específicos (usando variables globales de scope)
-        if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
-        if (btnAddMatch) btnAddMatch.style.display = isAdmin ? 'block' : 'none';
-        if (sessionFinalizeContainer) sessionFinalizeContainer.style.display = isAdmin ? 'block' : 'none';
-        if (btnNewPoll) btnNewPoll.style.display = isAdmin ? 'flex' : 'none';
-
-        // Botón "Mi Ficha" — visible para TODOS (Manager también juega)
+        // Botón "Mi Ficha" — SIEMPRE visible
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
         if (btnAddPlayer) {
             btnAddPlayer.style.display = 'flex';
@@ -233,6 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bloqueo de seguridad: Solo el Manager accede a gestión de equipo
         if (viewId === 'mi-equipo' && state.user?.role !== 'manager') {
             window.jbToast('Acceso denegado: Solo el Manager puede gestionar el club.', 'error');
+            viewId = 'home';
+        }
+
+        // --- RESTRICCIONES SIN CLUB (v47.2) ---
+        const teamRestrictedViews = ['plantilla', 'tacticas', 'jornadas', 'convocatorias', 'mi-equipo'];
+        if (!state.team && teamRestrictedViews.includes(viewId)) {
+            window.jbToast('⏳ Esta sección se desbloqueará cuando seas aceptado en un club.', 'info');
             viewId = 'home';
         }
 
@@ -486,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const newPlayer = {
                 user_id: targetPlayer ? (targetPlayer.user_id || targetPlayer.id) : state.user.auth.id,
-                team_id: state.team.id,
+                team_id: state.team ? state.team.id : null,
                 name: document.getElementById('playerName').value,
                 console_id: document.getElementById('consoleID').value,
                 dorsal: document.getElementById('dorsal').value,

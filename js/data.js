@@ -7,9 +7,42 @@
  */
 async function loadTeamData() {
     console.log(">>> [DATOS] Iniciando sincronización élite...");
-    if (!state.team) return;
-
+    
     try {
+        // Cargar mi ficha (AUTOGESTIÓN) - SIEMPRE
+        if (state.user && state.user.auth) {
+            const { data: myPlayer } = await supabase
+                .from('players')
+                .select('*')
+                .eq('user_id', state.user.auth.id)
+                .maybeSingle();
+            
+            if (myPlayer) {
+                window.state.userPlayer = {
+                    id: myPlayer.id,
+                    user_id: myPlayer.user_id,
+                    name: myPlayer.name,
+                    consoleID: myPlayer.console_id,
+                    avatarID: myPlayer.avatar_id,
+                    primaryPos: myPlayer.primary_pos,
+                    secondaryPos: myPlayer.secondary_pos,
+                    dorsal: myPlayer.dorsal,
+                    photo_url: myPlayer.photo_url,
+                    photo_scale: myPlayer.photo_scale,
+                    photo_x: myPlayer.photo_x,
+                    photo_y: myPlayer.photo_y,
+                    stats: myPlayer.stats
+                };
+            }
+        }
+
+        // Si no hay equipo, salimos tras cargar la ficha personal
+        if (!state.team) {
+            if (typeof updateTeamHeader === 'function') updateTeamHeader();
+            if (typeof applyRolePermissions === 'function') applyRolePermissions();
+            if (typeof renderHomeDashboard === 'function') renderHomeDashboard();
+            return;
+        }
         // 1. Cargar Jugadores
         const { data: dbPlayers } = await supabase.from('players').select('*').eq('team_id', state.team.id);
         if (dbPlayers) {
