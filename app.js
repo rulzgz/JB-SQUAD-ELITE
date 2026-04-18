@@ -2600,6 +2600,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCIÓN DE EXPORTACIÓN ELITE v4.8.0 ---
     async function exportTacticAsImage() {
+        // Validación de Seguridad (v47.4)
+        const role = (state.user?.role || 'jugador').toLowerCase();
+        if (role !== 'manager' && role !== 'capitan') {
+            window.jbToast('Acceso denegado: Solo el Manager y los Capitanes pueden exportar alineaciones.', 'error');
+            return;
+        }
+
         const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         if (!activeTactic) return;
 
