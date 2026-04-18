@@ -1380,8 +1380,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (targetPitch === pitch) {
+                const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+
                 slotEl.addEventListener('click', () => {
                     if (state.isEditingPositions) return; // BLOQUEO: No abrir modal en edición de dibujo
+                    if (!isAdmin) {
+                        window.jbToast('Solo la directiva puede editar la pizarra.', 'error');
+                        return;
+                    }
                     activeSlotId = slot.id;
                     renderPlayerModal(slot.pos);
                 });
@@ -1417,6 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         const assignedPlayerIds = Object.values(activeTactic?.assignments || {});
+        const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
 
         const getPosGroupInfo = (pos) => {
             const p = (pos || '').toUpperCase();
@@ -1477,11 +1484,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="roster-card-rating">${player.dorsal}</div>
             `;
 
-            // Drag Start (v20.2.0 - Solo si no está bloqueado)
-            card.draggable = !state.isEditingPositions;
+            // Drag Start (v20.2.0 - Solo si no está bloqueado y es directiva)
+            card.draggable = isAdmin && !state.isEditingPositions;
             
             card.addEventListener('dragstart', e => {
-                if (state.isEditingPositions) {
+                if (state.isEditingPositions || !isAdmin) {
                     e.preventDefault();
                     return;
                 }
