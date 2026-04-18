@@ -1156,9 +1156,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (state.alignmentMode.active) {
                     if (btnSaveTactic) btnSaveTactic.style.display = 'none';
-                    if (btnSavePollAlignment) btnSavePollAlignment.style.display = 'block';
+                    if (btnSavePollAlignment) btnSavePollAlignment.style.display = isAdmin ? 'block' : 'none';
                 } else {
-                    if (btnSaveTactic) btnSaveTactic.style.display = 'flex';
+                    if (btnSaveTactic) btnSaveTactic.style.display = isAdmin ? 'flex' : 'none';
                     if (btnSavePollAlignment) btnSavePollAlignment.style.display = 'none';
                 }
             }
@@ -1178,9 +1178,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (state.alignmentMode.active) {
                 if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'none';
-                if (mBtnSavePoll) mBtnSavePoll.style.display = 'flex';
+                if (mBtnSavePoll) mBtnSavePoll.style.display = isAdmin ? 'flex' : 'none';
             } else {
-                if (mBtnSaveTactic) mBtnSaveTactic.style.display = 'flex';
+                if (mBtnSaveTactic) mBtnSaveTactic.style.display = isAdmin ? 'flex' : 'none';
                 if (mBtnSavePoll) mBtnSavePoll.style.display = 'none';
             }
             
