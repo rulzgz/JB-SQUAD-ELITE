@@ -880,6 +880,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const rosterPanel = document.getElementById('tactic-roster-panel');
         if (rosterPanel) {
             rosterPanel.addEventListener('dragover', e => {
+                const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                if (!isAdmin) return;
                 e.preventDefault();
                 rosterPanel.style.border = "2px dashed #F44336";
             });
@@ -887,6 +889,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 rosterPanel.style.border = "none";
             });
             rosterPanel.addEventListener('drop', e => {
+                const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                if (!isAdmin) return;
                 e.preventDefault();
                 rosterPanel.style.border = "none";
                 if (draggedSourceSlotId) {
@@ -902,6 +906,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
         if (btnEmptyTeam) {
             btnEmptyTeam.addEventListener('click', async () => {
+                const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                if (!isAdmin) {
+                    window.jbToast('Solo la directiva puede usar esta función.', 'error');
+                    return;
+                }
                 const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
                 if (activeTactic && Object.keys(activeTactic.assignments || {}).length > 0) {
                     const agreed = await window.jbConfirm('¿Seguro que quieres enviar a todos los jugadores del campo de vuelta al banquillo?');
@@ -1297,11 +1306,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 slotEl.classList.add('filled');
                 
                 if (targetPitch === pitch) {
-                    // BLOQUEO: Solo permitir arrastrar jugador si NO estamos editando dibujo
-                    slotEl.draggable = !state.isEditingPositions;
+                    const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                    // BLOQUEO: Solo permitir arrastrar jugador si NO estamos editando dibujo y es admin
+                    slotEl.draggable = isAdmin && !state.isEditingPositions;
                     
                     if (slotEl.draggable) {
                         slotEl.addEventListener('dragstart', e => {
+                            if (!isAdmin) { e.preventDefault(); return; }
                             draggedSourceSlotId = slot.id;
                             e.dataTransfer.setData('text/plain', player.id);
                         });
@@ -1394,11 +1405,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Drag and Drop Zone
                 slotEl.addEventListener('dragover', e => {
+                    const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                    if (!isAdmin) return; // BLOQUEO DROP
                     e.preventDefault(); // Permitir drop
                     slotEl.classList.add('drag-over');
                 });
                 slotEl.addEventListener('dragleave', () => slotEl.classList.remove('drag-over'));
                 slotEl.addEventListener('drop', e => {
+                    const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+                    if (!isAdmin) return; // BLOQUEO DROP
                     e.preventDefault();
                     slotEl.classList.remove('drag-over');
                     const playerId = e.dataTransfer.getData('text/plain');
