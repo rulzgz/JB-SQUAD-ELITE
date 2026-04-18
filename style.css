@@ -2489,63 +2489,84 @@ body.editing-tactic .tactical-slot {
     letter-spacing: 2px;
 }
 
-/* Header Scorebug (Fijo) */
+/* Header Scorebug (Diseño Reestructurado v47.5) */
 .export-scorebug-banner {
     position: absolute;
     top: 60px;
     left: 80px;
     right: 80px;
-    height: 150px;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(30px);
+    height: 130px; /* Reducido para mayor elegancia */
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(40px);
     border-left: 6px solid var(--primary);
-    padding: 0 60px;
+    padding: 0 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 60px 120px rgba(0,0,0,0.9);
-    border-radius: 10px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    border-radius: 12px;
     z-index: 100;
 }
 
 .scorebug-left {
-    flex: 1;
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 25px;
+    flex: 1;
+    overflow: hidden;
 }
 
 .export-team-crest {
-    height: 90px;
-    width: 90px;
+    height: 85px;
+    width: 85px;
+    min-width: 85px;
     object-fit: contain;
     border-radius: 50%;
     background: #fff;
-    padding: 5px;
-    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    padding: 6px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.2);
 }
 
 .scorebug-team-name {
-    font-size: 64px !important;
-    font-weight: 950 !important;
-    letter-spacing: -3px !important;
+    font-size: 48px !important; /* Tamaño optimizado */
+    font-weight: 900 !important;
+    letter-spacing: -2px !important;
     color: #fff;
     white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.scorebug-divider {
+    width: 2px;
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    margin: 0 40px;
+}
+
+.scorebug-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    min-width: fit-content;
 }
 
 .scorebug-matchday {
-    font-size: 30px !important;
+    font-size: 24px !important;
     color: var(--primary) !important;
     font-weight: 900 !important;
-    letter-spacing: 5px !important;
-    margin-bottom: 5px !important;
+    letter-spacing: 4px !important;
+    margin-bottom: 2px !important;
+    text-transform: uppercase;
 }
 
 .scorebug-formation {
-    font-size: 20px !important;
-    opacity: 0.6 !important;
-    font-weight: 700 !important;
-    letter-spacing: 10px !important;
+    font-size: 16px !important;
+    opacity: 0.5 !important;
+    font-weight: 800 !important;
+    letter-spacing: 6px !important;
+    color: #fff;
+    text-transform: uppercase;
 }
 /* --- ESCRITORIO ÉLITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
 @media (min-width: 1024px) {

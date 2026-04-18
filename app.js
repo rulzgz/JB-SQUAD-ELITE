@@ -2624,6 +2624,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${state.team?.crest_url ? `<img src="${state.team.crest_url}" class="export-team-crest" crossOrigin="anonymous">` : ''}
                         <h1 class="scorebug-team-name">${escapeHTML(teamNameText)}</h1>
                     </div>
+                    <div class="scorebug-divider"></div>
                     <div class="scorebug-right">
                         <div class="scorebug-matchday">MATCHDAY • ${escapeHTML(matchTimeText)}</div>
                         <div class="scorebug-formation">LINEUP: ${escapeHTML(activeTactic.formation)}</div>
