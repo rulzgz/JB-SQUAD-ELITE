@@ -770,6 +770,14 @@
                     </div>
                 </div>
 
+                <!-- TABS DE NAVEGACIÓN (Solo visible para Managers) -->
+                <div id="team-view-tabs" class="elite-tabs fade-in" style="display: none; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <button class="elite-tab-btn active" data-target="team-roster-panel">PLANTILLA</button>
+                    <button class="elite-tab-btn" data-target="team-requests-panel">
+                        SOLICITUDES <span id="requests-tab-badge" style="display: none; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; margin-left: 5px;">0</span>
+                    </button>
+                </div>
+
                 <!-- Solicitudes de Fichaje (v37.0) -->
                 <div id="team-requests-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--primary); background: rgba(240, 165, 0, 0.03); margin-bottom: 20px;">
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -782,7 +790,7 @@
                 </div>
 
                 <!-- Member Management -->
-                <div class="member-management-panel card-elite fade-in">
+                <div id="team-roster-panel" class="member-management-panel card-elite fade-in">
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h2 style="font-size: 1.1rem; letter-spacing: 1px;">GESTIÓN DE PLANTILLA</h2>
                         <span id="member-count-badge" class="badge-elite">0 MIEMBROS</span>

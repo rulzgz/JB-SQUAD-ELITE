@@ -131,6 +131,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedGoalScorerId = null;
     let selectedAssistantId = null;
 
+    // Listeners for Elite Tabs (Mi Equipo)
+    const teamTabs = document.querySelectorAll('#team-view-tabs .elite-tab-btn');
+    teamTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            teamTabs.forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById('team-roster-panel').style.display = targetId === 'team-roster-panel' ? 'block' : 'none';
+            document.getElementById('team-requests-panel').style.display = targetId === 'team-requests-panel' ? 'block' : 'none';
+        });
+    });
+
     // --- VARIABLES DE ESTADO PARA FOTOS (v47.4) ---
     let currentPhotoBase64 = null; // Para previsualización rápida
     let selectedPhotoFile = null;  // Para subida real a Storage
@@ -2872,20 +2884,29 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!panel || !requestsContainer) return;
 
-        // Solo el Manager ve este panel
+        // Solo el Manager ve los tabs y las solicitudes
+        const tabsContainer = document.getElementById('team-view-tabs');
         if (state.user?.role !== 'manager') {
             panel.style.display = 'none';
+            if (tabsContainer) tabsContainer.style.display = 'none';
             return;
         }
 
         const requests = await fetchTeamRequests();
         
-        // Mostrar el panel ahora que sabemos que el usuario es Manager
-        panel.style.display = 'block';
+        // Mostrar los tabs ahora que sabemos que el usuario es Manager
+        if (tabsContainer) tabsContainer.style.display = 'flex';
         
+        // Actualizamos el counter original y el nuevo badge de la pestaña
         if (countBadge) {
             countBadge.textContent = requests.length > 0 ? `${requests.length} PENDIENTES` : '0 PENDIENTES';
             countBadge.style.display = requests.length > 0 ? 'inline-block' : 'none';
+        }
+        
+        const tabBadge = document.getElementById('requests-tab-badge');
+        if (tabBadge) {
+             tabBadge.textContent = requests.length;
+             tabBadge.style.display = requests.length > 0 ? 'inline-block' : 'none';
         }
 
         if (requests.length === 0) {
