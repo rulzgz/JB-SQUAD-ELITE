@@ -2621,6 +2621,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="export-broadcast-container">
                 <div class="export-scorebug-banner">
                     <div class="scorebug-left">
+                        ${state.team?.crest_url ? `<img src="${state.team.crest_url}" class="export-team-crest" crossOrigin="anonymous">` : ''}
                         <h1 class="scorebug-team-name">${escapeHTML(teamNameText)}</h1>
                     </div>
                     <div class="scorebug-right">

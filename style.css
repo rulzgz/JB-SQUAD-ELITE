@@ -2508,6 +2508,20 @@ body.editing-tactic .tactical-slot {
     z-index: 100;
 }
 
+.scorebug-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.export-team-crest {
+    height: 90px;
+    width: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+}
+
 .scorebug-team-name {
     font-size: 64px !important;
     font-weight: 950 !important;
