@@ -2617,12 +2617,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.createElement('div');
         wrapper.className = 'export-matchday-wrapper';
         
+        // Cálculo de tamaño dinámico para el nombre del club (v47.5.1)
+        let nameFontSize = '48px';
+        if (teamNameText.length > 12) nameFontSize = '38px';
+        if (teamNameText.length > 16) nameFontSize = '32px';
+        if (teamNameText.length > 20) nameFontSize = '26px';
+
         wrapper.innerHTML = `
             <div class="export-broadcast-container">
                 <div class="export-scorebug-banner">
                     <div class="scorebug-left">
                         ${state.team?.crest_url ? `<img src="${state.team.crest_url}" class="export-team-crest" crossOrigin="anonymous">` : ''}
-                        <h1 class="scorebug-team-name">${escapeHTML(teamNameText)}</h1>
+                        <h1 class="scorebug-team-name" style="font-size: ${nameFontSize} !important;">${escapeHTML(teamNameText)}</h1>
                     </div>
                     <div class="scorebug-divider"></div>
                     <div class="scorebug-right">
