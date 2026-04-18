@@ -2401,7 +2401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .slice(0, 3);
 
             if (assistants.length === 0) {
-                assistantsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
+                assistsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
             } else {
                 assistants.forEach((s, i) => {
                     const row = document.createElement('div');
