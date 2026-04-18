@@ -643,12 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', updatePlayerPreview);
         });
-
-        // Habilitar Botón de Migración (v47.4)
-        const btnMigrate = document.getElementById('btn-migrate-photos');
-        if (btnMigrate) {
-            btnMigrate.addEventListener('click', () => window.runGlobalPhotoMigration());
-        }
     }
 
     /**
@@ -683,95 +677,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
     }
-
-    /**
-     * Herramienta de Migración Global (v47.4)
-     * Convierte todas las fotos Base64 existentes a archivos en Supabase Storage.
-     */
-    window.runGlobalPhotoMigration = async function() {
-        const playersToMigrate = state.players.filter(p => p.photo_url && p.photo_url.startsWith('data:'));
-        
-        if (playersToMigrate.length === 0) {
-            window.jbToast('✅ No hay fotos pendientes de migración.', 'success');
-            return;
-        }
-
-        const confirmed = await window.jbConfirm(`Se han detectado ${playersToMigrate.length} fotos antiguas. ¿Deseas migrarlas a Storage para ahorrar ancho de banda?`);
-        if (!confirmed) return;
-
-        const btn = document.getElementById('btn-migrate-photos');
-        const originalText = btn.textContent;
-        btn.disabled = true;
-        window.jbLoading.show('Iniciando migración...');
-
-        let successCount = 0;
-        let errorCount = 0;
-
-        for (let i = 0; i < playersToMigrate.length; i++) {
-            const player = playersToMigrate[i];
-            btn.textContent = `⚙️ MIGRANDO ${i + 1}/${playersToMigrate.length}...`;
-            
-            try {
-                // 1. Convertir Base64 a Blob de forma manual (evita problemas de CSP con fetch)
-                const base64Data = player.photo_url.split(',')[1];
-                const mimeType = player.photo_url.split(',')[0].split(':')[1].split(';')[0];
-                const byteCharacters = atob(base64Data);
-                const byteArrays = [];
-                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-                    const slice = byteCharacters.slice(offset, offset + 512);
-                    const byteNumbers = new Array(slice.length);
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-                    const byteArray = new Uint8Array(byteNumbers);
-                    byteArrays.push(byteArray);
-                }
-                const blob = new Blob(byteArrays, { type: mimeType });
-                
-                // 2. Comprimir un poco por si acaso (opcional pero recomendado)
-                // Usamos la utilidad compressImage que creamos antes
-                // const compressedBlob = await compressImage(new File([blob], "temp.jpg", { type: "image/jpeg" }));
-
-                // 3. Subir a Storage
-                const filePath = `players/${player.user_id || player.id}.jpg`;
-                const { error: uploadErr } = await supabase.storage
-                    .from('player_photos')
-                    .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
-
-                if (uploadErr) throw uploadErr;
-
-                // 4. Obtener URL Pública
-                const { data: { publicUrl } } = supabase.storage
-                    .from('player_photos')
-                    .getPublicUrl(filePath);
-
-                // 5. Actualizar Base de Datos
-                const { error: updateErr } = await supabase
-                    .from('players')
-                    .update({ photo_url: `${publicUrl}?t=${Date.now()}` })
-                    .eq('id', player.id);
-
-                if (updateErr) throw updateErr;
-
-                successCount++;
-            } catch (err) {
-                console.error(`>>> [MIGRATION ERROR] Jugador ${player.name}:`, err);
-                errorCount++;
-            }
-        }
-
-        window.jbLoading.hide();
-        btn.disabled = false;
-        btn.textContent = originalText;
-        
-        if (successCount > 0) {
-            window.jbToast(`🚀 Migración finalizada: ${successCount} exitosas, ${errorCount} errores.`, 'success');
-            await loadTeamData();
-            renderTeamMembers();
-        } else {
-            window.jbToast('❌ La migración no pudo completarse.', 'error');
-        }
-    };
 
     // --- Renderizado de Jugadores y Tabla ---
 
