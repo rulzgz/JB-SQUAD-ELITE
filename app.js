@@ -2354,10 +2354,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderPlayerStats(player);
         
-        // Cargar Calendario (v36.3)
-        state.viewingPlayerForCalendar = player;
-        currentCalendarDate = new Date(); // Resetear al mes actual al abrir nuevo perfil
-        window.renderPlayerCalendar(player);
+        // Cargar Calendario (v36.3) - Seguridad de Privacidad
+        const attendanceContainer = document.getElementById('profile-attendance-container');
+        const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+        const isSelf = player.user_id === state.user?.auth?.id;
+
+        if (attendanceContainer) {
+            if (isAdmin || isSelf) {
+                attendanceContainer.style.display = 'block';
+                state.viewingPlayerForCalendar = player;
+                currentCalendarDate = new Date(); // Resetear al mes actual al abrir nuevo perfil
+                window.renderPlayerCalendar(player);
+            } else {
+                attendanceContainer.style.display = 'none';
+            }
+        }
     }
 
     function populatePlayerForm(player) {
