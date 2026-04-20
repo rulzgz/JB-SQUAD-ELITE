@@ -3392,7 +3392,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Por defecto, últimos 20 para no saturar si no hay filtro
             query = query.limit(20);
-        }
 
         const { data, error } = await query;
         if (error) return;
@@ -3406,15 +3405,20 @@ document.addEventListener('DOMContentLoaded', () => {
         historyList.innerHTML = '';
         
         for (const p of data) {
-            // Obtener conteo de Squad (SOLO SÍ)
-            const { count, error: countErr } = await supabase
-                .from('availability_votes')
-                .select('*', { count: 'exact', head: true })
-                .eq('poll_id', p.id)
-                .eq('vote', 'yes');
+            // Obtener conteos de Squad (SÍ, TARDE, NO)
+            const fetchCount = async (voteType) => {
+                const { count } = await supabase
+                    .from('availability_votes')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('poll_id', p.id)
+                    .eq('vote', voteType);
+                return count || 0;
+            };
 
-            
-            const squadCount = countErr ? '?' : (count || 0);
+            const countYes = await fetchCount('yes');
+            const countLate = await fetchCount('late');
+            const countNo = await fetchCount('no');
+
             const dateObj = new Date(p.created_at);
             const day = dateObj.getDate().toString().padStart(2, '0');
             const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
@@ -3425,7 +3429,9 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <div class="pht-col-date">${day}/${month}</div>
                 <div class="pht-col-title">${escapeHTML(p.title.toUpperCase())}</div>
-                <div class="pht-col-squad">${squadCount}</div>
+                <div class="pht-col-stat stat-yes">${countYes}</div>
+                <div class="pht-col-stat stat-late">${countLate}</div>
+                <div class="pht-col-stat stat-no">${countNo}</div>
                 <div class="pht-col-actions">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>

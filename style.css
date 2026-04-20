@@ -4550,7 +4550,7 @@ body.editing-tactic .tactical-slot {
 
 .poll-history-table-header {
     display: grid;
-    grid-template-columns: 80px 1fr 60px 40px;
+    grid-template-columns: 80px 1fr 1fr; /* Móvil por defecto: Fecha, Sí, No */
     gap: 10px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.03);
@@ -4573,13 +4573,13 @@ body.editing-tactic .tactical-slot {
         max-height: calc(15 * 55px); /* PC: 15 filas aprox */
     }
     .poll-history-table-header {
-        grid-template-columns: 120px 1fr 80px 50px;
+        grid-template-columns: 120px 1fr 60px 60px 60px 40px;
     }
 }
 
 .poll-history-row {
     display: grid;
-    grid-template-columns: 80px 1fr 60px 40px;
+    grid-template-columns: 80px 1fr 1fr; /* Móvil por defecto: Fecha, Sí, No */
     gap: 10px;
     padding: 12px 15px;
     align-items: center;
@@ -4591,9 +4591,10 @@ body.editing-tactic .tactical-slot {
 
 @media (min-width: 1024px) {
     .poll-history-row {
-        grid-template-columns: 120px 1fr 80px 50px;
+        grid-template-columns: 120px 1fr 60px 60px 60px 40px;
     }
 }
+
 
 .poll-history-row:hover {
     background: rgba(240, 165, 0, 0.05);
@@ -4615,17 +4616,20 @@ body.editing-tactic .tactical-slot {
     color: #fff;
 }
 
-.pht-col-squad {
+.pht-col-stat {
     text-align: center;
     font-weight: 800;
-    font-size: 0.8rem;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 2px 8px;
-    border-radius: 4px;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 0;
+    border-radius: 6px;
     color: #fff;
-    width: fit-content;
-    margin: 0 auto;
+    min-width: 40px;
 }
+
+.pht-col-stat.stat-yes { color: var(--success); background: rgba(76, 175, 80, 0.05); }
+.pht-col-stat.stat-late { color: var(--primary); background: rgba(255, 152, 0, 0.05); }
+.pht-col-stat.stat-no { color: var(--error); background: rgba(244, 67, 54, 0.05); }
 
 .pht-col-actions {
     display: flex;
@@ -4658,21 +4662,19 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 10px var(--primary-glow);
 }
 
-/* Ajuste Móvil: Solo Fecha y Squad */
+/* Ajuste Móvil: Solo Fecha, Sí y No */
 @media (max-width: 1023px) {
     .poll-history-table-header, 
     .poll-history-row {
-        grid-template-columns: 80px 1fr !important;
+        grid-template-columns: 80px 1fr 1fr !important;
         padding: 10px 15px;
     }
     .pht-col-title, 
-    .pht-col-actions {
+    .pht-col-actions,
+    .stat-late {
         display: none !important;
     }
-    .pht-col-squad {
-        margin-right: 0;
-        margin-left: auto;
-    }
 }
+
 
 
