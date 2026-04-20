@@ -4550,7 +4550,7 @@ body.editing-tactic .tactical-slot {
 
 .poll-history-table-header {
     display: grid;
-    grid-template-columns: 80px 1fr 1fr; /* Móvil por defecto: Fecha, Sí, No */
+    grid-template-columns: 80px 1fr 1fr 1fr; /* Móvil: Fecha, Sí, Tarde, No */
     gap: 10px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.03);
@@ -4579,7 +4579,8 @@ body.editing-tactic .tactical-slot {
 
 .poll-history-row {
     display: grid;
-    grid-template-columns: 80px 1fr 1fr; /* Móvil por defecto: Fecha, Sí, No */
+    grid-template-columns: 80px 1fr 1fr 1fr; /* Móvil: Fecha, Sí, Tarde, No */
+
     gap: 10px;
     padding: 12px 15px;
     align-items: center;
@@ -4662,18 +4663,22 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 10px var(--primary-glow);
 }
 
-/* Ajuste Móvil: Fecha, Sí, Tarde y No */
-@media (max-width: 1023px) {
-    .poll-history-table-header, 
-    .poll-history-row {
-        grid-template-columns: 80px 1fr 1fr 1fr !important;
-        padding: 10px 15px;
-    }
+/* Ajuste de visibilidad de columnas */
+.pht-col-title, 
+.pht-col-actions {
+    display: none;
+}
+
+@media (min-width: 1024px) {
     .pht-col-title, 
     .pht-col-actions {
-        display: none !important;
+        display: block;
+    }
+    .pht-col-actions {
+        display: flex;
     }
 }
+
 
 
 
