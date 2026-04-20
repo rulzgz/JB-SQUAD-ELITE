@@ -3365,40 +3365,118 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    async function renderPollHistory() {
+    async function renderPollHistory(selectedMonth = null, selectedYear = null) {
         if (!state.team) return;
-        const { data, error } = await supabase
+        
+        const historyList = document.getElementById('polls-history-list');
+        const monthSelect = document.getElementById('select-history-month');
+        if (!historyList) return;
+
+        // 1. Generar Selector de Meses si no está inicializado
+        if (monthSelect && monthSelect.options.length <= 1) {
+            await initPollHistoryFilters();
+        }
+
+        // 2. Determinar Rango de Fechas para la Consulta
+        let query = supabase
             .from('availability_polls')
             .select('*')
             .eq('team_id', state.team.id)
             .eq('status', 'closed')
-            .order('created_at', { ascending: false })
-            .limit(10); // Aumentamos límite para historial
+            .order('created_at', { ascending: false });
 
+        if (selectedMonth && selectedYear) {
+            const startDate = new Date(selectedYear, selectedMonth - 1, 1).toISOString();
+            const endDate = new Date(selectedYear, selectedMonth, 0, 23, 59, 59).toISOString();
+            query = query.gte('created_at', startDate).lte('created_at', endDate);
+        } else {
+            // Por defecto, últimos 20 para no saturar si no hay filtro
+            query = query.limit(20);
+        }
+
+        const { data, error } = await query;
         if (error) return;
-        const historyList = document.getElementById('polls-history-list');
-        if (!historyList) return;
         
         if (!data || data.length === 0) {
-            historyList.innerHTML = `<p style="font-size:0.75rem; opacity:0.4; text-align:center; padding:20px;">No hay convocatorias pasadas.</p>`;
+            historyList.innerHTML = `<p style="grid-column: 1/-1; font-size:0.75rem; opacity:0.4; text-align:center; padding:40px;">No hay convocatorias para este periodo.</p>`;
             return;
         }
 
-        historyList.innerHTML = data.map(p => `
-            <div class="poll-history-item fade-in" onclick="jbViewPollDetail('${p.id}')">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <strong style="color: var(--primary); font-size: 0.85rem;">${p.title.toUpperCase()}</strong>
-                    <div style="font-size: 0.65rem; opacity: 0.6; letter-spacing: 1px;">
-                        📅 ${new Date(p.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long' })}
-                    </div>
+        // 3. Renderizar Filas de Tabla
+        historyList.innerHTML = '';
+        
+        for (const p of data) {
+            // Obtener conteo de Squad (SÍ + TARDE)
+            const { count, error: countErr } = await supabase
+                .from('availability_votes')
+                .select('*', { count: 'exact', head: true })
+                .eq('poll_id', p.id)
+                .in('vote', ['yes', 'late']);
+            
+            const squadCount = countErr ? '?' : (count || 0);
+            const dateObj = new Date(p.created_at);
+            const day = dateObj.getDate().toString().padStart(2, '0');
+            const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+            
+            const row = document.createElement('div');
+            row.className = 'poll-history-row fade-in';
+            row.onclick = () => window.jbViewPollDetail(p.id);
+            row.innerHTML = `
+                <div class="pht-col-date">${day}/${month}</div>
+                <div class="pht-col-title">${escapeHTML(p.title.toUpperCase())}</div>
+                <div class="pht-col-squad">${squadCount}</div>
+                <div class="pht-col-actions">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    ${p.final_alignment ? '<span title="Tiene alineación guardada" style="font-size: 0.8rem;">📋</span>' : ''}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            </div>
-        `).join('');
+            `;
+            historyList.appendChild(row);
+        }
     }
+
+    async function initPollHistoryFilters() {
+        const monthSelect = document.getElementById('select-history-month');
+        if (!monthSelect || !state.team) return;
+
+        // Obtener todas las fechas únicas de convocatorias cerradas para llenar el select
+        const { data, error } = await supabase
+            .from('availability_polls')
+            .select('created_at')
+            .eq('team_id', state.team.id)
+            .eq('status', 'closed')
+            .order('created_at', { ascending: false });
+
+        if (error || !data) return;
+
+        const months = [];
+        data.forEach(p => {
+            const d = new Date(p.created_at);
+            const m = d.getMonth() + 1;
+            const y = d.getFullYear();
+            const val = `${m}-${y}`;
+            if (!months.find(x => x.val === val)) {
+                const label = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
+                months.push({ val, label, m, y });
+            }
+        });
+
+        monthSelect.innerHTML = '<option value="all">ÚLTIMAS 20</option>';
+        months.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.val;
+            opt.textContent = item.label;
+            monthSelect.appendChild(opt);
+        });
+
+        monthSelect.onchange = (e) => {
+            if (e.target.value === 'all') {
+                renderPollHistory();
+            } else {
+                const [m, y] = e.target.value.split('-');
+                renderPollHistory(parseInt(m), parseInt(y));
+            }
+        };
+    }
+
 
     window.jbViewPollDetail = async (id) => {
         const overlay = document.getElementById('poll-detail-overlay');

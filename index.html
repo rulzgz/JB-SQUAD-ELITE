@@ -722,12 +722,32 @@
                 </div>
 
                 <!-- Historial -->
-                <div id="polls-history-container" style="margin-top: 30px; opacity: 0.8;">
-                    <h4 style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 15px;">HISTORIAL RECIENTE</h4>
-                    <div id="polls-history-list" style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Inyectado por JS -->
+                <div id="polls-history-container" style="margin-top: 30px; opacity: 0.9;">
+                    <div class="polls-history-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h4 style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; margin: 0;">HISTORIAL DE JORNADAS</h4>
+                        
+                        <!-- Selector de Mes (Elite Style) -->
+                        <div id="poll-history-filter" class="month-filter-elite">
+                            <select id="select-history-month" class="premium-select-mini">
+                                <!-- Opciones inyectadas por JS -->
+                                <option value="current">Este Mes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="poll-history-table-container">
+                        <div class="poll-history-table-header">
+                            <div class="pht-col-date">FECHA</div>
+                            <div class="pht-col-title">EVENTO</div>
+                            <div class="pht-col-squad">SQUAD</div>
+                            <div class="pht-col-actions"></div>
+                        </div>
+                        <div id="polls-history-list" class="poll-history-table-body">
+                            <!-- Inyectado por JS -->
+                        </div>
                     </div>
                 </div>
+
             </section>
 
             <!-- VIEW: Mi Equipo (Gestión de Club) v31.0 -->
