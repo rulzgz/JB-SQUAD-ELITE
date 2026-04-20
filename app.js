@@ -3392,6 +3392,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Por defecto, últimos 20 para no saturar si no hay filtro
             query = query.limit(20);
+        }
 
         const { data, error } = await query;
         if (error) return;
