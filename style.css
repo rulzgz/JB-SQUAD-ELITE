@@ -4662,19 +4662,19 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 10px var(--primary-glow);
 }
 
-/* Ajuste Móvil: Solo Fecha, Sí y No */
+/* Ajuste Móvil: Fecha, Sí, Tarde y No */
 @media (max-width: 1023px) {
     .poll-history-table-header, 
     .poll-history-row {
-        grid-template-columns: 80px 1fr 1fr !important;
+        grid-template-columns: 80px 1fr 1fr 1fr !important;
         padding: 10px 15px;
     }
     .pht-col-title, 
-    .pht-col-actions,
-    .stat-late {
+    .pht-col-actions {
         display: none !important;
     }
 }
+
 
 
 
