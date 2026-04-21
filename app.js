@@ -3250,7 +3250,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function sharePollWhatsApp(poll) {
         const url = `https://jb-squad.netlify.app/?poll=${poll.id}`;
         const timeStr = poll.scheduled_time.split('T')[1].substring(0, 5);
-        const text = `⚽ *CONVOCATORIA JB-SQUAD* ⚽\n\n📅 ${poll.title} — Hoy ${timeStr}\n\n¿Estás disponible? Vota aquí 👇\n🔗 ${url}\n\nPowered by JB-SQUAD 🏆`;
+        const teamName = state.team?.name?.toUpperCase() || 'EQUIPO';
+        const text = `⚽ *CONVOCATORIA ${teamName}* ⚽\n\n📅 ${poll.title} — Hoy ${timeStr}\n\n¿Estás disponible? Vota aquí 👇\n🔗 ${url}`;
         const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
         window.open(waUrl, '_blank');
     }
