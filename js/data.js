@@ -23,6 +23,14 @@ async function loadTeamData() {
                 .maybeSingle();
             
             if (myPlayer) {
+                // [NUEVO] Sincronización proactiva (v48.2) - Autocuración por RLS
+                // Si el jugador tiene equipo por membresía pero su ficha no está vinculada, se vincula a sí mismo.
+                if (state.team && myPlayer.team_id !== state.team.id) {
+                    console.log(">>> [SYNC] Corrigiendo vinculación de ficha técnica (Self-Healing)...");
+                    await supabase.from('players').update({ team_id: state.team.id }).eq('id', myPlayer.id);
+                    myPlayer.team_id = state.team.id;
+                }
+
                 window.state.userPlayer = {
                     id: myPlayer.id,
                     user_id: myPlayer.user_id,
