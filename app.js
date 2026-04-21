@@ -416,39 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const teamCrestHeader = document.getElementById('header-crest-container');
         
         if (state.team) {
-            if (teamNameLabel) {
-                 teamNameLabel.textContent = state.team.name.toUpperCase();
-                 
-                 // --- Inyección de Redes Sociales (v49.0) ---
-                 const socialContainerId = 'header-social-links';
-                 let socialContainer = document.getElementById(socialContainerId);
-                 if (!socialContainer) {
-                     socialContainer = document.createElement('div');
-                     socialContainer.id = socialContainerId;
-                     socialContainer.style.display = 'flex';
-                     socialContainer.style.gap = '8px';
-                     socialContainer.style.marginLeft = '12px';
-                     teamNameLabel.parentElement.appendChild(socialContainer);
-                 }
-                 
-                 socialContainer.innerHTML = '';
-                 const socials = state.team.socials || {};
-                 
-                 if (socials.twitter) {
-                     socialContainer.innerHTML += `
-                         <a href="https://x.com/${socials.twitter}" target="_blank" title="Twitter/X" style="color: #1DA1F2; transition: 0.3s; display: flex; align-items: center; opacity: 0.8;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
-                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                         </a>
-                     `;
-                 }
-                 if (socials.twitch) {
-                     socialContainer.innerHTML += `
-                         <a href="https://twitch.tv/${socials.twitch}" target="_blank" title="Twitch" style="color: #9146FF; transition: 0.3s; display: flex; align-items: center; opacity: 0.8;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
-                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
-                         </a>
-                     `;
-                 }
-            }
+            if (teamNameLabel) teamNameLabel.textContent = state.team.name.toUpperCase();
             
             // Renderizar Escudo en Cabecera Global
             if (teamCrestHeader) {
@@ -2538,6 +2506,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (displayUser) displayUser.textContent = username.toUpperCase();
         if (displayRole) displayRole.textContent = role.toUpperCase();
+
+        // --- Inyección de Redes Sociales en Dashboard (v49.2) ---
+        const socialContainer = document.getElementById('home-social-links');
+        if (socialContainer && state.team) {
+            socialContainer.innerHTML = '';
+            const socials = state.team.socials || {};
+            
+            if (socials.twitter) {
+                socialContainer.innerHTML += `
+                    <a href="https://x.com/${socials.twitter}" target="_blank" title="Twitter/X" style="color: #1DA1F2; transition: 0.3s; display: flex; align-items: center; background: rgba(29, 161, 242, 0.1); padding: 8px; border-radius: 8px; border: 1px solid rgba(29, 161, 242, 0.2);" onmouseover="this.style.background='rgba(29, 161, 242, 0.2)'" onmouseout="this.style.background='rgba(29, 161, 242, 0.1)'">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <span style="font-size: 0.7rem; margin-left: 8px; font-weight: 800;">@${socials.twitter}</span>
+                    </a>
+                `;
+            }
+            if (socials.twitch) {
+                socialContainer.innerHTML += `
+                    <a href="https://twitch.tv/${socials.twitch}" target="_blank" title="Twitch" style="color: #9146FF; transition: 0.3s; display: flex; align-items: center; background: rgba(145, 70, 255, 0.1); padding: 8px; border-radius: 8px; border: 1px solid rgba(145, 70, 255, 0.2);" onmouseover="this.style.background='rgba(145, 70, 255, 0.2)'" onmouseout="this.style.background='rgba(145, 70, 255, 0.1)'">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                        <span style="font-size: 0.7rem; margin-left: 8px; font-weight: 800;">${socials.twitch}</span>
+                    </a>
+                `;
+            }
+        }
 
         // --- 1. TOP GOLEADORES ---
         if (scorersListEl) {
