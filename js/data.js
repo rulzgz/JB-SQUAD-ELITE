@@ -444,3 +444,46 @@ async function rejectTeamRequest(requestId) {
         window.jbToast('Error al rechazar solicitud', 'error');
     }
 }
+
+/**
+ * Sincroniza retroactivamente a todos los miembros de un club con la tabla 'players'.
+ * Util para corregir usuarios que se unieron antes de la v48.0. (v48.1)
+ */
+async function syncTeamMembers() {
+    if (!supabase || !state.team) return { error: 'No conectado' };
+    
+    try {
+        // 1. Obtener todos los miembros reales
+        const { data: members, error: memErr } = await supabase
+            .from('memberships')
+            .select('user_id, profiles(full_name)')
+            .eq('team_id', state.team.id);
+
+        if (memErr) throw memErr;
+
+        // 2. Procesar cada miembro en paralelo
+        const promises = members.map(async (m) => {
+            const { data: existingPlayer } = await supabase
+                .from('players')
+                .select('id')
+                .eq('user_id', m.user_id)
+                .maybeSingle();
+
+            if (existingPlayer) {
+                return supabase.from('players').update({ team_id: state.team.id }).eq('user_id', m.user_id);
+            } else {
+                return supabase.from('players').insert({
+                    user_id: m.user_id,
+                    team_id: state.team.id,
+                    name: m.profiles?.full_name || 'Jugador Sincro'
+                });
+            }
+        });
+
+        await Promise.all(promises);
+        return { success: true };
+    } catch (err) {
+        console.error(">>> [ERROR] syncTeamMembers:", err.message);
+        return { error: err.message };
+    }
+}

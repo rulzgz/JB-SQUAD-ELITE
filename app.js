@@ -2997,6 +2997,32 @@ document.addEventListener('DOMContentLoaded', () => {
         members.sort((a, b) => (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99));
 
         document.getElementById('member-count-badge').textContent = `${members.length} MIEMBROS`;
+
+        // --- Sincronización Retroactiva (v48.1 fix) ---
+        const btnSync = document.getElementById('btn-sync-squad');
+        if (btnSync) {
+            const isManager = state.user?.role === 'manager';
+            btnSync.style.display = isManager ? 'flex' : 'none';
+            if (isManager && !btnSync.dataset.listenerSet) {
+                btnSync.addEventListener('click', async () => {
+                    const agreed = await window.jbConfirm('¿Quieres reparar la vinculación de todos los miembros con la plantilla? Esto arreglará a los jugadores que no aparecen actualmente.');
+                    if (!agreed) return;
+                    
+                    window.jbLoading.show('Sincronizando plantilla...');
+                    const res = await syncTeamMembers();
+                    window.jbLoading.hide();
+                    
+                    if (res.success) {
+                        window.jbToast('Plantilla sincronizada con éxito', 'success');
+                        await loadTeamData();
+                        await renderMembersList();
+                    } else {
+                        window.jbToast('Error: ' + res.error, 'error');
+                    }
+                });
+                btnSync.dataset.listenerSet = "true";
+            }
+        }
         
         // Limpiar e Inyectar Encabezado
         membersListContainer.innerHTML = `

@@ -816,7 +816,10 @@
                 <div id="team-roster-panel" class="member-management-panel card-elite fade-in">
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h2 style="font-size: 1.1rem; letter-spacing: 1px;">GESTIÓN DE PLANTILLA</h2>
-                        <span id="member-count-badge" class="badge-elite">0 MIEMBROS</span>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="btn-sync-squad" class="btn-detail" title="Sincronizar fichas de todos los miembros" style="padding: 4px 8px; font-size: 0.6rem; border-radius: 4px; background: rgba(240, 165, 0, 0.1); border-color: var(--primary); color: var(--primary); font-weight: 800; cursor: pointer; display: none;">🔄 REPARAR</button>
+                            <span id="member-count-badge" class="badge-elite">0 MIEMBROS</span>
+                        </div>
                     </div>
                     
                     <div id="team-members-list" class="members-dynamic-list">
