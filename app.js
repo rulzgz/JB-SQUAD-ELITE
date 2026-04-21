@@ -3212,9 +3212,18 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSaveSettings.addEventListener('click', async () => {
             if (state.user?.role !== 'manager') return;
             
+            const sanitizeSocial = (val) => {
+                if (!val) return '';
+                if (val.includes('/')) {
+                    const parts = val.split('/').filter(p => p.trim() !== '');
+                    return parts.pop() || '';
+                }
+                return val.replace('@', '');
+            };
+
             const newName = document.getElementById('input-team-name').value.trim();
-            const twitter = document.getElementById('input-team-twitter').value.trim().replace('@', '');
-            const twitch = document.getElementById('input-team-twitch').value.trim();
+            const twitter = sanitizeSocial(document.getElementById('input-team-twitter').value.trim());
+            const twitch = sanitizeSocial(document.getElementById('input-team-twitch').value.trim());
 
             if (!newName) {
                 window.jbToast('El nombre del club no puede estar vacío.', 'error');
