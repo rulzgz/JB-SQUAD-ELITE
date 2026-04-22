@@ -959,6 +959,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnSavePoll?.addEventListener('click', async () => {
+            // --- SEGURIDAD EXTRA (v49.3) ---
+            const role = state.user?.role;
+            if (role !== 'manager' && role !== 'capitan') {
+                window.jbToast('No tienes permisos para realizar esta acción.', 'error');
+                return;
+            }
+
             const title = document.getElementById('poll-title').value.trim();
             const time = document.getElementById('poll-time').value;
             if (!title) return window.jbToast('Ponle un título al evento', 'warning');
@@ -3294,6 +3301,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function createPoll(title, time) {
         if (!state.team || !state.user) return;
         
+        // --- SEGURIDAD: Solo Manager o Capitán (v49.3) ---
+        const role = state.user.role;
+        if (role !== 'manager' && role !== 'capitan') {
+            window.jbToast('Acceso Denegado: No tienes permisos para crear convocatorias.', 'error');
+            return;
+        }
+        
         // Fecha de hoy combinada con la hora elegida
         const today = new Date().toISOString().split('T')[0];
         const scheduledTime = `${today}T${time}:00Z`;
@@ -3809,6 +3823,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sel) sel.style.display = sel.style.display === 'flex' ? 'none' : 'flex';
     };
     window.jbClosePoll = async (id) => {
+        // --- SEGURIDAD: Solo Manager o Capitán (v49.3) ---
+        const role = state.user?.role;
+        if (role !== 'manager' && role !== 'capitan') {
+            window.jbToast('Acceso Denegado: No tienes permisos para cerrar convocatorias.', 'error');
+            return;
+        }
+
         const dialog = document.getElementById('jb-poll-close-dialog');
         const btnAlign = document.getElementById('btn-poll-close-align');
         const btnOnlyClose = document.getElementById('btn-poll-close-only');
@@ -3910,6 +3931,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnBack.onclick = () => dialog.style.display = 'none';
     };
     window.jbSharePoll = () => {
+        const role = state.user?.role;
+        if (role !== 'manager' && role !== 'capitan') return;
         if (state.activePoll) sharePollWhatsApp(state.activePoll);
     };
 
