@@ -1946,46 +1946,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function revertSessionStats(session) {
         session.matches.forEach(match => {
-            // Revertir Goles y Asistencias
+            const mType = match.type || 'friendly';
+
+            // 1. Revertir Goles y Asistencias
             match.events.forEach(ev => {
                 const scorer = state.players.find(p => p.id == ev.scorerId);
                 const assistant = state.players.find(p => p.id == ev.assistantId);
                 
-                if (scorer) {
-                    scorer.stats[match.type].goals = Math.max(0, scorer.stats[match.type].goals - 1);
+                if (scorer && scorer.stats?.[mType]) {
+                    scorer.stats[mType].goals = Math.max(0, scorer.stats[mType].goals - 1);
                 }
-                if (assistant) {
-                    assistant.stats[match.type].assists = Math.max(0, assistant.stats[match.type].assists - 1);
+                if (assistant && assistant.stats?.[mType]) {
+                    assistant.stats[mType].assists = Math.max(0, assistant.stats[mType].assists - 1);
                 }
             });
 
-            // Revertir Partidos Jugados
-            // Para ser precisos, descontamos PJ a los que estuvieran en la alineación técnica
-            // (La app asocia los PJ a los que están en la táctica activa en el momento de fin del partido)
-            // Aquí usamos un fallback: si el partido no guardó la alineación, no podemos saberlo 100% retroactivo,
-            // pero como los PJ se sumaron en finalizeMatch usando state.savedTactics[0], 
-            // asumimos que el usuario sabe que si borra una jornada muy antigua con tácticas cambiadas, el PJ podría variar ligeramente.
-            // MEJORA: El match ahora guarda implicitamente los que sumaron PJ si quisiéramos ser perfectos, 
-            // pero por ahora revertimos PJ a los que sumaron stats en ese partido por ahora, 
-            // o mejor, dejamos los PJ si hay duda? No, el usuario pidió "deshacer estadísticas".
-            
-            // Revertir MVP de partido
+            // 2. Revertir PJ y Wins usando la alineación guardada en el partido
+            if (match.lineup && Array.isArray(match.lineup)) {
+                const isWin = match.scoreHome > match.scoreAway;
+                for (let playerId of match.lineup) {
+                    const player = state.players.find(p => p.id.toString() === playerId.toString());
+                    if (player && player.stats?.[mType]) {
+                        player.stats[mType].matches = Math.max(0, player.stats[mType].matches - 1);
+                        if (isWin) {
+                            player.stats[mType].wins = Math.max(0, (player.stats[mType].wins || 0) - 1);
+                        }
+                    }
+                }
+            }
+
+            // 3. Revertir MVP de partido
             if (match.mvpId) {
                 const mvpPlayer = state.players.find(p => p.id == match.mvpId);
-                if (mvpPlayer) {
-                    mvpPlayer.stats[match.type].mvps = Math.max(0, mvpPlayer.stats[match.type].mvps - 1);
+                if (mvpPlayer && mvpPlayer.stats?.[mType]) {
+                    mvpPlayer.stats[mType].mvps = Math.max(0, mvpPlayer.stats[mType].mvps - 1);
                 }
             }
         });
 
-        // Revertir MVP de jornada (legacy o si existiera)
+        // 4. Revertir MVP de jornada
         if (session.mvpId) {
             const mvpPlayer = state.players.find(p => p.id == session.mvpId);
             if (mvpPlayer) {
-                // Determinar si fue oficial o friendly (lógica original de finalizeSession)
                 const hasOfficial = session.matches.some(m => m.type === 'official');
                 const type = hasOfficial ? 'official' : 'friendly';
-                mvpPlayer.stats[type].mvps = Math.max(0, mvpPlayer.stats[type].mvps - 1);
+                if (mvpPlayer.stats?.[type]) {
+                    mvpPlayer.stats[type].mvps = Math.max(0, mvpPlayer.stats[type].mvps - 1);
+                }
             }
         }
     }
@@ -2211,6 +2218,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         if (lastTactic) {
             const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
+            
+            // Guardar la alineación dentro del partido para poder revertir stats al borrar
+            currentMatch.lineup = assignedIds;
+            
             for (let p of state.players) {
                 if (assignedIds.includes(p.id.toString())) {
                     initStats(p);
