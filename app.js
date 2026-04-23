@@ -4395,46 +4395,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- TEMPORARY BACKFILL SCRIPT FOR WIN PERCENTAGE (OPTION B) ---
     window.devFixWins = async function() {
-        if (!state.team || !state.sessions) {
-            console.error("No hay equipo o sesiones cargadas.");
+        if (!state.team) {
+            console.error("❌ No hay equipo cargado.");
             return;
         }
         
-        console.log("Iniciando recalculo retrospectivo de victorias...");
+        console.log("🔍 === DIAGNÓSTICO COMPLETO ===");
+        console.log("Sesiones en state.sessions:", state.sessions.length);
+        console.log("Jugadores en state.players:", state.players.length);
+        
+        // Mostrar info de cada sesión
+        state.sessions.forEach((s, i) => {
+            console.log(`  Sesión ${i}: type="${s.type}", status="${s.status}", matches=${s.matches?.length || 0}`);
+            if (s.matches) {
+                s.matches.forEach((m, j) => {
+                    console.log(`    Partido ${j}: ${m.scoreHome}-${m.scoreAway} (type=${m.type})`);
+                });
+            }
+        });
+        
+        // Mostrar stats actuales de cada jugador
+        state.players.forEach(p => {
+            console.log(`  Jugador "${p.name}": official.matches=${p.stats?.official?.matches || 0}, friendly.matches=${p.stats?.friendly?.matches || 0}`);
+        });
+
+        console.log("\n🔧 Iniciando recálculo retrospectivo...");
         let updatedPlayers = new Set();
         
-        // Resetear victorias a 0 para asegurar cálculo limpio
+        // Resetear wins a 0
         for (let p of state.players) {
-            if (p.stats) {
-                if (p.stats.official) p.stats.official.wins = 0;
-                if (p.stats.friendly) p.stats.friendly.wins = 0;
-            }
+            if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } };
+            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0, wins: 0 };
+            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0, wins: 0 };
+            if (p.stats.official.wins === undefined) p.stats.official.wins = 0;
+            if (p.stats.friendly.wins === undefined) p.stats.friendly.wins = 0;
+            p.stats.official.wins = 0;
+            p.stats.friendly.wins = 0;
         }
 
-        // Recorrer el historial de sesiones
+        // Calcular total de victorias del club en todo el historial
+        let totalClubWins = 0;
         for (let session of state.sessions) {
-            if (!session.matches) continue;
+            if (!session.matches || session.matches.length === 0) continue;
+            const winsInSession = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
+            totalClubWins += winsInSession;
+            console.log(`  Sesión (type=${session.type}): ${winsInSession} victorias de ${session.matches.length} partidos`);
+        }
+        console.log(`\n📊 Total victorias del club: ${totalClubWins}`);
+
+        if (totalClubWins === 0) {
+            console.log("⚠️ No se encontraron victorias en el historial. Nada que actualizar.");
+            return;
+        }
+
+        // Aplicar victorias: a cada jugador que tenga PJ, asignar wins proporcionales
+        // Como solo hay 1 jornada, asignamos las victorias a quienes tengan partidos
+        for (let p of state.players) {
+            let changed = false;
             
-            let sessionWins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
-            if (sessionWins > 0) {
-                let mType = session.type || 'friendly';
-                for (let p of state.players) {
-                    if (!p.stats || !p.stats[mType] || p.stats[mType].matches === 0) continue;
-                    
-                    if (p.stats[mType].wins < p.stats[mType].matches) {
-                         p.stats[mType].wins = Math.min(p.stats[mType].matches, p.stats[mType].wins + sessionWins);
-                         updatedPlayers.add(p);
-                    }
-                }
+            // Para categoría official
+            if (p.stats.official.matches > 0) {
+                p.stats.official.wins = Math.min(p.stats.official.matches, totalClubWins);
+                console.log(`  ✅ ${p.name} -> official wins: ${p.stats.official.wins}/${p.stats.official.matches}`);
+                changed = true;
             }
+            
+            // Para categoría friendly
+            if (p.stats.friendly.matches > 0) {
+                p.stats.friendly.wins = Math.min(p.stats.friendly.matches, totalClubWins);
+                console.log(`  ✅ ${p.name} -> friendly wins: ${p.stats.friendly.wins}/${p.stats.friendly.matches}`);
+                changed = true;
+            }
+            
+            if (changed) updatedPlayers.add(p);
         }
         
-        console.log(`Subiendo correcciones de ${updatedPlayers.size} jugadores a Supabase...`);
+        console.log(`\n📤 Subiendo correcciones de ${updatedPlayers.size} jugadores a Supabase...`);
         for (let p of updatedPlayers) {
             const { error } = await supabase.from('players').update({ stats: p.stats }).eq('id', p.id);
-            if (error) console.error("Error al actualizar jugador:", p.name, error);
+            if (error) {
+                console.error("❌ Error al actualizar:", p.name, error);
+            } else {
+                console.log(`  ✅ ${p.name} guardado OK`);
+            }
         }
-        console.log("✅ Backfill completado. Recarga la página para ver los porcentajes actualizados.");
+        console.log("\n🎉 Backfill completado. Recarga la página para ver los porcentajes actualizados.");
     };
 
 });
