@@ -263,7 +263,6 @@ async function handleUserSession(authUser) {
             // Redirección Inteligente (v47.2 - Soporte Sin Club)
             setTimeout(() => {
                 if (window.state.userPlayer) {
-                    window.switchView('home'); 
                     window.viewPlayerProfileDetail(window.state.userPlayer.id); 
                 } else {
                     window.switchView('add-player');
