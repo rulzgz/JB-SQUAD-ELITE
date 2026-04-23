@@ -1125,9 +1125,30 @@
             </div>
             <p style="color: var(--text-muted); font-size: 0.8rem; margin: 15px 0;">Indica la hora para la imagen del Matchday</p>
             <div class="form-group">
-                <input type="time" id="export-match-time" value="22:00" style="font-size: 2rem; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); color: var(--primary); font-weight: 900;">
+                <input type="time" id="export-match-time" value="22:00" style="font-size: 2rem; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); color: var(--primary); font-weight: 900; margin-bottom: 20px;">
             </div>
+
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 10px 0;">Selecciona el fondo del campo</p>
+            <div id="export-bg-selector" class="bg-selector-grid">
+                <div class="bg-option selected" data-bg="img/emerald_pitch.png">
+                    <img src="img/emerald_pitch.png" alt="Fondo 1">
+                </div>
+                <div class="bg-option" data-bg="img/pitch_2.png">
+                    <div class="bg-placeholder">Fondo 2</div>
+                </div>
+                <div class="bg-option" data-bg="img/pitch_3.png">
+                    <div class="bg-placeholder">Fondo 3</div>
+                </div>
+                <div class="bg-option" data-bg="img/pitch_4.png">
+                    <div class="bg-placeholder">Fondo 4</div>
+                </div>
+                <div class="bg-option" data-bg="img/pitch_5.png">
+                    <div class="bg-placeholder">Fondo 5</div>
+                </div>
+            </div>
+
             <button id="btn-confirm-export" class="btn-gold" style="margin-top: 25px;">GENERAR IMAGEN</button>
+
         </div>
     </div>
 

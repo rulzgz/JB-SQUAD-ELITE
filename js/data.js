@@ -18,9 +18,10 @@ async function loadTeamData() {
         if (state.user && state.user.auth) {
             const { data: myPlayer } = await supabase
                 .from('players')
-                .select('*')
+                .select('id, user_id, team_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats')
                 .eq('user_id', state.user.auth.id)
                 .maybeSingle();
+
             
             if (myPlayer) {
                 // [NUEVO] Sincronización proactiva (v48.2) - Autocuración por RLS
@@ -56,9 +57,10 @@ async function loadTeamData() {
             // 1. Cargar Jugadores (Excluyendo al usuario si ya se cargó para evitar duplicados)
             const { data: dbPlayers } = await supabase
                 .from('players')
-                .select('*')
+                .select('id, user_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats')
                 .eq('team_id', state.team.id)
                 .neq('user_id', state.user.auth.id);
+
 
             if (dbPlayers) {
                 const otherPlayers = dbPlayers.map(p => ({
@@ -80,7 +82,8 @@ async function loadTeamData() {
             }
 
             // 2. Cargar Sesiones
-            const { data: dbSessions } = await supabase.from('sessions').select('*').eq('team_id', state.team.id);
+            const { data: dbSessions } = await supabase.from('sessions').select('id, date, status, mvp_id, matches').eq('team_id', state.team.id);
+
             if (dbSessions) {
                 window.state.sessions = dbSessions.filter(s => s.status === 'closed').map(s => ({
                     id: s.id,
@@ -100,7 +103,8 @@ async function loadTeamData() {
             }
 
             // 3. Cargar Tácticas
-            const { data: dbTactics } = await supabase.from('tactics').select('*').eq('team_id', state.team.id);
+            const { data: dbTactics } = await supabase.from('tactics').select('id, name, formation, assignments, custom_positions, is_active').eq('team_id', state.team.id);
+
             if (dbTactics) {
                 window.state.savedTactics = dbTactics.map(t => ({
                     id: t.id,
@@ -378,7 +382,7 @@ async function fetchTeamRequests(teamId) {
 
     const { data, error } = await supabase
         .from('team_requests')
-        .select('id, created_at, user_id')
+        .select('id, created_at, user_id, profiles(full_name)')
         .eq('team_id', tId);
         
     if (error) {
@@ -386,14 +390,9 @@ async function fetchTeamRequests(teamId) {
         return [];
     }
 
-    // Cargar nombres de perfiles manualmente para evitar joins complejos si RLS es estricto
-    const augmentedData = await Promise.all((data || []).map(async (req) => {
-        const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', req.user_id).single();
-        return { ...req, profiles: prof };
-    }));
-
-    return augmentedData;
+    return data || [];
 }
+
 
 /**
  * Acepta una solicitud de fichaje.

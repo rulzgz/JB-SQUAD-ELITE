@@ -27,6 +27,10 @@ window.state = {
         voters: {}, // userId -> status ('yes', 'no', 'late')
         currentPollId: null 
     },
-    historyCache: {}    // Caché para el historial de convocatorias { key: [data] }
+    historyCache: {},    // Caché para el historial de convocatorias { key: [data] }
+    // Cachés de rendimiento (v49.5)
+    bannerCache: { data: null, timestamp: 0 },
+    requestsBadgeCache: { count: 0, timestamp: 0 }
 };
+
 

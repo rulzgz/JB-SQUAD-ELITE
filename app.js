@@ -896,10 +896,22 @@ document.addEventListener('DOMContentLoaded', () => {
             exportTimeModal.style.display = 'none';
         });
 
+        // Selector de Fondos de Exportación (v49.5)
+        let selectedExportBg = 'img/emerald_pitch.png';
+        const bgOptions = document.querySelectorAll('.bg-option');
+        bgOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                bgOptions.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedExportBg = opt.getAttribute('data-bg');
+            });
+        });
+
         btnConfirmExport.addEventListener('click', () => {
             exportTimeModal.style.display = 'none';
-            exportTacticAsImage();
+            exportTacticAsImage(selectedExportBg);
         });
+
 
         // Exportar Plantilla (v49.4)
         if (btnExportSquad) {
@@ -2504,6 +2516,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     window.renderHomeDashboard = function() {
+        if (state.currentView !== 'home') return;
+        
+        // No llamar a renderAvailabilityBanner aquí, ya se llama en switchView('home')
+        // renderAvailabilityBanner(); 
+        
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
         const assistsListEl = document.getElementById('home-top-assists-list');
@@ -2692,7 +2709,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- FUNCIÓN DE EXPORTACIÓN ELITE v4.8.0 ---
-    async function exportTacticAsImage() {
+    async function exportTacticAsImage(bgImage = 'img/emerald_pitch.png') {
         // Validación de Seguridad (v47.4)
         const role = (state.user?.role || 'jugador').toLowerCase();
         if (role !== 'manager' && role !== 'capitan') {
@@ -2709,6 +2726,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Crear el contenedor Off-screen
         const wrapper = document.createElement('div');
         wrapper.className = 'export-matchday-wrapper';
+        wrapper.style.backgroundImage = `url('${bgImage}')`;
+
         
         // Cálculo de tamaño dinámico para el nombre del club (v47.5.1)
         let nameFontSize = '48px';
@@ -3105,20 +3124,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.updateJoinRequestsBadge = async function() {
-        if (!state.user || state.user.role !== 'manager' || !state.team) return;
-        
-        const requests = await fetchTeamRequests();
-        const badge = document.getElementById('requests-badge-profile');
-        
-        if (badge) {
-            if (requests.length > 0) {
-                badge.textContent = requests.length;
-                badge.style.display = 'flex';
-            } else {
-                badge.style.display = 'none';
-            }
+        const isAdmin = state.user?.role === 'manager' || state.user?.role === 'capitan';
+        const badge = document.getElementById('nav-requests-badge');
+        if (!badge || !isAdmin) return;
+
+        // Caché de 60 segundos (v49.5)
+        const now = Date.now();
+        if (state.requestsBadgeCache.timestamp && (now - state.requestsBadgeCache.timestamp < 60000)) {
+            renderBadge(state.requestsBadgeCache.count);
+            return;
         }
-    }
+
+        const requests = await fetchTeamRequests();
+        const count = requests.length;
+        
+        state.requestsBadgeCache = { count, timestamp: now };
+        renderBadge(count);
+
+        function renderBadge(n) {
+            badge.textContent = n;
+            badge.style.display = n > 0 ? 'flex' : 'none';
+        }
+    };
+
 
     window.handleRequestAction = async function(requestId, action) {
         const msg = action === 'accept' ? '¿Quieres aceptar a este jugador en el club?' : '¿Rechazar esta solicitud?';
@@ -3468,6 +3496,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function renderAvailabilityBanner() {
+        const banner = document.getElementById('availability-banner');
+        const navDot = document.getElementById('nav-votar-dot');
+        if (!banner) return;
+
+        // Reset visual
+        banner.style.display = 'none';
+        if (navDot) navDot.style.display = 'none';
+
+        if (!state.team || !state.user) return;
+
+        // Caché de 60 segundos (v49.5)
+        const now = Date.now();
+        let poll;
+        if (state.bannerCache.timestamp && (now - state.bannerCache.timestamp < 60000)) {
+            poll = state.bannerCache.data;
+        } else {
+            poll = await fetchActivePoll();
+            state.bannerCache = { data: poll, timestamp: now };
+        }
+
+        if (!poll) return;
+      
+        // Mostrar/Ocultar botón de nueva según rango
+        const isManagerOrCapitan = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+        if (btnNewPoll) btnNewPoll.style.display = isManagerOrCapitan ? 'flex' : 'none';
+
+        const poll = await fetchActivePoll();
+        // ... (resto del renderizado del banner)
+    }
+
     function sharePollWhatsApp(poll) {
         const url = `https://jb-squad.netlify.app/?poll=${poll.id}`;
         const timeStr = poll.scheduled_time.split('T')[1].substring(0, 5);
@@ -3792,6 +3851,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pitchContainer = document.getElementById('report-mini-pitch-container');
         const btnDeleteReport = document.getElementById('btn-delete-report');
         const btnReopenReport = document.getElementById('btn-reopen-report');
+        
+        // Filtros de calendario para el reporte
+        const monthStart = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1).toISOString();
+        const monthEnd = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
         if (!overlay) return;
         window.jbLoading.show('Generando reporte...');
@@ -4139,8 +4202,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderAvailabilityBanner = async function() {
         if (!state.user || !state.team) return;
         
-        const poll = await fetchActivePoll();
+        // Caché de 60 segundos (v49.5)
+        const now = Date.now();
+        let poll;
+        if (state.bannerCache.timestamp && (now - state.bannerCache.timestamp < 60000)) {
+            poll = state.bannerCache.data;
+        } else {
+            poll = await fetchActivePoll();
+            state.bannerCache = { data: poll, timestamp: now };
+        }
+
         const pollBtn = document.querySelector('.nav-btn[data-view="convocatorias"]');
+
 
         if (!poll) {
             if (navPollBadge) navPollBadge.style.display = 'none';
@@ -4224,6 +4297,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 3. Obtener Votos del Jugador con fecha de la encuesta
+            const monthStart = new Date(year, month, 1).toISOString();
+            const monthEnd = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+
             const { data: votes, error } = await supabase
                 .from('availability_votes')
                 .select(`
@@ -4232,7 +4308,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         created_at
                     )
                 `)
-                .eq('user_id', player.user_id);
+                .eq('user_id', player.user_id)
+                .gte('availability_polls.created_at', monthStart)
+                .lte('availability_polls.created_at', monthEnd);
+
 
             if (error) throw error;
 
