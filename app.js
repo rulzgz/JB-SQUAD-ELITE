@@ -326,6 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMiEquipoView();
         } else if (viewId === 'convocatorias') {
             renderAvailabilityPanel();
+        } else if (viewId === 'home') {
+            if (window.renderHomeDashboard) window.renderHomeDashboard();
         }
 
         // Actualizar estado del Nav Bar
@@ -2553,9 +2555,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderHomeDashboard = function() {
         if (state.currentView !== 'home') return;
         
-        // No llamar a renderAvailabilityBanner aquí, ya se llama en switchView('home')
-        // renderAvailabilityBanner(); 
-        
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
         const assistsListEl = document.getElementById('home-top-assists-list');
@@ -2569,6 +2568,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formStreakContainer = document.getElementById('form-streak-container');
         
         const scorersListEl = document.getElementById('home-top-scorers-list');
+        const winrateListEl = document.getElementById('home-top-winrate-list');
         const displayUser = document.getElementById('display-user-welcome');
         const displayRole = document.getElementById('display-user-role');
 
@@ -2605,77 +2605,70 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- 1. TOP GOLEADORES ---
-        if (scorersListEl) {
-            scorersListEl.innerHTML = '';
-            const scorers = state.players
-                .map(p => ({
-                    name: p.name,
-                    photo: p.photo_url,
-                    transform: getPlayerTransform(p),
-                    avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
-                    totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0)
-                }))
-                .filter(s => s.totalGoals > 0)
-                .sort((a, b) => b.totalGoals - a.totalGoals)
-                .slice(0, 3);
-
-            if (scorers.length === 0) {
-                scorersListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
-            } else {
-                scorers.forEach((s, i) => {
-                    const row = document.createElement('div');
-                    row.className = 'card-elite';
-                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
-                    row.innerHTML = `
-                        <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
-                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
-                        </div>
-                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
-                        <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
-                    `;
-                    scorersListEl.appendChild(row);
-                });
+        // --- Helper para renderizar filas de ranking ---
+        function renderTopRow(container, items, valueKey, valueSuffix) {
+            if (!container) return;
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
+                return;
             }
+            items.forEach((s, i) => {
+                const row = document.createElement('div');
+                row.className = 'card-elite';
+                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
+                row.innerHTML = `
+                    <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
+                    <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
+                    </div>
+                    <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                    <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s[valueKey]} <small style="font-size:0.5rem;">${valueSuffix}</small></span>
+                `;
+                container.appendChild(row);
+            });
         }
 
-        // --- 2. TOP ASISTENTES ---
-        if (assistsListEl) {
-            assistsListEl.innerHTML = '';
-            const assistants = state.players
-                .map(p => ({
-                    name: p.name,
-                    photo: p.photo_url,
-                    transform: getPlayerTransform(p),
-                    avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
-                    totalAssists: (p.stats?.official?.assists || 0) + (p.stats?.friendly?.assists || 0)
-                }))
-                .filter(s => s.totalAssists > 0)
-                .sort((a, b) => b.totalAssists - a.totalAssists)
-                .slice(0, 3);
-
-            if (assistants.length === 0) {
-                assistsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
-            } else {
-                assistants.forEach((s, i) => {
-                    const row = document.createElement('div');
-                    row.className = 'card-elite';
-                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
-                    row.innerHTML = `
-                        <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
-                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
-                        </div>
-                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
-                        <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalAssists} <small style="font-size:0.5rem;">AST</small></span>
-                    `;
-                    assistsListEl.appendChild(row);
-                });
-            }
+        // --- Mapeador de jugador para rankings ---
+        function mapPlayerForRanking(p) {
+            return {
+                name: p.name,
+                photo: p.photo_url,
+                transform: getPlayerTransform(p),
+                avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1))
+            };
         }
 
-        // --- 3. RECOPILAR PARTIDOS PARA RATIO Y RACHA ---
+        // --- 1. TOP GOLEADORES (5) ---
+        const scorers = state.players
+            .map(p => ({ ...mapPlayerForRanking(p), totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0) }))
+            .filter(s => s.totalGoals > 0)
+            .sort((a, b) => b.totalGoals - a.totalGoals)
+            .slice(0, 5);
+        renderTopRow(scorersListEl, scorers, 'totalGoals', 'GLS');
+
+        // --- 2. TOP ASISTENTES (5) ---
+        const assistants = state.players
+            .map(p => ({ ...mapPlayerForRanking(p), totalAssists: (p.stats?.official?.assists || 0) + (p.stats?.friendly?.assists || 0) }))
+            .filter(s => s.totalAssists > 0)
+            .sort((a, b) => b.totalAssists - a.totalAssists)
+            .slice(0, 5);
+        renderTopRow(assistsListEl, assistants, 'totalAssists', 'AST');
+
+        // --- 3. TOP % VICTORIAS INDIVIDUAL (5) ---
+        const winRaters = state.players
+            .map(p => {
+                const totalPJ = (p.stats?.official?.matches || 0) + (p.stats?.friendly?.matches || 0);
+                const totalW = (p.stats?.official?.wins || 0) + (p.stats?.friendly?.wins || 0);
+                const pct = totalPJ > 0 ? ((totalW / totalPJ) * 100) : 0;
+                return { ...mapPlayerForRanking(p), winPct: pct.toFixed(1) + '%', winPctNum: pct, totalPJ };
+            })
+            .filter(s => s.totalPJ > 0)
+            .sort((a, b) => b.winPctNum - a.winPctNum)
+            .slice(0, 5);
+        renderTopRow(winrateListEl, winRaters, 'winPct', '');
+
+        // --- 4. RECOPILAR PARTIDOS PARA RATIO Y RACHA ---
         let allMatches = [];
         const allSessions = [...state.sessions];
         if (state.activeSession) {
