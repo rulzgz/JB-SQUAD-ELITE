@@ -1782,7 +1782,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: selectedType,
                 status: 'active'
             };
-            state.sessions.push(newSession);
             state.activeSession = newSession;
             saveSessionCloud(newSession);
             renderActiveSession();
