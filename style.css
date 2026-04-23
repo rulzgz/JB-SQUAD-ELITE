@@ -4991,6 +4991,7 @@ body.editing-tactic .tactical-slot {
 
     .team-management-actions {
         width: 100% !important;
+        display: flex !important; /* Forzar fila */
         justify-content: flex-start !important;
         gap: 8px !important;
     }
