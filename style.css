@@ -4957,3 +4957,72 @@ body.editing-tactic .tactical-slot {
 .report-collapsible-section.expanded .chevron {
     transform: rotate(180deg);
 }
+
+/* --- Ajustes Mi Equipo en Mobile (v34.4) --- */
+@media (max-width: 768px) {
+    /* Pestañas más compactas */
+    .elite-tabs {
+        gap: 5px !important;
+        margin-bottom: 20px !important;
+        padding: 0 5px;
+    }
+
+    .elite-tab-btn {
+        flex: 1;
+        padding: 10px 5px !important;
+        font-size: 0.6rem !important;
+        letter-spacing: 0.5px !important;
+        text-align: center;
+    }
+
+    /* Cabecera de Gestión en Bloques */
+    .team-management-header-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .team-management-title {
+        font-size: 1rem !important;
+        width: 100%;
+        margin: 0 !important;
+    }
+
+    .team-management-actions {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+    }
+
+    #btn-export-squad, #btn-sync-squad {
+        flex: 1;
+        padding: 10px 5px !important;
+        justify-content: center;
+    }
+
+    .badge-elite {
+        font-size: 0.6rem !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Más ancho para la tabla (menos margen) */
+    .view#view-equipo .container-elite {
+        padding: 10px !important; /* Reducir padding exterior */
+    }
+
+    .card-elite.member-management-panel {
+        padding: 15px 10px !important; /* Reducir padding interior */
+        width: 100%;
+    }
+
+    /* Ajuste tabla de miembros */
+    .roster-table-header {
+        font-size: 0.55rem !important;
+        padding: 10px 5px !important;
+    }
+
+    .player-row-elite {
+        padding: 8px 5px !important;
+    }
+}
