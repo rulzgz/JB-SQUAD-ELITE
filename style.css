@@ -4975,18 +4975,28 @@ body.editing-tactic .tactical-slot {
         text-align: center;
     }
 
-    /* Cabecera de Gestión en Bloques */
+    /* Cabecera de Gestión en Bloques (3 Filas) */
     .team-management-header-flex {
         flex-direction: column !important;
         align-items: flex-start !important;
-        gap: 12px !important;
-        margin-bottom: 20px !important;
+        gap: 15px !important; /* Espacio entre filas */
+        margin-bottom: 25px !important;
     }
 
     .team-management-title {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
         width: 100%;
         margin: 0 !important;
+        letter-spacing: 1px !important;
+    }
+
+    .badge-elite {
+        font-size: 0.7rem !important;
+        padding: 5px 12px !important;
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
     }
 
     .team-management-actions {
