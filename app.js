@@ -3516,7 +3516,6 @@ document.addEventListener('DOMContentLoaded', () => {
         activePollContainer.innerHTML = `
             <div class="poll-active-card fade-in">
                 <div class="poll-main-layout">
-                    <!-- Panel Izquierdo: Controles y Voto -->
                     <div class="poll-left-side">
                         <div class="poll-header">
                             <div class="poll-info">
@@ -3530,7 +3529,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                             <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.7 17.8 69.4 27.2 106.2 27.2h.1c122.3 0 222-99.6 222-222 0-59.3-23-115.1-65.1-157.1zM223.9 446.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 367.3l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-82.7 184.6-184.5 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.1-3.2-5.5-.3-8.4 2.4-11.2 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 .9-7-1.3-9.5-2.4-2.5-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
                                         </svg>
                                     </button>
-                                    <button onclick="window.jbClosePoll('${poll.id}')" class="btn-close-poll">CERRAR</button>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button onclick="window.jbClosePoll('${poll.id}', false)" class="btn-poll-cancel">CANCELAR</button>
+                                        <button onclick="window.jbClosePoll('${poll.id}', true)" class="btn-poll-align">CREAR ALINEACIÓN</button>
+                                    </div>
                                 ` : `<span class="poll-status-tag open">ABIERTA</span>`}
                             </div>
                         </div>
@@ -3957,113 +3959,75 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = document.getElementById('late-minutes-selector');
         if (sel) sel.style.display = sel.style.display === 'flex' ? 'none' : 'flex';
     };
-    window.jbClosePoll = async (id) => {
-        // --- SEGURIDAD: Solo Manager o Capitán (v49.3) ---
+    window.jbClosePoll = async (id, withAlignment = false) => {
+        // --- SEGURIDAD: Solo Manager o Capitán (v49.4) ---
         const role = state.user?.role;
         if (role !== 'manager' && role !== 'capitan') {
-            window.jbToast('Acceso Denegado: No tienes permisos para cerrar convocatorias.', 'error');
+            window.jbToast('Acceso Denegado', 'error');
             return;
         }
 
-        const dialog = document.getElementById('jb-poll-close-dialog');
-        const btnAlign = document.getElementById('btn-poll-close-align');
-        const btnOnlyClose = document.getElementById('btn-poll-close-only');
-        const btnBack = document.getElementById('btn-poll-close-back');
+        const msg = withAlignment 
+            ? '¿Cerrar jornada y pasar a CREAR LA ALINEACIÓN?' 
+            : '¿Seguro que quieres CANCELAR y archivar esta jornada sin alinear?';
 
-        if (!dialog) return;
-        dialog.style.display = 'flex';
+        const confirmed = await window.jbConfirm(msg);
+        if (!confirmed) return;
 
-        const withAlignmentData = async (withAlignment) => {
-            dialog.style.display = 'none';
-            window.jbLoading.show('Archivando convocatoria...');
+        window.jbLoading.show('Procesando jornada...');
+
+        // 1. Lógica de Alineación (si aplica)
+        if (withAlignment && state.activePoll && state.activePoll.votes) {
+            state.alignmentMode.active = true;
+            state.alignmentMode.currentPollId = id; 
+            state.alignmentMode.voters = {};
+            state.activePoll.votes.forEach(v => {
+                if (v.user_id) state.alignmentMode.voters[v.user_id.toString()] = v.vote;
+            });
+
+            const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
+            if (tacticId) {
+                const activeTactic = state.savedTactics.find(t => t.id === tacticId);
+                if (activeTactic) {
+                    activeTactic.assignments = {}; 
+                    await saveTacticsCloud(); 
+                }
+            }
+        }
+
+        // 2. Auto-voto NO para los que no votaron
+        try {
+            const { data: dbVotes } = await supabase.from('availability_votes').select('user_id').eq('poll_id', id);
+            if (state.players) {
+                const votedUserIds = (dbVotes || []).map(v => String(v.user_id));
+                const nonVoters = state.players.filter(p => p.user_id && !votedUserIds.includes(String(p.user_id)));
+                if (nonVoters.length > 0) {
+                    const autoVotes = nonVoters.map(p => ({
+                        poll_id: id, user_id: p.user_id, vote: 'no', voted_at: new Date().toISOString()
+                    }));
+                    await supabase.from('availability_votes').upsert(autoVotes, { onConflict: 'poll_id,user_id' });
+                }
+            }
+        } catch (e) {}
+
+        // 3. Cerrar en Supabase
+        const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
+        
+        window.jbLoading.hide();
+
+        if (error) {
+            window.jbToast('Error: ' + error.message, 'error');
+        } else {
+            window.jbToast(withAlignment ? 'Jornada cerrada. ¡A por el 11!' : 'Jornada archivada', 'success');
+            state.historyCache = {};
+            await renderAvailabilityPanel();
             
-            // Si vamos a alinear, capturamos los votos y PREPARAMOS EL CAMPO
-            if (withAlignment && state.activePoll && state.activePoll.votes) {
-                // 1. Activar Modo Alineación y Vincular ID
-                state.alignmentMode.active = true;
-                state.alignmentMode.currentPollId = id; 
-                state.alignmentMode.voters = {};
-                state.activePoll.votes.forEach(v => {
-                    if (v.user_id) state.alignmentMode.voters[v.user_id.toString()] = v.vote;
-                });
-
-                // 2. Localizar y VACIAR la táctica activa
+            if (withAlignment) {
                 const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
-                if (tacticId) {
-                    const activeTactic = state.savedTactics.find(t => t.id === tacticId);
-                    if (activeTactic) {
-                        activeTactic.assignments = {}; // Limpieza total para alinear de cero
-                        await saveTacticsCloud(); // Guardar el vaciado en la nube
-                    }
-                }
+                switchView('tacticas');
+                if (tacticId) openPitchView(tacticId);
             }
-
-            // --- MEJORA ELITE: Auto-voto NO para no-votantes (v36.1 Robust) ---
-            try {
-                // 1. Obtener los IDs de quienes YA votaron directamente de la DB (fresco)
-                const { data: dbVotes, error: dbVotesErr } = await supabase
-                    .from('availability_votes')
-                    .select('user_id')
-                    .eq('poll_id', id);
-
-                if (!dbVotesErr && state.players && state.players.length > 0) {
-                    const votedUserIds = (dbVotes || []).map(v => String(v.user_id));
-                    
-                    // 2. Identificar quién falta (que tenga user_id y no esté en la lista)
-                    const nonVoters = state.players.filter(p => {
-                        return p.user_id && !votedUserIds.includes(String(p.user_id));
-                    });
-
-                    if (nonVoters.length > 0) {
-                        const autoVotes = nonVoters.map(p => ({
-                            poll_id: id,
-                            user_id: p.user_id,
-                            vote: 'no',
-                            voted_at: new Date().toISOString()
-                        }));
-
-                        const { error: autoVoteErr } = await supabase
-                            .from('availability_votes')
-                            .upsert(autoVotes, { onConflict: 'poll_id,user_id' });
-                        
-                        if (!autoVoteErr) {
-                            window.jbToast(`Auto-marcados ${nonVoters.length} jugadores como NO`, 'info');
-                            console.log(`>>> [CONVOCATORIAS] Auto-voto exitoso para ${nonVoters.length} jugadores.`);
-                        } else {
-                            console.error(">>> [ERROR] Auto-voto falló (posible RLS):", autoVoteErr);
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error(">>> [ERROR] Excepción en auto-voto:", err);
-            }
-
-            const { error } = await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
-            
-            if (error) {
-                window.jbToast('Error al cerrar: ' + error.message, 'error');
-            } else {
-                window.jbToast('Convocatoria cerrada. Iniciando alineación...', 'success');
-                state.historyCache = {}; // Invalidar caché
-                await renderAvailabilityPanel();
-
-                
-                if (withAlignment) {
-                    const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);
-                    // IMPORTANTE: Cambiamos a la vista de tácticas global primero
-                    switchView('tacticas');
-                    
-                    if (tacticId) {
-                        openPitchView(tacticId);
-                    }
-                }
-            }
-            window.jbLoading.hide();
-        };
-
-        btnAlign.onclick = () => withAlignmentData(true);
-        btnOnlyClose.onclick = () => withAlignmentData(false);
-        btnBack.onclick = () => dialog.style.display = 'none';
+        }
     };
 
     window.jbReopenPoll = async (id) => {
