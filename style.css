@@ -328,6 +328,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     gap: 15px;
 }
 
+.home-stats-grid {
+    display: none !important;
+}
+
 @media (min-width: 1024px) {
     .dashboard-desktop-layout {
         flex-direction: row;
@@ -357,9 +361,6 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     }
 }
 
-.home-stats-grid {
-    display: none !important;
-}
 
 /* Onboarding */
 #onboarding {
