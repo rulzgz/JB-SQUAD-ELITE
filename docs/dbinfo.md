@@ -91,7 +91,7 @@ CREATE TABLE public.players (
   primary_pos text DEFAULT 'DC'::text,
   secondary_pos ARRAY DEFAULT '{}'::text[],
   dorsal text DEFAULT '0'::text,
-  stats jsonb DEFAULT '{"friendly": {"mvps": 0, "goals": 0, "assists": 0, "matches": 0}, "official": {"mvps": 0, "goals": 0, "assists": 0, "matches": 0}}'::jsonb,
+  stats jsonb DEFAULT '{"friendly": {"mvps": 0, "goals": 0, "assists": 0, "matches": 0, "wins": 0}, "official": {"mvps": 0, "goals": 0, "assists": 0, "matches": 0, "wins": 0}}'::jsonb,
   created_at timestamp with time zone DEFAULT now(),
   team_id uuid,
   user_id uuid UNIQUE,

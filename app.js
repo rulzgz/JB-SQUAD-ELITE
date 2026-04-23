@@ -2180,9 +2180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentMatch.type = mType; // Asegurar consistencia
 
         const initStats = (p) => {
-            if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } };
-            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0 };
-            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0 };
+            if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } };
+            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0, wins: 0 };
+            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0, wins: 0 };
+
             if (p.mvp_count === undefined) p.mvp_count = 0;
         };
 
@@ -2214,6 +2215,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (assignedIds.includes(p.id.toString())) {
                     initStats(p);
                     p.stats[mType].matches++;
+                    
+                    // Sumar victoria individual si el club ganó el partido (scoreHome > scoreAway)
+                    if (currentMatch.scoreHome > currentMatch.scoreAway) {
+                        p.stats[mType].wins = (p.stats[mType].wins || 0) + 1;
+                    }
+
                     playersToSave.add(p);
                 }
             }
@@ -2479,8 +2486,21 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const mvp = player.mvp_count || 0;
 
-        const off = stats.official || { goals: 0, assists: 0, matches: 0 };
-        const fri = stats.friendly || { goals: 0, assists: 0, matches: 0 };
+        const off = stats.official || { goals: 0, assists: 0, matches: 0, wins: 0 };
+        const fri = stats.friendly || { goals: 0, assists: 0, matches: 0, wins: 0 };
+
+        // Lógica de privacidad: ¿Puede ver el porcentaje de victorias?
+        const isManagerOrCap = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+        const isSelf = state.user && player.user_id === state.user.auth.id;
+        const canViewWinRate = isManagerOrCap || isSelf;
+
+        const calcWinRate = (matches, wins) => {
+            if (!matches || matches === 0) return '0.0%';
+            return ((wins || 0) / matches * 100).toFixed(1) + '%';
+        };
+
+        const offWinRate = canViewWinRate ? calcWinRate(off.matches, off.wins) : '<span title="Confidencial">🔒</span>';
+        const friWinRate = canViewWinRate ? calcWinRate(fri.matches, fri.wins) : '<span title="Confidencial">🔒</span>';
 
         tbody.innerHTML = `
             <tr class="row-official">
@@ -2488,6 +2508,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${off.matches || 0}</td>
                 <td>${off.goals || 0}</td>
                 <td>${off.assists || 0}</td>
+                <td style="font-weight: 800;">${offWinRate}</td>
                 <td>-</td>
             </tr>
             <tr class="row-friendly">
@@ -2495,6 +2516,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${fri.matches || 0}</td>
                 <td>${fri.goals || 0}</td>
                 <td>${fri.assists || 0}</td>
+                <td style="font-weight: 800;">${friWinRate}</td>
                 <td>-</td>
             </tr>
         `;
@@ -2502,12 +2524,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPJ = (off.matches || 0) + (fri.matches || 0);
         const totalG = (off.goals || 0) + (fri.goals || 0);
         const totalA = (off.assists || 0) + (fri.assists || 0);
+        const totalW = (off.wins || 0) + (fri.wins || 0);
+        const totalWinRate = canViewWinRate ? calcWinRate(totalPJ, totalW) : '<span title="Confidencial">🔒</span>';
 
         tfooter.innerHTML = `
             <td>TOTAL TEMPORADA</td>
             <td>${totalPJ}</td>
             <td>${totalG}</td>
             <td>${totalA}</td>
+            <td style="font-weight: 800; color: var(--primary);">${totalWinRate}</td>
             <td style="color:var(--primary); font-weight:900;">⭐ ${mvp}</td>
         `;
     }
@@ -4368,6 +4393,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-}
+    // --- TEMPORARY BACKFILL SCRIPT FOR WIN PERCENTAGE (OPTION B) ---
+    window.devFixWins = async function() {
+        if (!state.team || !state.sessions) {
+            console.error("No hay equipo o sesiones cargadas.");
+            return;
+        }
+        
+        console.log("Iniciando recalculo retrospectivo de victorias...");
+        let updatedPlayers = new Set();
+        
+        // Resetear victorias a 0 para asegurar cálculo limpio
+        for (let p of state.players) {
+            if (p.stats) {
+                if (p.stats.official) p.stats.official.wins = 0;
+                if (p.stats.friendly) p.stats.friendly.wins = 0;
+            }
+        }
 
-);
+        // Recorrer el historial de sesiones
+        for (let session of state.sessions) {
+            if (!session.matches) continue;
+            
+            let sessionWins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
+            if (sessionWins > 0) {
+                let mType = session.type || 'friendly';
+                for (let p of state.players) {
+                    if (!p.stats || !p.stats[mType] || p.stats[mType].matches === 0) continue;
+                    
+                    if (p.stats[mType].wins < p.stats[mType].matches) {
+                         p.stats[mType].wins = Math.min(p.stats[mType].matches, p.stats[mType].wins + sessionWins);
+                         updatedPlayers.add(p);
+                    }
+                }
+            }
+        }
+        
+        console.log(`Subiendo correcciones de ${updatedPlayers.size} jugadores a Supabase...`);
+        for (let p of updatedPlayers) {
+            const { error } = await supabase.from('players').update({ stats: p.stats }).eq('id', p.id);
+            if (error) console.error("Error al actualizar jugador:", p.name, error);
+        }
+        console.log("✅ Backfill completado. Recarga la página para ver los porcentajes actualizados.");
+    };
+
+});

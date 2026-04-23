@@ -184,7 +184,7 @@ async function savePlayerCloud(player) {
             photo_scale: player.photo_scale,
             photo_x: player.photo_x,
             photo_y: player.photo_y,
-            stats: player.stats || { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } }
+            stats: player.stats || { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } }
         };
 
         if (player.id && player.id.toString().includes('-')) {
